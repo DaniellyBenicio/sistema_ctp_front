@@ -161,6 +161,7 @@ const Login = ({ onLogin }) => {
             fullWidth
             variant="contained"
             disabled={loading || !isEmailValid() || !password}
+            onClick={() => navigate('/MainScreen')}
             sx={{ mt: 3, mb: 2, py: 1.5, bgcolor: '#387c34', '&:hover': { bgcolor: '#2e622b' } }}
           >
             {loading ? <CircularProgress size={24} /> : 'Entrar'}

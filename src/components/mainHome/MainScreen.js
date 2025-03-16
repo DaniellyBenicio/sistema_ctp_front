@@ -1,20 +1,13 @@
 import React from 'react';
+import Sidebar from './SideBar';
 
 const MainScreen = ({ setAuthenticated }) => {
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove o token de autenticação
-    setAuthenticated(false);
-  };
-
   return (
-    <div>
-      {/* Cabeçalho com o botão de logout */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', backgroundColor: '#f8f8f8' }}>
+    <div style={{ display: 'flex' }}>
+      <Sidebar setAuthenticated={setAuthenticated} />
+      <div style={{ flexGrow: 1, padding: '20px' }}>
         <h1>Bem-vindo ao Sistema</h1>
-        <button onClick={handleLogout} style={{ padding: '5px 10px' }}>
-          Sair
-        </button>
-      </header>
+      </div>
     </div>
   );
 };
