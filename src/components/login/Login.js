@@ -1,75 +1,65 @@
 import React, { useState } from 'react';
-import {
-  TextField,
-  Container,
-  Button,
-  Typography,
-  Paper,
-  Box,
-  Checkbox,
-  FormControlLabel,
-  CircularProgress
-} from '@mui/material';
+import { login } from '../../service/auth';
+import { TextField, Container, Button, Typography, Paper, Box, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [focusedField, setFocusedField] = useState(null);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
-
-  const validateForm = () => {
-    let valid = true;
-
-    if (!email) {
-      setEmailError('O campo de e-mail é obrigatório.');
-      valid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError('E-mail inválido.');
-      valid = false;
-    } else {
-      setEmailError('');
-    }
-
-    if (!password) {
-      setPasswordError('O campo de senha é obrigatório.');
-      valid = false;
-    } else if (password.length < 6) {
-      setPasswordError('A senha deve ter pelo menos 6 caracteres.');
-      valid = false;
-    } else {
-      setPasswordError('');
-    }
-
-    return valid;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) return;
-
     setLoading(true);
+    setError('');
 
     try {
-      // Simulação de requisição para o servidor
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log('Login realizado com:', { email, password });
-    } catch (error) {
-      console.error('Erro no login:', error);
+      await login(email, password);
+      onLogin();
+    } catch (err) {
+      setError('Credenciais inválidas');
     } finally {
       setLoading(false);
     }
   };
 
+  const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   return (
-    <Container component="main" maxWidth="md" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <Paper elevation={3} sx={{ p: 6, borderRadius: 4, width: '100%', maxWidth: 480 }}>
-        <Typography component="h1" variant="h5" sx={{ mb: 4, fontWeight: 'bold', textAlign: 'center' }}>
-          LOGIN
+    <Container
+      component="main"
+      maxWidth="md"
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          p: 6,
+          borderRadius: 4,
+          width: '100%',
+          maxWidth: 480
+        }}
+      >
+        {/* Título */}
+        <Typography
+          component="h1"
+          variant="h5"
+          sx={{
+            mb: 4,
+            fontWeight: 'bold',
+            textAlign: 'center'
+          }}
+        >
+          Login
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
@@ -81,9 +71,20 @@ const Login = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={!!emailError}
-            helperText={emailError}
+            onFocus={() => setFocusedField('email')}
+            onBlur={() => setFocusedField(null)}
+            error={!!email && !isEmailValid()}
+            helperText={!!email && !isEmailValid() ? 'Email inválido' : ''}
             variant="outlined"
+            InputLabelProps={{
+              shrink: focusedField === 'email' || email !== '',
+              sx: {
+                color: focusedField === 'email' || email !== '' ? 'primary.main' : 'text.secondary',
+                fontSize: focusedField === 'email' || email !== '' ? '0.85rem' : '1rem',
+                transform: focusedField === 'email' || email !== '' ? 'translate(14px, -6px) scale(0.85)' : 'translate(14px, 16px) scale(1)',
+                transition: 'transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out'
+              }
+            }}
           />
 
           {/* Campo de Senha */}
@@ -94,27 +95,41 @@ const Login = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={!!passwordError}
-            helperText={passwordError}
+            onFocus={() => setFocusedField('password')}
+            onBlur={() => setFocusedField(null)}
             variant="outlined"
+            InputLabelProps={{
+              shrink: focusedField === 'password' || password !== '',
+              sx: {
+                color: focusedField === 'password' || password !== '' ? 'primary.main' : 'text.secondary',
+                fontSize: focusedField === 'password' || password !== '' ? '0.85rem' : '1rem',
+                transform: focusedField === 'password' || password !== '' ? 'translate(14px, -6px) scale(0.85)' : 'translate(14px, 16px) scale(1)',
+                transition: 'transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out'
+              }
+            }}
           />
 
-          {/* Lembre-se de mim e Esqueceu a senha */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
-            <FormControlLabel
-              control={<Checkbox color="primary" />}
-              label={
-                <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                  Lembre-se de mim
-                </Typography>
-              }
-            />
+          {/* Errors*/}
+          {error && (
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
+
+          {/*"Esqueceu a senha?" */}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              mt: 2
+            }}
+          >
             <Button
               sx={{
                 textTransform: 'none',
                 fontSize: '0.875rem',
                 color: 'primary.main',
-                '&:hover': { textDecoration: 'underline' },
+                '&:hover': { textDecoration: 'underline' }
               }}
               onClick={() => navigate('/forgot-password')}
             >
@@ -122,25 +137,18 @@ const Login = () => {
             </Button>
           </Box>
 
-          {/* Botão de Login */}
+          {/* Login */}
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            disabled={!email || !password || loading}
-            sx={{
-              mt: 3,
-              mb: 2,
-              bgcolor: 'primary.main',
-              '&:hover': { bgcolor: 'primary.dark' },
-              py: 1.5,
-              position: 'relative',
-            }}
+            disabled={loading || !isEmailValid() || !password}
+            sx={{ mt: 3, mb: 2, py: 1.5, bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' }}}
           >
-            {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Entrar'}
+            {loading ? <CircularProgress size={24} /> : 'Entrar'}
           </Button>
 
-          {/* Link para cadastro → Substituído por botão com navigate */}
+          {/*Ir para registro */}
           <Typography align="center" variant="body2" sx={{ mt: 2, fontSize: '1rem' }}>
             Não tem uma conta?{' '}
             <Button
