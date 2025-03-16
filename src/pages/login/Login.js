@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Container, Button, Typography, Paper, Box, CircularProgress, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import {login} from "../../service/auth";
 
 
 const Login = ({ onLogin }) => {
@@ -20,7 +21,8 @@ const Login = ({ onLogin }) => {
     setError('');
 
     try {
-      await onLogin(email, password);
+      await login(email, password);
+      onLogin();
     } catch (err) {
       setError('Credenciais inválidas');
     } finally {

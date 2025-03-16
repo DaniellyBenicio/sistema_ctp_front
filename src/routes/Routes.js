@@ -1,21 +1,13 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { SignUp } from '../components/signUp/signUp.js';
-import Login from '../components/login/Login.js';
-import { login } from '../service/auth';
-import MainScreen from '../components/mainHome/MainScreen';
+import { SignUp } from '../pages/signUp/signUp.js';
+import Login from '../pages/login/Login.js';
+import MainScreen from '../pages/mainHome/MainScreen';
+import UsersList from "../pages/admin/UsersList";
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
-  const handleLogin = async (email, senha) => {
-    try {
-      const token = await login(email, senha);
-      if (token) {
-        setAuthenticated(true);
-        localStorage.setItem('token', token);
-      }
-    } catch (error) {
-      console.error(error.message);
-    }
+  const handleLogin = () => {
+    setAuthenticated(true)
   };
 
   return (
@@ -36,8 +28,9 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           ) : (
             <Navigate to="/login" />
           )
-        }
-      >
+        }>
+
+        <Route path="users" element={<UsersList />} />
       </Route>
 
       {/* Redirecionamento para rotas inválidas */}
