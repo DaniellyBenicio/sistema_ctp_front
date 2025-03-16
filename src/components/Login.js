@@ -1,85 +1,161 @@
 import React, { useState } from 'react';
-import { login } from '../service/auth';
-import { TextField, Container, Button, Typography, Paper, Box, CircularProgress } from '@mui/material';
-import { Email, Lock } from '@mui/icons-material'; // Ícones para os campos
+import {
+  TextField,
+  Container,
+  Button,
+  Typography,
+  Paper,
+  Box,
+  Checkbox,
+  FormControlLabel,
+  CircularProgress
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // Estado para o ícone de carregamento
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
+
+  const validateForm = () => {
+    let valid = true;
+
+    if (!email) {
+      setEmailError('O campo de e-mail é obrigatório.');
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('E-mail inválido.');
+      valid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!password) {
+      setPasswordError('O campo de senha é obrigatório.');
+      valid = false;
+    } else if (password.length < 6) {
+      setPasswordError('A senha deve ter pelo menos 6 caracteres.');
+      valid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    return valid;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Ativa o ícone de carregamento
-    setError(''); // Limpa erros anteriores
+
+    if (!validateForm()) return;
+
+    setLoading(true);
 
     try {
-      await login(email, password);
-      onLogin();
-    } catch (err) {
-      setError('Credenciais inválidas');
+      // Simulação de requisição para o servidor
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log('Login realizado com:', { email, password });
+    } catch (error) {
+      console.error('Erro no login:', error);
     } finally {
-      setLoading(false); // Desativa o ícone de carregamento
+      setLoading(false);
     }
   };
 
-  // Validação básica do email
-  const isEmailValid = () => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={3} sx={{ mt: 8, p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
-          Login
+    <Container component="main" maxWidth="md" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Paper elevation={3} sx={{ p: 6, borderRadius: 4, width: '100%', maxWidth: 480 }}>
+        <Typography component="h1" variant="h5" sx={{ mb: 4, fontWeight: 'bold', textAlign: 'center' }}>
+          LOGIN
         </Typography>
+
         <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
           {/* Campo de Email */}
           <TextField
             fullWidth
             margin="normal"
-            id="email"
             label="Email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={!!email && !isEmailValid()} // Mostra erro se o email for inválido
-            helperText={!!email && !isEmailValid() ? 'Email inválido' : ''}
-            InputProps={{
-              startAdornment: <Email sx={{ color: 'action.active', mr: 1 }} />, // Ícone de email
-            }}
+            error={!!emailError}
+            helperText={emailError}
+            variant="outlined"
           />
+
           {/* Campo de Senha */}
           <TextField
             fullWidth
             margin="normal"
-            id="password"
             label="Senha"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            InputProps={{
-              startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />, // Ícone de senha
-            }}
+            error={!!passwordError}
+            helperText={passwordError}
+            variant="outlined"
           />
-          {/* Exibição de Erro */}
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-              {error}
-            </Typography>
-          )}
+
+          {/* Lembre-se de mim e Esqueceu a senha */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+            <FormControlLabel
+              control={<Checkbox color="primary" />}
+              label={
+                <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                  Lembre-se de mim
+                </Typography>
+              }
+            />
+            <Button
+              sx={{
+                textTransform: 'none',
+                fontSize: '0.875rem',
+                color: 'primary.main',
+                '&:hover': { textDecoration: 'underline' },
+              }}
+              onClick={() => navigate('/forgot-password')}
+            >
+              Esqueceu a senha?
+            </Button>
+          </Box>
+
           {/* Botão de Login */}
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            disabled={loading || !isEmailValid() || !password} // Desabilita o botão se estiver carregando ou os campos forem inválidos
-            sx={{ mt: 3, mb: 2, bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}
+            disabled={!email || !password || loading}
+            sx={{
+              mt: 3,
+              mb: 2,
+              bgcolor: 'primary.main',
+              '&:hover': { bgcolor: 'primary.dark' },
+              py: 1.5,
+              position: 'relative',
+            }}
           >
-            {loading ? <CircularProgress size={24} /> : 'Entrar'} {/* Ícone de carregamento */}
+            {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Entrar'}
           </Button>
+
+          {/* Link para cadastro → Substituído por botão com navigate */}
+          <Typography align="center" variant="body2" sx={{ mt: 2, fontSize: '1rem' }}>
+            Não tem uma conta?{' '}
+            <Button
+              sx={{
+                textTransform: 'none',
+                color: 'primary.main',
+                fontSize: '1rem',
+                fontWeight: 400,
+                '&:hover': { textDecoration: 'underline' }
+              }}
+              onClick={() => navigate('/signUp')}
+            >
+              Cadastrar
+            </Button>
+          </Typography>
         </Box>
       </Paper>
     </Container>
