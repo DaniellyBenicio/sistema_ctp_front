@@ -92,12 +92,11 @@ const Login = ({ onLogin }) => {
             }}
           />
 
-          {/* Campo de Senha */}
           <TextField
             fullWidth
             margin="normal"
             label="Senha"
-            type={showPassword ? 'text' : 'password'} // Alterna entre texto e senha
+            type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onFocus={() => setFocusedField('password')}

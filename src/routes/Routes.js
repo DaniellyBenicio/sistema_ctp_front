@@ -4,7 +4,6 @@ import { SignUp } from '../components/signUp/signUp.js';
 import Login from '../components/login/Login.js';
 import { login } from '../service/auth';
 import MainScreen from '../components/mainHome/MainScreen';
-import Demandas from '../components/demandas/Demandas'; // Importação correta do componente Demandas
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = async (email, senha) => {
@@ -12,7 +11,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
       const token = await login(email, senha);
       if (token) {
         setAuthenticated(true);
-        localStorage.setItem('token', token); // Salva o token no armazenamento local
+        localStorage.setItem('token', token);
       }
     } catch (error) {
       console.error(error.message);
@@ -21,13 +20,11 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
 
   return (
     <Routes>
-      {/* Rota de Login */}
       <Route
         path="/login"
         element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/MainScreen" />}
       />
 
-      {/* Rota de Cadastro */}
       <Route path="/signUp" element={<SignUp />} />
 
       {/* Rota após autenticação */}
@@ -41,8 +38,6 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           )
         }
       >
-        {/* Rota de demanda */}
-        <Route path="demanda" element={<Demandas />} />
       </Route>
 
       {/* Redirecionamento para rotas inválidas */}
