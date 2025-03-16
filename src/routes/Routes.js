@@ -3,30 +3,71 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import { SignUp } from '../components/signUp/signUp.js';
 import { Hello } from '../components/HelloReact.js';
 import Login from '../components/Login';
+import { login } from '../service/auth';
 
-  const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
-    const handleLogin = () => {
-      setAuthenticated(true);
-    };
+const Layout = ({ children, setAuthenticated }) => {
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove o token de autenticação
+    setAuthenticated(false);
+  };
 
-    return (
+  return (
+    <div>
+      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', backgroundColor: '#f8f8f8' }}>
+        <h1>Bem-vindo ao Sistema</h1>
+        <button onClick={handleLogout} style={{ padding: '5px 10px' }}>
+          Sair
+        </button>
+      </header>
+      <main style={{ padding: '20px' }}>
+        {children}
+      </main>
+    </div>
+  );
+};
+
+const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
+  const handleLogin = async (email, senha) => {
+    try {
+      const token = await login(email, senha);
+      if (token) {
+        setAuthenticated(true);
+        localStorage.setItem('token', token); // Salva o token no armazenamento local
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  return (
       <Routes>
         {/* Rota de Login */}
         <Route
-        path="/login"
-        element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/" />}
-      />
-      
+          path="/login"
+          element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/" />}
+        />
 
+        {/* Rota de Cadastro */}
         <Route path="/signUp" element={<SignUp />} />
-        <Route path="/*"
-          element = {
-            <Hello />
+
+        {/* Rota após autenticação com Layout */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <Layout setAuthenticated={setAuthenticated}>
+                <Hello />
+              </Layout>
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
-      </Routes>
-    );
-  };
 
+        {/* Redirecionamento para rotas inválidas */}
+        <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/login'} />} />
+      </Routes>
+  );
+};
 
 export default AppRoutes;
