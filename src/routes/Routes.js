@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { SignUp } from '../components/signUp/signUp.js';
 import { Hello } from '../components/HelloReact.js';
 import Login from '../components/Login';
@@ -40,6 +40,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   };
 
   return (
+    <BrowserRouter>
       <Routes>
         {/* Rota de Login */}
         <Route
@@ -67,6 +68,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         {/* Redirecionamento para rotas inválidas */}
         <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/login'} />} />
       </Routes>
+      </BrowserRouter>
   );
 };
 
