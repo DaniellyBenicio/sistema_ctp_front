@@ -1,9 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import {Route, Routes, Navigate } from 'react-router-dom';
 import { SignUp } from '../components/signUp/signUp.js';
 import Login from '../components/Login';
 import { login } from '../service/auth';
-import MainScreen from '../components/MainScreen';
+//import MainScreen from '../components/MainScreen';
 
 const Layout = ({ children, setAuthenticated }) => {
   const handleLogout = () => {
@@ -40,7 +40,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   };
 
   return (
-    <BrowserRouter>
+   
       <Routes>
         {/* Rota de Login */}
         <Route
@@ -57,7 +57,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           element={
             isAuthenticated ? (
               <Layout setAuthenticated={setAuthenticated}>
-                <MainScreen setAuthenticated={setAuthenticated} />
+                {/*<MainScreen setAuthenticated={setAuthenticated} />*/}
               </Layout>
             ) : (
               <Navigate to="/login" />
@@ -68,7 +68,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         {/* Redirecionamento para rotas inválidas */}
         <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/login'} />} />
       </Routes>
-      </BrowserRouter>
+      
   
   );
 };
