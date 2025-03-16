@@ -32,11 +32,11 @@ export const SignUp = () => {
 
         try {
             await signUp(nome, email, senha, matricula, cargo);
-            navigate('/login');
         } catch (err) {
-            setError('Falha na criação do usuário!\n' + err);
+            setError('Falha na criação do usuário!');
         } finally {
             setLoading(false);
+            navigate('/login');
         }
     }
 
@@ -100,7 +100,7 @@ export const SignUp = () => {
                     />
                     {/* Cargos */}
                     <FormControl fullWidth margin="normal" >
-                        <FormHelperText id="cargo" >Tipo de Cargo</FormHelperText> {/* Ajuste aqui */}
+                        <FormHelperText id="cargo" >Tipo de Cargo</FormHelperText>
                         <Select
                             labelId="cargo"
                             id="cargo"
@@ -135,6 +135,7 @@ export const SignUp = () => {
                         type="button"
                         fullWidth
                         variant="outlined"
+                        onClick={() => navigate('/login')}
                     >
                         Voltar
                     </Button>
