@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { TextField, Container, Button, Typography, Paper, Box, CircularProgress } from '@mui/material';
+import { TextField, Container, Button, Typography, Paper, Box, CircularProgress, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -8,6 +10,7 @@ const Login = ({ onLogin }) => {
   const [focusedField, setFocusedField] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -17,8 +20,7 @@ const Login = ({ onLogin }) => {
     setError('');
 
     try {
-      await onLogin(email, password); // Chama handleLogin do AppRoutes
-      // Não precisa de navigate aqui, o AppRoutes gerencia o redirecionamento
+      await onLogin(email, password);
     } catch (err) {
       setError('Credenciais inválidas');
     } finally {
@@ -27,6 +29,10 @@ const Login = ({ onLogin }) => {
   };
 
   const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <Container
@@ -45,9 +51,10 @@ const Login = ({ onLogin }) => {
           p: 6,
           borderRadius: 4,
           width: '100%',
-          maxWidth: 480
+          maxWidth: 350
         }}
       >
+        {/* Título */}
         <Typography
           component="h1"
           variant="h5"
@@ -61,6 +68,7 @@ const Login = ({ onLogin }) => {
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+          {/* Campo de Email */}
           <TextField
             fullWidth
             margin="normal"
@@ -76,19 +84,20 @@ const Login = ({ onLogin }) => {
             InputLabelProps={{
               shrink: focusedField === 'email' || email !== '',
               sx: {
-                color: focusedField === 'email' || email !== '' ? 'primary.main' : 'text.secondary',
+                color: focusedField === 'email' || email !== '',
                 fontSize: focusedField === 'email' || email !== '' ? '0.85rem' : '1rem',
                 transform: focusedField === 'email' || email !== '' ? 'translate(14px, -6px) scale(0.85)' : 'translate(14px, 16px) scale(1)',
-                transition: 'transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out'
-              }
+                transition: 'transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out',
+              },
             }}
           />
 
+          {/* Campo de Senha */}
           <TextField
             fullWidth
             margin="normal"
             label="Senha"
-            type="password"
+            type={showPassword ? 'text' : 'password'} // Alterna entre texto e senha
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onFocus={() => setFocusedField('password')}
@@ -103,19 +112,34 @@ const Login = ({ onLogin }) => {
                 transition: 'transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out'
               }
             }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleTogglePasswordVisibility}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
+          {/* Errors */}
           {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+            <Typography color="error" variant="body2" sx={{ mt: 0 }}>
               {error}
             </Typography>
           )}
 
+          {/* "Esqueceu a senha?" */}
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'flex-end',
-              mt: 2
+              justifyContent: 'flex-start',
+              mt: 0.5,
             }}
           >
             <Button
@@ -131,39 +155,45 @@ const Login = ({ onLogin }) => {
             </Button>
           </Box>
 
+          {/* Login */}
           <Button
             type="submit"
             fullWidth
             variant="contained"
             disabled={loading || !isEmailValid() || !password}
-            sx={{ mt: 3, mb: 2, py: 1.5, bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' }}}
+            sx={{ mt: 3, mb: 2, py: 1.5, bgcolor: '#387c34', '&:hover': { bgcolor: '#2e622b' } }}
           >
             {loading ? <CircularProgress size={24} /> : 'Entrar'}
           </Button>
 
-          <Typography align="center" variant="body2" sx={{ mt: 2, fontSize: '1rem' }}>
-            Não tem uma conta?{' '}
+          {/* Ir para registro */}
+          <Typography
+            align="center"
+            variant="body2"
+            sx={{
+              mt: 1,
+              fontSize: '1rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            Não possui uma conta?{' '}
             <Button
               sx={{
                 textTransform: 'none',
                 color: 'primary.main',
                 fontSize: '1rem',
                 fontWeight: 400,
+                ml: 0.5,
+                p: 0,
                 '&:hover': { textDecoration: 'underline' }
               }}
               onClick={() => navigate('/signUp')}
             >
-              Cadastrar
+              Cadastra-se
             </Button>
           </Typography>
-          <Button
-            type="button"
-            fullWidth
-            variant="outlined"
-            onClick={() => navigate('/MainScreen')}
-          >
-            Voltar
-          </Button>
         </Box>
       </Paper>
     </Container>
