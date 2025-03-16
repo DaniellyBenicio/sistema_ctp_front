@@ -24,7 +24,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
       {/* Rota de Login */}
       <Route
         path="/login"
-        element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/" />}
+        element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/MainScreen" />}
       />
 
       {/* Rota de Cadastro */}

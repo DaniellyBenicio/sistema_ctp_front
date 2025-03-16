@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { login } from '../../service/auth';
 import { TextField, Container, Button, Typography, Paper, Box, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,8 +17,8 @@ const Login = ({ onLogin }) => {
     setError('');
 
     try {
-      await login(email, password);
-      onLogin();
+      await onLogin(email, password); // Chama handleLogin do AppRoutes
+      // Não precisa de navigate aqui, o AppRoutes gerencia o redirecionamento
     } catch (err) {
       setError('Credenciais inválidas');
     } finally {
@@ -49,7 +48,6 @@ const Login = ({ onLogin }) => {
           maxWidth: 480
         }}
       >
-        {/* Título */}
         <Typography
           component="h1"
           variant="h5"
@@ -63,7 +61,6 @@ const Login = ({ onLogin }) => {
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-          {/* Campo de Email */}
           <TextField
             fullWidth
             margin="normal"
@@ -87,7 +84,6 @@ const Login = ({ onLogin }) => {
             }}
           />
 
-          {/* Campo de Senha */}
           <TextField
             fullWidth
             margin="normal"
@@ -109,14 +105,12 @@ const Login = ({ onLogin }) => {
             }}
           />
 
-          {/* Errors*/}
           {error && (
             <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {error}
             </Typography>
           )}
 
-          {/*"Esqueceu a senha?" */}
           <Box
             sx={{
               display: 'flex',
@@ -137,7 +131,6 @@ const Login = ({ onLogin }) => {
             </Button>
           </Box>
 
-          {/* Login */}
           <Button
             type="submit"
             fullWidth
@@ -148,7 +141,6 @@ const Login = ({ onLogin }) => {
             {loading ? <CircularProgress size={24} /> : 'Entrar'}
           </Button>
 
-          {/*Ir para registro */}
           <Typography align="center" variant="body2" sx={{ mt: 2, fontSize: '1rem' }}>
             Não tem uma conta?{' '}
             <Button
@@ -164,6 +156,14 @@ const Login = ({ onLogin }) => {
               Cadastrar
             </Button>
           </Typography>
+          <Button
+            type="button"
+            fullWidth
+            variant="outlined"
+            onClick={() => navigate('/MainScreen')}
+          >
+            Voltar
+          </Button>
         </Box>
       </Paper>
     </Container>
