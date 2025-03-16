@@ -1,30 +1,10 @@
 import React from 'react';
-import {Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { SignUp } from '../components/signUp/signUp.js';
 import Login from '../components/login/Login.js';
 import { login } from '../service/auth';
-//import MainScreen from '../components/MainScreen';
-
-const Layout = ({ children, setAuthenticated }) => {
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove o token de autenticação
-    setAuthenticated(false);
-  };
-
-  return (
-    <div>
-      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', backgroundColor: '#f8f8f8' }}>
-        <h1>Bem-vindo ao Sistema</h1>
-        <button onClick={handleLogout} style={{ padding: '5px 10px' }}>
-          Sair
-        </button>
-      </header>
-      <main style={{ padding: '20px' }}>
-        {children}
-      </main>
-    </div>
-  );
-};
+import MainScreen from '../components/mainHome/MainScreen';
+import Demandas from '../components/demandas/Demandas'; // Importação correta do componente Demandas
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = async (email, senha) => {
@@ -40,36 +20,34 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   };
 
   return (
-   
-      <Routes>
-        {/* Rota de Login */}
-        <Route
-          path="/login"
-          element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/" />}
-        />
+    <Routes>
+      {/* Rota de Login */}
+      <Route
+        path="/login"
+        element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/" />}
+      />
 
-        {/* Rota de Cadastro */}
-        <Route path="/signUp" element={<SignUp />} />
+      {/* Rota de Cadastro */}
+      <Route path="/signUp" element={<SignUp />} />
 
-        {/* Rota após autenticação com Layout */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? (
-              <Layout setAuthenticated={setAuthenticated}>
-                {/*<MainScreen setAuthenticated={setAuthenticated} />*/}
-              </Layout>
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+      {/* Rota após autenticação */}
+      <Route
+        path="/"
+        element={
+          isAuthenticated ? (
+            <MainScreen setAuthenticated={setAuthenticated} />
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      >
+        {/* Rota de demanda */}
+        <Route path="demanda" element={<Demandas />} />
+      </Route>
 
-        {/* Redirecionamento para rotas inválidas */}
-        <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/login'} />} />
-      </Routes>
-      
-  
+      {/* Redirecionamento para rotas inválidas */}
+      <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/login'} />} />
+    </Routes>
   );
 };
 
