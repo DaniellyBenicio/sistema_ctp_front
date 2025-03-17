@@ -1,80 +1,93 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useNavigate, useOutletContext} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
-import {IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {Delete, Edit} from "@mui/icons-material";
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
 
 export const UsersList = () => {
-    const [ users, setUsers ] = useState([]);
+    const [users, setUsers] = useState([]);
     const { userRole } = useOutletContext();
-    const [ alert, setAlert ] = useState({ show: false, message: '', type: '' })
+    const [alert, setAlert] = useState({ show: false, message: '', type: '' });
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(userRole !== 'Admin'){
+        if (userRole !== 'Admin') {
             navigate('/');
-            return ;
+            return;
         }
         fetchUsers();
     }, []);
 
     const fetchUsers = async () => {
-        try{
-            const response  = await api.get('usuarios');
-            if(!response.data || !Array.isArray(response.data.usuarios)){
+        try {
+            const response = await api.get('usuarios');
+            if (!response.data || !Array.isArray(response.data.usuarios)) {
                 throw new Error('Erro ao buscar usuários.')
             }
             setUsers(response.data.usuarios);
         } catch (error) {
             setAlert({
-                    show: true,
-                    message: 'Erro ao buscar usuários',
-                    type: 'error'
-                });
+                show: true,
+                message: 'Erro ao buscar usuários',
+                type: 'error'
+            });
         }
     }
 
     const handleDeleteUser = async (id) => {
-        if(window.confirm('Deseja excluir?')){
-            try{
+        if (window.confirm('Deseja excluir?')) {
+            try {
                 await api.delete(`/usuarios/${id}`);
                 fetchUsers();
-            } catch (error){
+            } catch (error) {
                 setAlert({
                     show: true,
                     message: 'Erro ao excluir usuário',
                     type: 'error'
                 });
-
             }
         }
     }
 
     return (
-        <div>
-            { alert.show && (
+        <Box 
+            sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                minHeight: '100vh',  
+                flexDirection: 'column',
+                marginLeft: 35
+            }}
+        >
+            {alert.show && (
                 <CustomAlert
                     message={alert.message}
                     type={alert.type}
-                    />
+                />
             )}
-            <TableContainer component={Paper}>
+
+            <TableContainer component={Paper} sx={{ width: '100%' }}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Nome</TableCell>
-                            <TableCell>Cargo</TableCell>
-                            <TableCell>Ações</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Nome</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Matrícula</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Cargo</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Email</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 'bold' }}>Ações</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        { users.map((user) => (
+                        {users.map((user) => (
                             <TableRow key={user.id}>
                                 <TableCell>{user.nome}</TableCell>
+                                <TableCell>{user.matricula}</TableCell>
                                 <TableCell>{user.Cargo.nome}</TableCell>
+                                <TableCell>{user.email}</TableCell>
                                 <TableCell>
-                                    <IconButton >
+                                    <IconButton>
                                         <Edit />
                                     </IconButton>
                                     <IconButton
@@ -83,16 +96,12 @@ export const UsersList = () => {
                                         <Delete />
                                     </IconButton>
                                 </TableCell>
-
                             </TableRow>
-                            )
-                        )}
-
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-
-        </div>
+        </Box>
     );
 };
 

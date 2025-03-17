@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Drawer, List, ListItem, ListItemText, Collapse, Divider, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, Collapse, Divider, Typography, Dialog, DialogActions, DialogContent, Button } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,7 +27,7 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
             <Drawer
                 variant="permanent"
                 sx={{
-                    width: 250,
+                    width: 220,
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
                         width: 240,
@@ -50,37 +50,37 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                             <ListItemText primary="Usuários" />
                         </ListItem>
                     ) :
-                    (
-                        <>
-                            <ListItem button onClick={() => setOpenDemandas(!openDemandas)}>
-                                <ListItemText primary="Demandas" />
-                                {openDemandas ? <ExpandLess /> : <ExpandMore />}
-                            </ListItem>
+                        (
+                            <>
+                                <ListItem button onClick={() => setOpenDemandas(!openDemandas)}>
+                                    <ListItemText primary="Demandas" />
+                                    {openDemandas ? <ExpandLess /> : <ExpandMore />}
+                                </ListItem>
 
-                            <Collapse in={openDemandas} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/demandas/criadas')}>
-                                        <ListItemText primary="Criadas" />
-                                    </ListItem>
-                                    <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/demandas/recebidas')}>
-                                        <ListItemText primary="Recebidas" />
-                                    </ListItem>
-                                </List>
-                            </Collapse>
+                                <Collapse in={openDemandas} timeout="auto" unmountOnExit>
+                                    <List component="div" disablePadding>
+                                        <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/demandas/criadas')}>
+                                            <ListItemText primary="Criadas" />
+                                        </ListItem>
+                                        <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/demandas/recebidas')}>
+                                            <ListItemText primary="Recebidas" />
+                                        </ListItem>
+                                    </List>
+                                </Collapse>
 
-                            <ListItem button onClick={() => navigate('/relatorios')}>
-                                <ListItemText primary="Relatórios" />
-                            </ListItem>
+                                <ListItem button onClick={() => navigate('/relatorios')}>
+                                    <ListItemText primary="Relatórios" />
+                                </ListItem>
 
-                            <ListItem button onClick={() => navigate('/perfil')}>
-                                <ListItemText primary="Perfil" />
-                            </ListItem>
+                                <ListItem button onClick={() => navigate('/perfil')}>
+                                    <ListItemText primary="Perfil" />
+                                </ListItem>
 
-                            <ListItem button onClick={() => navigate('/suporte')}>
-                                <ListItemText primary="Suporte" />
-                            </ListItem>
-                        </>
-                    )}
+                                <ListItem button onClick={() => navigate('/suporte')}>
+                                    <ListItemText primary="Suporte" />
+                                </ListItem>
+                            </>
+                        )}
 
                     <ListItem button onClick={handleOpenConfirmDialog}>
                         <ListItemText primary="Sair" />

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Sidebar from './SideBar';
-import RecentDemands from '../demandas/RecentDemands';
+//import RecentDemands from '../demandas/RecentDemands';
 import {jwtDecode} from "jwt-decode";
 import {Outlet} from "react-router-dom";
 

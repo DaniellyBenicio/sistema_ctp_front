@@ -48,7 +48,7 @@ const Login = ({ onLogin }) => {
       }}
     >
       <Paper
-        elevation={3}
+        elevation={5}
         sx={{
           p: 6,
           borderRadius: 4,
