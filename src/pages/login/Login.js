@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Container, Button, Typography, Paper, Box, CircularProgress, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import {login} from "../../service/auth";
+import { login } from "../../service/auth";
 
 
 const Login = ({ onLogin }) => {
@@ -167,35 +167,6 @@ const Login = ({ onLogin }) => {
           >
             {loading ? <CircularProgress size={24} /> : 'Entrar'}
           </Button>
-
-          {/* Ir para registro */}
-          <Typography
-            align="center"
-            variant="body2"
-            sx={{
-              mt: 1,
-              fontSize: '1rem',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            Não possui uma conta?{' '}
-            <Button
-              sx={{
-                textTransform: 'none',
-                color: 'primary.main',
-                fontSize: '1rem',
-                fontWeight: 400,
-                ml: 0.5,
-                p: 0,
-                '&:hover': { textDecoration: 'underline' }
-              }}
-              onClick={() => navigate('/signUp')}
-            >
-              Cadastra-se
-            </Button>
-          </Typography>
         </Box>
       </Paper>
     </Container>
