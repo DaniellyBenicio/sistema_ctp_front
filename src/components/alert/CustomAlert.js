@@ -6,30 +6,27 @@ export const CustomAlert = ({ message, type, onClose }) => {
     const validTypes = ['success', 'info', 'warning', 'error'];
     const alertType = validTypes.includes(type) ? type : 'info';
 
-    // Add useEffect to handle auto-close after 3 seconds
     useEffect(() => {
         const timer = setTimeout(() => {
             if (onClose) {
                 onClose();
             }
-        }, 3000); // 3000ms = 3 seconds
-
-        // Cleanup timer on component unmount
+        }, 3000);
         return () => clearTimeout(timer);
-    }, [onClose]); // Dependency array includes onClose
+    }, [onClose]);
 
     const getAlertIcon = () => {
         switch (alertType) {
             case 'success':
-                return <CheckCircle style={{ color: '#4caf50' }} />;
+                return <CheckCircle style={{ color: '#4caf50' }} fontSize="small" />;
             case 'info':
-                return <Info style={{ color: '#2196f3' }} />;
+                return <Info style={{ color: '#2196f3' }} fontSize="small" />;
             case 'warning':
-                return <Warning style={{ color: '#ff9800' }} />;
+                return <Warning style={{ color: '#ff9800' }} fontSize="small" />;
             case 'error':
-                return <Error style={{ color: '#f44336' }} />;
+                return <Error style={{ color: '#f44336' }} fontSize="small" />;
             default:
-                return <Info style={{ color: '#2196f3' }} />;
+                return <Info style={{ color: '#2196f3' }} fontSize="small" />;
         }
     };
 
@@ -48,26 +45,37 @@ export const CustomAlert = ({ message, type, onClose }) => {
             sx={{
                 position: 'fixed',
                 bottom: '20px',
-                right: '80px',
-                width: '15%',
-                margin: '10px 0',
-                padding: '15px',
-                borderRadius: '10px',
-                boxShadow: 2,
+                right: '20px',
+                width: 'auto',
+                minWidth: '200px',
+                maxWidth: '300px',
+                height: '40px',
+                margin: '5px 0',
+                padding: '5px 10px',
+                borderRadius: '8px',
+                boxShadow: 1,
                 backgroundColor: 'transparent',
                 borderColor: borderColor,
                 borderWidth: '1px',
                 color: borderColor,
+                display: 'flex',
+                alignItems: 'center',
                 '& .MuiAlert-icon': {
-                    marginRight: '8px',
+                    marginRight: '6px',
                 },
                 transition: 'all 0.3s ease-in-out',
                 zIndex: 1000,
+                fontSize: '0.875rem',
+                '@media (max-width: 600px)': {
+                    right: '10px',
+                    width: '90%',
+                }
             }}
         >
             {message}
         </Alert>
     );
+
 };
 
 export default CustomAlert;

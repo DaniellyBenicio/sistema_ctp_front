@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Drawer, List, ListItem, ListItemText, Divider, Typography, Dialog, DialogActions, DialogContent, Button } from '@mui/material';
-import { People, Assignment, Assessment, Person, Support, ExitToApp } from '@mui/icons-material';
+import React, { useState } from 'react';
+import {
+    Drawer, List, ListItem, ListItemText, Divider, Typography, Dialog, DialogActions, DialogContent, Button, IconButton,
+    Toolbar, AppBar
+} from '@mui/material';
+import { People, Assignment, Assessment, Person, Support, ExitToApp, Menu as MenuIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from '@mui/material';
 
 const Sidebar = ({ setAuthenticated, useRole }) => {
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null); // Estado para o item selecionado
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [mobileOpen, setMobileOpen] = useState(false);
     const navigate = useNavigate();
+    const isMobile = useMediaQuery('(max-width:600px)');
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -14,132 +20,145 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
         navigate('/login');
     };
 
-    const handleOpenConfirmDialog = () => {
-        setOpenConfirmDialog(true);
-    };
-
-    const handleCloseConfirmDialog = () => {
-        setOpenConfirmDialog(false);
-    };
+    const handleOpenConfirmDialog = () => setOpenConfirmDialog(true);
+    const handleCloseConfirmDialog = () => setOpenConfirmDialog(false);
 
     const handleItemClick = (path, item) => {
-        setSelectedItem(item); // Define o item selecionado
-        navigate(path); // Navega para a rota correspondente
+        setSelectedItem(item);
+        navigate(path);
+        if (isMobile) setMobileOpen(false);
     };
+
+    const getListItemStyle = (selectedItem, itemKey) => ({
+        backgroundColor: selectedItem === itemKey ? '#4CAF50' : 'transparent',
+        '&:hover': {
+            backgroundColor: selectedItem === itemKey ? '#4CAF50' : '#388E3C',
+        },
+    });
+
+    const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+
+    const drawerContent = (
+        <List>
+            <ListItem sx={{ justifyContent: 'center' }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Sistema CTP
+                </Typography>
+            </ListItem>
+            <Divider sx={{ backgroundColor: 'white', marginBottom: 1 }} />
+            {useRole === 'Admin' ? (
+                <ListItem
+                    button
+                    onClick={() => handleItemClick('/users', 'users')}
+                    sx={getListItemStyle(selectedItem, 'users')}
+                >
+                    <People sx={{ mr: 1 }} />
+                    <ListItemText primary="Usuários" />
+                </ListItem>
+            ) : (
+                <>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/demandas', 'demandas')}
+                        sx={getListItemStyle(selectedItem, 'demandas')}
+                    >
+                        <Assignment sx={{ mr: 1 }} />
+                        <ListItemText primary="Demandas" />
+                    </ListItem>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/relatorios', 'relatorios')}
+                        sx={getListItemStyle(selectedItem, 'relatorios')}
+                    >
+                        <Assessment sx={{ mr: 1 }} />
+                        <ListItemText primary="Relatórios" />
+                    </ListItem>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/perfil', 'perfil')}
+                        sx={getListItemStyle(selectedItem, 'perfil')}
+                    >
+                        <Person sx={{ mr: 1 }} />
+                        <ListItemText primary="Perfil" />
+                    </ListItem>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/suporte', 'suporte')}
+                        sx={getListItemStyle(selectedItem, 'suporte')}
+                    >
+                        <Support sx={{ mr: 1 }} />
+                        <ListItemText primary="Suporte" />
+                    </ListItem>
+                </>
+            )}
+            <ListItem
+                button
+                onClick={handleOpenConfirmDialog}
+                sx={getListItemStyle(selectedItem, 'sair')}
+            >
+                <ExitToApp sx={{ mr: 1 }} />
+                <ListItemText primary="Sair" />
+            </ListItem>
+        </List>
+    );
 
     return (
         <>
-            <Drawer
-                variant="permanent"
-                sx={{
-                    width: 220,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
-                        width: 240,
-                        backgroundColor: '#2E7D32',
-                        color: 'white',
-                    },
-                }}
-            >
-                <List>
-                    <ListItem sx={{ justifyContent: 'center' }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                            Sistema CTP
-                        </Typography>
-                    </ListItem>
-
-                    <Divider sx={{ backgroundColor: 'white', marginBottom: 1 }} />
-
-                    {useRole === "Admin" ? (
-                        <ListItem
-                            button
-                            onClick={() => handleItemClick('/users', 'users')}
-                            sx={{
-                                backgroundColor: selectedItem === 'users' ? '#4CAF50' : 'transparent', // Fundo mais claro quando selecionado
-                                '&:hover': {
-                                    backgroundColor: selectedItem === 'users' ? '#4CAF50' : '#388E3C', // Mantém o fundo ao passar o mouse
-                                },
-                            }}
-                        >
-                            <People sx={{ mr: 1 }} />
-                            <ListItemText primary="Usuários" />
-                        </ListItem>
-                    ) : (
-                        <>
-                            <ListItem
-                                button
-                                onClick={() => handleItemClick('/demandas', 'demandas')}
-                                sx={{
-                                    backgroundColor: selectedItem === 'demandas' ? '#4CAF50' : 'transparent',
-                                    '&:hover': {
-                                        backgroundColor: selectedItem === 'demandas' ? '#4CAF50' : '#388E3C',
-                                    },
-                                }}
-                            >
-                                <Assignment sx={{ mr: 1 }} />
-                                <ListItemText primary="Demandas" />
-                            </ListItem>
-
-                            <ListItem
-                                button
-                                onClick={() => handleItemClick('/relatorios', 'relatorios')}
-                                sx={{
-                                    backgroundColor: selectedItem === 'relatorios' ? '#4CAF50' : 'transparent',
-                                    '&:hover': {
-                                        backgroundColor: selectedItem === 'relatorios' ? '#4CAF50' : '#388E3C',
-                                    },
-                                }}
-                            >
-                                <Assessment sx={{ mr: 1 }} />
-                                <ListItemText primary="Relatórios" />
-                            </ListItem>
-
-                            <ListItem
-                                button
-                                onClick={() => handleItemClick('/perfil', 'perfil')}
-                                sx={{
-                                    backgroundColor: selectedItem === 'perfil' ? '#4CAF50' : 'transparent',
-                                    '&:hover': {
-                                        backgroundColor: selectedItem === 'perfil' ? '#4CAF50' : '#388E3C',
-                                    },
-                                }}
-                            >
-                                <Person sx={{ mr: 1 }} />
-                                <ListItemText primary="Perfil" />
-                            </ListItem>
-
-                            <ListItem
-                                button
-                                onClick={() => handleItemClick('/suporte', 'suporte')}
-                                sx={{
-                                    backgroundColor: selectedItem === 'suporte' ? '#4CAF50' : 'transparent',
-                                    '&:hover': {
-                                        backgroundColor: selectedItem === 'suporte' ? '#4CAF50' : '#388E3C',
-                                    },
-                                }}
-                            >
-                                <Support sx={{ mr: 1 }} />
-                                <ListItemText primary="Suporte" />
-                            </ListItem>
-                        </>
-                    )}
-
-                    <ListItem
-                        button
-                        onClick={handleOpenConfirmDialog}
+            {isMobile ? (
+                <>
+                    <AppBar
+                        position="fixed"
                         sx={{
-                            backgroundColor: selectedItem === 'sair' ? '#4CAF50' : 'transparent',
-                            '&:hover': {
-                                backgroundColor: selectedItem === 'sair' ? '#4CAF50' : '#388E3C',
+                            backgroundColor: '#2E7D32',
+                            zIndex: (theme) => theme.zIndex.drawer + 1,
+                        }}
+                    >
+                        <Toolbar>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                edge="start"
+                                onClick={handleDrawerToggle}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography variant="h6" noWrap>
+                                Sistema CTP
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <Drawer
+                        variant="temporary"
+                        open={mobileOpen}
+                        onClose={handleDrawerToggle}
+                        ModalProps={{ keepMounted: true }}
+                        sx={{
+                            '& .MuiDrawer-paper': {
+                                width: 240,
+                                backgroundColor: '#2E7D32',
+                                color: 'white',
                             },
                         }}
                     >
-                        <ExitToApp sx={{ mr: 1 }} />
-                        <ListItemText primary="Sair" />
-                    </ListItem>
-                </List>
-            </Drawer>
-
+                        {drawerContent}
+                    </Drawer>
+                </>
+            ) : (
+                <Drawer
+                    variant="permanent"
+                    sx={{
+                        width: 220,
+                        flexShrink: 0,
+                        '& .MuiDrawer-paper': {
+                            width: 240,
+                            backgroundColor: '#2E7D32',
+                            color: 'white',
+                        },
+                    }}
+                >
+                    {drawerContent}
+                </Drawer>
+            )}
             <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog}>
                 <DialogContent sx={{ textAlign: 'center' }}>
                     <Typography>Tem certeza que deseja sair?</Typography>
@@ -147,13 +166,21 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                 <DialogActions sx={{ justifyContent: 'center' }}>
                     <Button
                         onClick={handleLogout}
-                        sx={{ color: 'white', backgroundColor: '#388E3C', '&:hover': { backgroundColor: '#2C6E29' } }}
+                        sx={{
+                            color: 'white',
+                            backgroundColor: '#388E3C',
+                            '&:hover': { backgroundColor: '#2C6E29' },
+                        }}
                     >
                         Sim
                     </Button>
                     <Button
                         onClick={handleCloseConfirmDialog}
-                        sx={{ color: 'white', backgroundColor: '#D32F2F', '&:hover': { backgroundColor: '#B71C1C' } }}
+                        sx={{
+                            color: 'white',
+                            backgroundColor: '#D32F2F',
+                            '&:hover': { backgroundColor: '#B71C1C' },
+                        }}
                     >
                         Não
                     </Button>
