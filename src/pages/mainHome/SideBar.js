@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Drawer, List, ListItem, ListItemText, Collapse, Divider, Typography, Dialog, DialogActions, DialogContent, Button } from '@mui/material';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import { Drawer, List, ListItem, ListItemText, Divider, Typography, Dialog, DialogActions, DialogContent, Button } from '@mui/material';
+import { People, Assignment, Assessment, Person, Support, ExitToApp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ setAuthenticated, useRole }) => {
-    const [openDemandas, setOpenDemandas] = useState(false);
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null); // Estado para o item selecionado
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -20,6 +20,11 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
 
     const handleCloseConfirmDialog = () => {
         setOpenConfirmDialog(false);
+    };
+
+    const handleItemClick = (path, item) => {
+        setSelectedItem(item); // Define o item selecionado
+        navigate(path); // Navega para a rota correspondente
     };
 
     return (
@@ -37,7 +42,7 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                 }}
             >
                 <List>
-                    <ListItem>
+                    <ListItem sx={{ justifyContent: 'center' }}>
                         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                             Sistema CTP
                         </Typography>
@@ -46,43 +51,90 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                     <Divider sx={{ backgroundColor: 'white', marginBottom: 1 }} />
 
                     {useRole === "Admin" ? (
-                        <ListItem button onClick={() => navigate('/users')}>
+                        <ListItem
+                            button
+                            onClick={() => handleItemClick('/users', 'users')}
+                            sx={{
+                                backgroundColor: selectedItem === 'users' ? '#4CAF50' : 'transparent', // Fundo mais claro quando selecionado
+                                '&:hover': {
+                                    backgroundColor: selectedItem === 'users' ? '#4CAF50' : '#388E3C', // Mantém o fundo ao passar o mouse
+                                },
+                            }}
+                        >
+                            <People sx={{ mr: 1 }} />
                             <ListItemText primary="Usuários" />
                         </ListItem>
-                    ) :
-                        (
-                            <>
-                                <ListItem button onClick={() => setOpenDemandas(!openDemandas)}>
-                                    <ListItemText primary="Demandas" />
-                                    {openDemandas ? <ExpandLess /> : <ExpandMore />}
-                                </ListItem>
+                    ) : (
+                        <>
+                            <ListItem
+                                button
+                                onClick={() => handleItemClick('/demandas', 'demandas')}
+                                sx={{
+                                    backgroundColor: selectedItem === 'demandas' ? '#4CAF50' : 'transparent',
+                                    '&:hover': {
+                                        backgroundColor: selectedItem === 'demandas' ? '#4CAF50' : '#388E3C',
+                                    },
+                                }}
+                            >
+                                <Assignment sx={{ mr: 1 }} />
+                                <ListItemText primary="Demandas" />
+                            </ListItem>
 
-                                <Collapse in={openDemandas} timeout="auto" unmountOnExit>
-                                    <List component="div" disablePadding>
-                                        <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/demandas/criadas')}>
-                                            <ListItemText primary="Criadas" />
-                                        </ListItem>
-                                        <ListItem button sx={{ pl: 4 }} onClick={() => navigate('/demandas/recebidas')}>
-                                            <ListItemText primary="Recebidas" />
-                                        </ListItem>
-                                    </List>
-                                </Collapse>
+                            <ListItem
+                                button
+                                onClick={() => handleItemClick('/relatorios', 'relatorios')}
+                                sx={{
+                                    backgroundColor: selectedItem === 'relatorios' ? '#4CAF50' : 'transparent',
+                                    '&:hover': {
+                                        backgroundColor: selectedItem === 'relatorios' ? '#4CAF50' : '#388E3C',
+                                    },
+                                }}
+                            >
+                                <Assessment sx={{ mr: 1 }} />
+                                <ListItemText primary="Relatórios" />
+                            </ListItem>
 
-                                <ListItem button onClick={() => navigate('/relatorios')}>
-                                    <ListItemText primary="Relatórios" />
-                                </ListItem>
+                            <ListItem
+                                button
+                                onClick={() => handleItemClick('/perfil', 'perfil')}
+                                sx={{
+                                    backgroundColor: selectedItem === 'perfil' ? '#4CAF50' : 'transparent',
+                                    '&:hover': {
+                                        backgroundColor: selectedItem === 'perfil' ? '#4CAF50' : '#388E3C',
+                                    },
+                                }}
+                            >
+                                <Person sx={{ mr: 1 }} />
+                                <ListItemText primary="Perfil" />
+                            </ListItem>
 
-                                <ListItem button onClick={() => navigate('/perfil')}>
-                                    <ListItemText primary="Perfil" />
-                                </ListItem>
+                            <ListItem
+                                button
+                                onClick={() => handleItemClick('/suporte', 'suporte')}
+                                sx={{
+                                    backgroundColor: selectedItem === 'suporte' ? '#4CAF50' : 'transparent',
+                                    '&:hover': {
+                                        backgroundColor: selectedItem === 'suporte' ? '#4CAF50' : '#388E3C',
+                                    },
+                                }}
+                            >
+                                <Support sx={{ mr: 1 }} />
+                                <ListItemText primary="Suporte" />
+                            </ListItem>
+                        </>
+                    )}
 
-                                <ListItem button onClick={() => navigate('/suporte')}>
-                                    <ListItemText primary="Suporte" />
-                                </ListItem>
-                            </>
-                        )}
-
-                    <ListItem button onClick={handleOpenConfirmDialog}>
+                    <ListItem
+                        button
+                        onClick={handleOpenConfirmDialog}
+                        sx={{
+                            backgroundColor: selectedItem === 'sair' ? '#4CAF50' : 'transparent',
+                            '&:hover': {
+                                backgroundColor: selectedItem === 'sair' ? '#4CAF50' : '#388E3C',
+                            },
+                        }}
+                    >
+                        <ExitToApp sx={{ mr: 1 }} />
                         <ListItemText primary="Sair" />
                     </ListItem>
                 </List>
