@@ -11,9 +11,9 @@ export const login = async (email, senha) => {
     }
 };
 
-export const signUp = async (nome, email, senha, matricula, cargo) => {
+export const signUp = async (nome, email, senha, matricula, cargo_id) => {
     try {
-        const response = await api.post('/auth/cadastro', { nome, email, senha, matricula, cargo });
+        const response = await api.post('/auth/cadastro', { nome, email, senha, matricula, cargo_id });
         return response.data;
     } catch (error) {
         throw new Error('Falha na criação de conta');

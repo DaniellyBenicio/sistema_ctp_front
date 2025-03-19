@@ -47,20 +47,20 @@ const UsersTable = ({ users, onDelete }) => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>Nome</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>Matrícula</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>Cargo</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>Email</TableCell>
-                        <TableCell align="center" sx={{ fontWeight: 'bold' }}>Ações</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: '#2f9e41', color: '#fff', borderRight: '1px solid #fff' }}>Nome</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: '#2f9e41', color: '#fff', borderRight: '1px solid #fff' }}>Matrícula</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: '#2f9e41', color: '#fff', borderRight: '1px solid #fff' }}>Cargo</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: '#2f9e41', color: '#fff', borderRight: '1px solid #fff' }}>Email</TableCell>
+                        <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: '#2f9e41', color: '#fff' }}>Ações</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {users.map((user) => (
                         <TableRow key={user.id}>
-                            <TableCell align="center">{user.nome}</TableCell>
-                            <TableCell align="center">{user.matricula}</TableCell>
-                            <TableCell align="center">{user.Cargo.nome}</TableCell>
-                            <TableCell align="center">{user.email}</TableCell>
+                            <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0' }}>{user.nome}</TableCell>
+                            <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0' }}>{user.matricula}</TableCell>
+                            <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0' }}>{user.Cargo.nome}</TableCell>
+                            <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0' }}>{user.email}</TableCell>
                             <TableCell align="center">
                                 <IconButton>
                                     <Edit />

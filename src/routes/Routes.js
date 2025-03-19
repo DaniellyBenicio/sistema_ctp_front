@@ -1,13 +1,12 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { SignUp } from '../pages/signUp/signUp.js';
 import Login from '../pages/login/Login.js';
 import MainScreen from '../pages/mainHome/MainScreen';
-import UsersList from "../pages/admin/UsersList";
+import UsersList from '../pages/admin/UsersList';
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
-    setAuthenticated(true)
+    setAuthenticated(true);
   };
 
   return (
@@ -16,8 +15,6 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         path="/login"
         element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/MainScreen" />}
       />
-
-      <Route path="/signUp" element={<SignUp />} />
 
       {/* Rota após autenticação */}
       <Route
@@ -28,8 +25,8 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           ) : (
             <Navigate to="/login" />
           )
-        }>
-
+        }
+      >
         <Route path="users" element={<UsersList />} />
       </Route>
 
