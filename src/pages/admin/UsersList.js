@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import SearchBar from "../../components/SearchBar";
 import UsersTable from "../../components/UsersTable";
 
@@ -13,7 +13,7 @@ export const UsersList = () => {
     const { userRole } = useOutletContext();
     const [alert, setAlert] = useState({ show: false, message: '', type: '' });
     const navigate = useNavigate();
- 
+
     useEffect(() => {
         if (userRole !== 'Admin') {
             navigate('/');
@@ -25,6 +25,7 @@ export const UsersList = () => {
     const fetchUsers = async () => {
         try {
             const response = await api.get('usuarios');
+            console.log('Todos os usuários:', response.data);
             if (!response.data || !Array.isArray(response.data.usuarios)) {
                 throw new Error('Erro ao buscar usuários.');
             }
@@ -39,17 +40,39 @@ export const UsersList = () => {
         }
     };
 
-    const handleSearchChange = (e) => {
-        const value = e.target.value;
+    const fetchUsersByTermo = async (termo) => {
+        try {
+            const response = await api.get(`/usuarios/busca/${termo}`);
+            console.log('Resultado da busca por termo:', response.data);
+            if (!response.data || !Array.isArray(response.data.usuarios)) {
+                throw new Error('Erro ao buscar usuários por termo.');
+            }
+            return response.data.usuarios;
+        } catch (error) {
+            console.error('Erro ao buscar por termo:', error);
+            return null;
+        }
+    };
+
+    const handleSearchChange = async (e) => {
+        const value = e.target.value.trim();
         setSearchValue(value);
 
-        const filtered = users.filter((user) =>
-            user.nome.toLowerCase().includes(value.toLowerCase()) ||
-            user.matricula.toLowerCase().includes(value.toLowerCase()) ||
-            user.email.toLowerCase().includes(value.toLowerCase()) ||
-            user.Cargo.nome.toLowerCase().includes(value.toLowerCase())
-        );
-        setFilteredUsers(filtered);
+        if (!value) {
+            setFilteredUsers(users); 
+            setAlert({ show: false, message: '', type: '' });
+            return;
+        }
+
+        const usersByTermo = await fetchUsersByTermo(value);
+        if (usersByTermo && usersByTermo.length > 0) {
+            setFilteredUsers(usersByTermo);
+            setAlert({ show: false, message: '', type: '' });
+            return;
+        }
+
+        setFilteredUsers([]);
+        setAlert({ show: false, message: '', type: '' });
     };
 
     const handleDeleteUser = async (id) => {
@@ -99,7 +122,18 @@ export const UsersList = () => {
 
             <SearchBar value={searchValue} onChange={handleSearchChange} />
 
-            <UsersTable users={filteredUsers} onDelete={handleDeleteUser} />
+            {filteredUsers.length === 0 && searchValue ? (
+                <Typography 
+                variant="body2"
+                color="textSecondary" 
+                align="center" 
+                sx={{ mt: 2, fontSize: '0.875rem', fontFamily: '"Open Sans", sans-serif' }}
+            >
+                Nenhum resultado encontrado
+            </Typography>
+            ) : (
+                <UsersTable users={filteredUsers} onDelete={handleDeleteUser} />
+            )}
         </Box>
     );
 };
