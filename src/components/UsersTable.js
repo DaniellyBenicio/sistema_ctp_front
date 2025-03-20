@@ -4,7 +4,7 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 
-const UsersTable = ({ users, onDelete }) => {
+const UsersTable = ({ users, onDelete, onUpdate }) => { // Adicionada prop onUpdate
     const isMobile = useMediaQuery('(max-width:600px)');
 
     if (isMobile) {
@@ -18,7 +18,10 @@ const UsersTable = ({ users, onDelete }) => {
                             <Typography><strong>Cargo:</strong> {user.Cargo.nome}</Typography>
                             <Typography><strong>Email:</strong> {user.email}</Typography>
                             <Stack direction="row" spacing={1} justifyContent="center">
-                                <IconButton>
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => onUpdate(user)} // Adicionado evento onClick com onUpdate
+                                >
                                     <Edit />
                                 </IconButton>
                                 <IconButton
@@ -173,7 +176,10 @@ const UsersTable = ({ users, onDelete }) => {
                                     lineHeight: '30px',
                                 }}
                             >
-                                <IconButton>
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => onUpdate(user)} // Adicionado evento onClick com onUpdate
+                                >
                                     <Edit />
                                 </IconButton>
                                 <IconButton
