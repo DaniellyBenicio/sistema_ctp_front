@@ -42,26 +42,21 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-
-    /*
+  
     try {
-      console.log('Dados enviados:', formData); 
       const response = await api.post('/auth/cadastro', formData);
-      console.log('Resposta da API:', response.data); 
       setSuccess('Usuário cadastrado com sucesso!');
-      onSave(response.data); 
+      onSave(response.data);
       setFormData({ nome: '', matricula: '', email: '', senha: '', cargo: '' });
       setTimeout(() => {
-        onClose(); 
+        onClose();
       }, 2000);
     } catch (err) {
-      console.error('Erro ao cadastrar usuário:', err.response || err); 
-      setError(err.response?.data?.message || 'Erro ao cadastrar o usuário');
+      setError(err.response?.data?.mensagem || 'Erro ao cadastrar o usuário');
     } finally {
       setLoading(false);
-    }*/
+    }
   };
-
   const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
 
   return (
