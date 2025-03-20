@@ -120,8 +120,8 @@ export const UsersList = () => {
                 justifyContent: 'center',
                 flexDirection: 'column',
                 width: '100%',
-                marginTop: { xs: '60px', sm: '30px' },
-                padding: { xs: '5%', sm: '5%' }
+                marginTop: 0,
+                padding: { xs: '2% 5%', sm: '2% 0%' },
             }}
         >
             {alert.show && (
@@ -132,22 +132,46 @@ export const UsersList = () => {
                 />
             )}
 
+            <Typography
+                variant="h5"
+                sx={{
+                    fontWeight: 'bold',
+                    color: '#333',
+                    mb: 1,
+                    textAlign: 'center',
+                    fontFamily: '"Open Sans", sans-serif',
+                    marginBottom: { xs: '16px', sm: '30px' },
+                }}
+            >
+                Lista de Usuários
+            </Typography>
+
             <Box
                 sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
-                    gap: { xs: 2, sm: 3 },
+                    justifyContent: 'space-between',
                     alignItems: { xs: 'stretch', sm: 'center' },
+                    gap: { xs: 1, sm: 2 },
                     mb: 2,
-                    width: '100%',
+                    width: { xs: '100%', sm: '90%' },
+                    maxWidth: '1200px',
+                    alignSelf: 'center',
                 }}
             >
                 <SearchBar
                     value={searchValue}
                     onChange={handleSearchChange}
                     sx={{
-                        width: { xs: '100%', sm: 'auto' },
-                        flexGrow: 1,
+                        width: { xs: '100%', sm: '40%' },
+                        flexGrow: 0,
+                        height: { xs: 'auto', sm: '35px' },
+                        '& .MuiInputBase-root': {
+                            height: '35px',
+                            fontSize: '0.875rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                        },
                     }}
                 />
                 <Button
@@ -155,12 +179,15 @@ export const UsersList = () => {
                     sx={{
                         bgcolor: '#2f9e41',
                         '&:hover': { bgcolor: '#257a33' },
-                        minWidth: { xs: '100%', sm: '200px', md: '300px' },
-                        px: 3,
-                        height: { xs: 'auto', sm: '56px' },
-                        mt: { xs: 0, sm: -2 },
-                        ml: { xs: 0, sm: 2 },
-                        alignSelf: { xs: 'stretch', sm: 'center' },
+                        minWidth: { xs: '100%', sm: '150px', md: '150px' },
+                        px: 2,
+                        height: { xs: '35px', sm: '38px' },
+                        fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                        padding: { xs: '4px 8px', sm: '6px 12px' },
+                        textTransform: 'none',
+                        marginBottom: '15px',
+                        display: 'flex',
+                        alignItems: 'center',
                     }}
                     onClick={() => setOpenPopup(true)}
                 >
@@ -168,18 +195,53 @@ export const UsersList = () => {
                 </Button>
             </Box>
 
-            {filteredUsers.length === 0 && searchValue ? (
-                <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    align="center"
-                    sx={{ mt: 2, fontSize: '0.875rem', fontFamily: '"Open Sans", sans-serif' }}
-                >
-                    Nenhum resultado encontrado
-                </Typography>
-            ) : (
-                <UsersTable users={filteredUsers} onDelete={handleDeleteUser} />
-            )}
+            <Box
+                sx={{
+                    width: { xs: '100%', sm: '90%' },
+                    maxWidth: '1200px',
+                    alignSelf: 'center',
+                    mx: 'auto',
+                }}
+            >
+                {filteredUsers.length === 0 && searchValue ? (
+                    <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        align="center"
+                        sx={{ mt: 2, fontSize: '0.875rem', fontFamily: '"Open Sans", sans-serif' }}
+                    >
+                        Nenhum resultado encontrado
+                    </Typography>
+                ) : (
+                    <UsersTable
+                        users={filteredUsers}
+                        onDelete={handleDeleteUser}
+                        sx={{
+                            '& .MuiTable-root': {
+                                minWidth: '100%',
+                                tableLayout: 'fixed',
+                            },
+                            '& .MuiTableCell-root': {
+                                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+                                padding: { xs: '6px 4px', sm: '8px 8px', md: '12px 16px' },
+                                whiteSpace: { xs: 'normal', sm: 'nowrap' },
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                            },
+                            '& .MuiTableHead-root .MuiTableCell-root': {
+                                height: { xs: '30px', sm: '35px', md: '40px' },
+                                padding: { xs: '4px 4px', sm: '6px 8px', md: '8px 16px' },
+                                lineHeight: { xs: '1.2', sm: '1.5' },
+                                fontWeight: 'bold',
+                                backgroundColor: '#f5f5f5',
+                            },
+                            '& .MuiTableBody-root .MuiTableCell-root': {
+                                borderBottom: '1px solid rgba(224, 224, 224, 1)',
+                            },
+                        }}
+                    />
+                )}
+            </Box>
 
             <UserRegisterPopup
                 open={openPopup}

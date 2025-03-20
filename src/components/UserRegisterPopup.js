@@ -13,7 +13,7 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null); 
+  const [success, setSuccess] = useState(null);
   const [cargos, setCargos] = useState([]);
 
   const fetchCargos = async () => {
@@ -43,6 +43,7 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
     setError(null);
     setSuccess(null);
 
+    /*
     try {
       console.log('Dados enviados:', formData); 
       const response = await api.post('/auth/cadastro', formData);
@@ -58,7 +59,7 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
       setError(err.response?.data?.message || 'Erro ao cadastrar o usuário');
     } finally {
       setLoading(false);
-    }
+    }*/
   };
 
   const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
@@ -160,13 +161,13 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           fullWidth
           variant="contained"
           disabled={loading || !isEmailValid() || !formData.nome || !formData.senha}
-          sx={{ 
-            mt: 3, 
-            mb: 2, 
+          sx={{
+            mt: 3,
+            mb: 2,
             bgcolor: '#2f9e41',
-            '&:hover': { 
-              bgcolor: '#278735' // A slightly darker shade for hover effect
-            } 
+            '&:hover': {
+              bgcolor: '#278735'
+            }
           }}
           onClick={handleSubmit}
         >

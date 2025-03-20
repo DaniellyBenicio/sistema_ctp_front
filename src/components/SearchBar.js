@@ -17,8 +17,27 @@ const SearchBar = ({ value, onChange }) => {
                 ),
             }}
             sx={{
-                width: { xs: '100%', sm: '66.67%' },
-                marginBottom: 2,
+                width: { xs: '100%', sm: '40%' },
+                marginBottom: { xs: 1, sm: 2 },
+                '& .MuiOutlinedInput-root': {
+                    height: { xs: '32px', sm: '40px' },
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    padding: { xs: '0 6px', sm: '0 8px' },
+                },
+                '& .MuiInputBase-input': {
+                    padding: { xs: '0 0 0 6px', sm: '0 0 0 8px' },
+                },
+                '& .MuiInputAdornment-root': {
+                    height: { xs: '32px', sm: '40px' },
+                    display: 'flex',
+                    alignItems: 'center',
+                    '& .MuiSvgIcon-root': {
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                    },
+                },
+                '& .MuiInputBase-input::placeholder': {
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                },
             }}
         />
     );
