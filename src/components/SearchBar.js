@@ -6,7 +6,7 @@ const SearchBar = ({ value, onChange }) => {
     return (
         <TextField
             variant="outlined"
-            placeholder="Buscar usuários..."
+            placeholder="Buscar..."
             value={value}
             onChange={onChange}
             InputProps={{
