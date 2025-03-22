@@ -83,9 +83,15 @@ export const Demands = () => {
         setAlert({ show: false, message: '', type: '' });
     };
 
-    const handleDeleteDemand = (id) => {
-        console.log('Deletar demanda:', id);
-        // Lógica de exclusão a ser implementada
+    const handleSendDemand = async (id) => {
+        try {
+            setDemands((prev) => prev.filter((d) => d.id !== id));
+            setFilteredDemands((prev) => prev.filter((d) => d.id !== id));
+            setAlert({ show: true, message: 'Demanda enviada com sucesso', type: 'success' });
+        } catch (error) {
+            console.error('Erro ao enviar demanda:', error);
+            setAlert({ show: true, message: 'Erro ao enviar demanda', type: 'error' });
+        }
     };
 
     const handleUpdateDemand = (demand) => {
@@ -202,7 +208,7 @@ export const Demands = () => {
                 ) : (
                     <DemandsTable
                         demands={filteredDemands}
-                        onDelete={handleDeleteDemand}
+                        onSend={handleSendDemand}
                         onUpdate={handleUpdateDemand}
                         userRole={userRole}
                     />

@@ -2,12 +2,11 @@ import React from 'react';
 import {
     IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Typography, useMediaQuery
 } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Send, Edit } from "@mui/icons-material";
 
-const DemandsTable = ({ demands, onDelete, onUpdate }) => {
+const DemandsTable = ({ demands, onSend, onUpdate }) => {
     const isMobile = useMediaQuery('(max-width:600px)');
 
-    // Caso seja mobile, exibe os dados em um formato de lista
     if (isMobile) {
         return (
             <Stack spacing={1} sx={{ width: '100%' }}>
@@ -26,10 +25,10 @@ const DemandsTable = ({ demands, onDelete, onUpdate }) => {
                                     <Edit />
                                 </IconButton>
                                 <IconButton
-                                    color="error"
-                                    onClick={() => onDelete(demand.id)}
+                                    color="primary"
+                                    onClick={() => onSend(demand.id)}
                                 >
-                                    <Delete />
+                                    <Send />
                                 </IconButton>
                             </Stack>
                         </Stack>
@@ -185,10 +184,10 @@ const DemandsTable = ({ demands, onDelete, onUpdate }) => {
                                     <Edit />
                                 </IconButton>
                                 <IconButton
-                                    color="error"
-                                    onClick={() => onDelete(demand.id)}
+                                    color="sucess"
+                                    onClick={() => onSend(demand.id)}
                                 >
-                                    <Delete />
+                                    <Send />
                                 </IconButton>
                             </TableCell>
                         </TableRow>
