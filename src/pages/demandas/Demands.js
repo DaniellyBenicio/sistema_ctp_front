@@ -23,7 +23,7 @@ export const Demands = () => {
 
     const fetchDemands = async () => {
         try {
-            const response = await api.get('/demanda');
+            const response = await api.get('/minhas-demandas');
             console.log('Dados da API:', response.data);
             const demandsData = response.data.demandas;
             if (!demandsData || !Array.isArray(demandsData)) {
