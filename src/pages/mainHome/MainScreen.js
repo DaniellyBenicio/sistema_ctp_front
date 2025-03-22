@@ -1,30 +1,34 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from './SideBar';
-//import RecentDemands from '../demandas/RecentDemands';
-import {jwtDecode} from "jwt-decode";
-import {Outlet} from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { Outlet } from "react-router-dom";
 
 const MainScreen = ({ setAuthenticated }) => {
     const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if(token){
-            try{
+        if (token) {
+            try {
                 const decode = jwtDecode(token);
                 setUserRole(decode.cargo);
-            } catch (erro){
-                localStorage.removeItem( 'token')
+            } catch (erro) {
+                localStorage.removeItem('token');
             }
         }
-
     }, []);
 
-
     return (
-        <div style={{ display: 'flex' }}>
-            <Sidebar setAuthenticated={setAuthenticated} useRole={userRole}/>
-            <Outlet context={{ userRole }}/>
+        <div style={{ display: 'flex', height: '100vh' }}>
+            {/* Sidebar com largura fixa */}
+            <div style={{ width: '250px' }}>
+                <Sidebar setAuthenticated={setAuthenticated} useRole={userRole} />
+            </div>
+            
+            {/* Conteúdo da página (Outlet) ocupa o restante do espaço */}
+            <div style={{ flexGrow: 1, padding: '20px', overflowY: 'auto' }}>
+                <Outlet context={{ userRole }} />
+            </div>
         </div>
     );
 };

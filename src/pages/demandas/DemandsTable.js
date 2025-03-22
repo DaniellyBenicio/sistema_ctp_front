@@ -4,29 +4,30 @@ import {
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 
-const UsersTable = ({ users, onDelete, onUpdate }) => {
+const DemandsTable = ({ demands, onDelete, onUpdate }) => {
     const isMobile = useMediaQuery('(max-width:600px)');
 
+    // Caso seja mobile, exibe os dados em um formato de lista
     if (isMobile) {
         return (
             <Stack spacing={1} sx={{ width: '100%' }}>
-                {users.map((user) => (
-                    <Paper key={user.id} sx={{ p: 1 }}>
+                {demands.map((demand) => (
+                    <Paper key={demand.id} sx={{ p: 1 }}>
                         <Stack spacing={0.5}>
-                            <Typography><strong>Nome:</strong> {user.nome}</Typography>
-                            <Typography><strong>Matrícula:</strong> {user.matricula}</Typography>
-                            <Typography><strong>Cargo:</strong> {user.Cargo.nome}</Typography>
-                            <Typography><strong>Email:</strong> {user.email}</Typography>
+                            <Typography><strong>Descrição:</strong> {demand.descricao}</Typography>
+                            <Typography><strong>Status:</strong> {demand.status ? 'Ativo' : 'Inativo'}</Typography>
+                            <Typography><strong>Nível:</strong> {demand.nivel}</Typography>
+                            <Typography><strong>Usuário ID:</strong> {demand.usuario_id}</Typography>
                             <Stack direction="row" spacing={1} justifyContent="center">
                                 <IconButton
                                     color="primary"
-                                    onClick={() => onUpdate(user)}
+                                    onClick={() => onUpdate(demand)}
                                 >
                                     <Edit />
                                 </IconButton>
                                 <IconButton
                                     color="error"
-                                    onClick={() => onDelete(user.id)}
+                                    onClick={() => onDelete(demand.id)}
                                 >
                                     <Delete />
                                 </IconButton>
@@ -38,6 +39,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
         );
     }
 
+    // Caso não seja mobile, exibe os dados em uma tabela
     return (
         <TableContainer
             component={Paper}
@@ -62,7 +64,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                 lineHeight: '30px',
                             }}
                         >
-                            Nome
+                            Descrição
                         </TableCell>
                         <TableCell
                             align="center"
@@ -76,7 +78,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                 lineHeight: '30px',
                             }}
                         >
-                            Matrícula
+                            Status
                         </TableCell>
                         <TableCell
                             align="center"
@@ -90,7 +92,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                 lineHeight: '30px',
                             }}
                         >
-                            Cargo
+                            Nível
                         </TableCell>
                         <TableCell
                             align="center"
@@ -104,7 +106,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                 lineHeight: '30px',
                             }}
                         >
-                            Email
+                            Usuário ID
                         </TableCell>
                         <TableCell
                             align="center"
@@ -122,8 +124,8 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {users.map((user) => (
-                        <TableRow key={user.id}>
+                    {demands.map((demand) => (
+                        <TableRow key={demand.id}>
                             <TableCell
                                 align="center"
                                 sx={{
@@ -133,7 +135,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                     lineHeight: '30px',
                                 }}
                             >
-                                {user.nome}
+                                {demand.descricao}
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -144,7 +146,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                     lineHeight: '30px',
                                 }}
                             >
-                                {user.matricula}
+                                {demand.status ? 'Ativo' : 'Inativo'}
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -155,7 +157,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                     lineHeight: '30px',
                                 }}
                             >
-                                {user.Cargo.nome}
+                                {demand.nivel}
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -166,7 +168,7 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                                     lineHeight: '30px',
                                 }}
                             >
-                                {user.email}
+                                {demand.usuario_id}
                             </TableCell>
                             <TableCell
                                 align="center"
@@ -178,13 +180,13 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
                             >
                                 <IconButton
                                     color="primary"
-                                    onClick={() => onUpdate(user)}
+                                    onClick={() => onUpdate(demand)}
                                 >
                                     <Edit />
                                 </IconButton>
                                 <IconButton
                                     color="error"
-                                    onClick={() => onDelete(user.id)}
+                                    onClick={() => onDelete(demand.id)}
                                 >
                                     <Delete />
                                 </IconButton>
@@ -197,4 +199,4 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
     );
 };
 
-export default UsersTable;
+export default DemandsTable;

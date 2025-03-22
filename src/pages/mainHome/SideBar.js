@@ -59,12 +59,13 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                 <>
                     <ListItem
                         button
-                        onClick={() => handleItemClick('/demandas', 'demandas')}
-                        sx={getListItemStyle(selectedItem, 'demandas')}
+                        onClick={() => handleItemClick('/demands', 'demands')}
+                        sx={getListItemStyle(selectedItem, 'demands')} // Corrigido para "demands"
                     >
                         <Assignment sx={{ mr: 1 }} />
                         <ListItemText primary="Demandas" />
                     </ListItem>
+
                     <ListItem
                         button
                         onClick={() => handleItemClick('/relatorios', 'relatorios')}

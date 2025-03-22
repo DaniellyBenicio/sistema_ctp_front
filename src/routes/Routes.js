@@ -3,6 +3,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from '../pages/login/Login.js';
 import MainScreen from '../pages/mainHome/MainScreen';
 import UsersList from '../pages/admin/UsersList';
+import Demands from '../pages/demandas/Demands.js';
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
@@ -28,6 +29,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         }
       >
         <Route path="users" element={<UsersList />} />
+        <Route path="demands" element={<Demands />} />
       </Route>
 
       {/* Redirecionamento para rotas inválidas */}
