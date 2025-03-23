@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Dialog, 
-    DialogActions, 
-    DialogContent, 
-    DialogTitle, 
-    Button, 
-    TextField, 
-    Typography, 
-    IconButton, 
-    CircularProgress 
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Button,
+    TextField,
+    Typography,
+    IconButton,
+    CircularProgress,
+    FormControl,
+    Select,
+    MenuItem,
+    FormHelperText
 } from "@mui/material";
 import { Email, Lock, Close } from '@mui/icons-material';
 import api from "../service/api";
@@ -19,11 +23,24 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
         matricula: '',
         email: '',
         senha: '',
-        cargoId: ''
+        cargoId: '' // Este é o id do cargo, que será associado ao select
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [cargos, setCargos] = useState([]);
+
+    // Função para buscar os cargos
+    const fetchCargos = async () => {
+        try {
+            const response = await api.get('/cargos');
+            const filteredCargos = response.data.filter(cargo => cargo.nome.toLowerCase() !== 'admin');
+            setCargos(filteredCargos);
+        } catch (err) {
+            setError('Erro ao buscar os cargos');
+            console.error('Erro ao buscar cargos:', err);
+        }
+    };
 
     // Sincroniza formData com os dados do user quando o popup abre ou o user muda
     useEffect(() => {
@@ -34,11 +51,13 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
                 matricula: user.matricula || '',
                 email: user.email || '',
                 senha: '', // Mantém vazio por padrão
-                cargoId: user.cargo_id || ''
+                cargoId: user.cargo_id || '' // Atribui o id do cargo
             });
+            fetchCargos();
         }
     }, [open, user]);
 
+    // Função de alteração do formulário
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -47,6 +66,7 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
         }));
     };
 
+    // Função para enviar os dados de atualização
     const handleSubmit = async () => {
         setLoading(true);
         setError(null);
@@ -94,6 +114,7 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
         }
     };
 
+    // Função para validar email
     const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
 
     return (
@@ -161,15 +182,21 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
                     value={formData.matricula}
                     onChange={handleChange}
                 />
-                <TextField
-                    fullWidth
-                    margin="normal"
-                    name="cargoId"
-                    label="Cargo ID"
-                    type="number"
-                    value={formData.cargoId}
-                    onChange={handleChange}
-                />
+                <FormControl fullWidth margin="normal">
+                    <FormHelperText id="cargo">Tipo de Cargo</FormHelperText>
+                    <Select
+                        labelId="cargo"
+                        name="cargoId"
+                        value={formData.cargoId} // Altere para 'cargoId' aqui
+                        onChange={handleChange}
+                    >
+                        {cargos.map((cargoItem) => (
+                            <MenuItem key={cargoItem.id} value={cargoItem.id}>
+                                {cargoItem.nome}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
                 {error && (
                     <Typography color="error" variant="body2" sx={{ mt: 1 }}>

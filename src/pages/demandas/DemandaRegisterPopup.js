@@ -7,16 +7,19 @@ import { Close } from '@mui/icons-material';
 import api from '../../service/api';
 import UserListsDemands from './UserListsDemands';
 import AmparoLegalList from './AmparoLegalList';
+import { jwtDecode } from 'jwt-decode';
 
 const DemandaRegisterPopup = ({ open, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     descricao: '',
-    status: true, 
+    status: true,
     nivel: '',
     usuariosEncaminhados: [],
     alunos: [],
     amparoLegal: [],
   });
+  const token = localStorage.getItem('token');
+  const [user_id, setUderId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -26,15 +29,21 @@ const DemandaRegisterPopup = ({ open, onClose, onSave }) => {
   const fetchOptions = async () => {
     try {
       const nivelResponse = await api.get('/demandaniveis');
-      const alunosResponse = await api.get('/aluno');
+      const alunosResponse = await api.get('/alunos');
 
       setNivelOptions(nivelResponse.data);
       setAlunosOptions(alunosResponse.data);
+
     } catch (err) {
-      setError('Erro ao buscar opções');
+      setError('Erro ao buscar opções, aqui');
       console.error('Erro ao buscar opções:', err);
     }
   };
+
+  const getUserId = () => {
+    const decoded = jwtDecode(token);
+    setUderId(decoded.id);
+  }
 
   useEffect(() => {
     if (open) {
@@ -47,6 +56,8 @@ const DemandaRegisterPopup = ({ open, onClose, onSave }) => {
         alunos: [],
         amparoLegal: [],
       });
+      getUserId();
+      fetchOptions();
     }
   }, [open]);
 
@@ -69,7 +80,8 @@ const DemandaRegisterPopup = ({ open, onClose, onSave }) => {
     setSuccess(null);
 
     try {
-      const response = await api.post('/demanda', {
+      const response = await api.post('/criar-demanda', {
+        usuario_id: user_id,
         descricao: formData.descricao,
         status: formData.status,
         nivel: formData.nivel,
@@ -117,7 +129,7 @@ const DemandaRegisterPopup = ({ open, onClose, onSave }) => {
           <FormHelperText id="status">Status</FormHelperText>
           <TextField
             disabled
-            value="Aberto" 
+            value="Aberto"
             variant="outlined"
             fullWidth
           />
