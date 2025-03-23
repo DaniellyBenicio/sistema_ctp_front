@@ -4,6 +4,7 @@ import Login from '../pages/login/Login.js';
 import MainScreen from '../pages/mainHome/MainScreen';
 import UsersList from '../pages/admin/UsersList';
 import Demands from '../pages/demandas/Demands.js';
+import DemandaRegisterPage from '../pages/demandas/DemandaRegisterPage';
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
@@ -30,6 +31,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
       >
         <Route path="users" element={<UsersList />} />
         <Route path="demands" element={<Demands />} />
+        <Route path="demands/register" element={<DemandaRegisterPage />} />
       </Route>
 
       {/* Redirecionamento para rotas inválidas */}

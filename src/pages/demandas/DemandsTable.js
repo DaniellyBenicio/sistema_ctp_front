@@ -2,9 +2,9 @@ import React from 'react';
 import {
     IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Typography, useMediaQuery
 } from "@mui/material";
-import { Send, Edit } from "@mui/icons-material";
+import { Send, Visibility } from "@mui/icons-material";
 
-const DemandsTable = ({ demands, onSend, onUpdate }) => {
+const DemandsTable = ({ demands, onSend, onViewDetails }) => {
     const isMobile = useMediaQuery('(max-width:600px)');
 
     if (isMobile) {
@@ -20,9 +20,9 @@ const DemandsTable = ({ demands, onSend, onUpdate }) => {
                             <Stack direction="row" spacing={1} justifyContent="center">
                                 <IconButton
                                     color="primary"
-                                    onClick={() => onUpdate(demand)}
+                                    onClick={() => onViewDetails(demand)}
                                 >
-                                    <Edit />
+                                    <Visibility />
                                 </IconButton>
                                 <IconButton
                                     color="primary"
@@ -179,12 +179,12 @@ const DemandsTable = ({ demands, onSend, onUpdate }) => {
                             >
                                 <IconButton
                                     color="primary"
-                                    onClick={() => onUpdate(demand)}
+                                    onClick={() => onViewDetails(demand)}
                                 >
-                                    <Edit />
+                                    <Visibility />
                                 </IconButton>
                                 <IconButton
-                                    color="sucess"
+                                    color="success"
                                     onClick={() => onSend(demand.id)}
                                 >
                                     <Send />
