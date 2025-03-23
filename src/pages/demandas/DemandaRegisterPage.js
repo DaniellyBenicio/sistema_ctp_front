@@ -23,10 +23,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: '12px',
   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
   background: 'linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)',
-  transition: 'transform 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-5px)',
-  },
   width: '100%',
   boxSizing: 'border-box',
 }));
@@ -66,7 +62,7 @@ const DemandaRegisterPage = () => {
     status: true,
     nivel: '',
     disciplina: '',
-    condicao: '', 
+    condicao: '',
     usuariosEncaminhados: [],
     alunos: [],
     amparoLegal: [],
@@ -130,23 +126,19 @@ const DemandaRegisterPage = () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Buscando matrícula:', matriculaInput);
-      console.log('URL completa:', `${api.defaults.baseURL}/alunos/${matriculaInput}`);
       const response = await api.get(`/alunos/${matriculaInput}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       const student = response.data;
-      console.log('Dados retornados do backend:', student);
-
       if (student?.nome) {
         const mappedStudent = {
           id: student.matricula,
           nome: student.nome,
           email: student.email,
           curso: student.curso,
-          condicoes: [], 
+          condicoes: [],
         };
         const newStudentsData = [...studentsData];
         newStudentsData[index] = mappedStudent;
@@ -215,7 +207,7 @@ const DemandaRegisterPage = () => {
         usuariosEncaminhados: formData.usuariosEncaminhados.map((user) => user.id),
         alunos: formData.alunos.map((aluno) => ({
           id: aluno.id,
-          condicoes: aluno.condicoes.map(c => c.id), 
+          condicoes: aluno.condicoes.map(c => c.id),
         })).filter((aluno) => aluno.id),
         amparoLegal: formData.amparoLegal.map((amparo) => amparo.id),
       });
@@ -303,10 +295,30 @@ const DemandaRegisterPage = () => {
                 sx={{ bgcolor: '#fff', borderRadius: '8px' }}
               />
               <Box sx={{ gridColumn: { xs: '1 / 2', sm: '2 / 3' } }}>
-                <CondicaoList
-                  selectedCondicoes={formData.alunos[index]?.condicoes || []}
-                  onCondicaoChange={(newCondicoes) => handleCondicaoChange(index, newCondicoes)}
-                />
+                <FormControl fullWidth>
+                  <InputLabel sx={{ fontSize: '0.875rem', transform: 'translate(14px, 10px) scale(1)', '&.MuiInputLabel-shrink': { transform: 'translate(14px, -6px) scale(0.75)' } }}>
+                    Condições
+                  </InputLabel>
+                  <StyledSelect
+                    value={formData.alunos[index]?.condicoes.map(c => c.id) || []}
+                    multiple
+                    renderValue={(selected) => formData.alunos[index]?.condicoes.map(c => c.nome).join(', ') || 'Nenhuma condição selecionada'}
+                    sx={{ bgcolor: '#fff', borderRadius: '8px' }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 300,
+                          width: 'auto',
+                        },
+                      },
+                    }}
+                  >
+                    <CondicaoList
+                      selectedCondicoes={formData.alunos[index]?.condicoes || []}
+                      onCondicaoChange={(newCondicoes) => handleCondicaoChange(index, newCondicoes)}
+                    />
+                  </StyledSelect>
+                </FormControl>
               </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: 2, mt: 2 }}>

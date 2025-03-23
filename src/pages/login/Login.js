@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { TextField, Container, Button, Typography, Paper, Box, CircularProgress, InputAdornment, IconButton } from '@mui/material';
+import {
+  TextField,
+  Container,
+  Button,
+  Typography,
+  Box,
+  CircularProgress,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { login } from "../../service/auth";
-
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -39,136 +47,210 @@ const Login = ({ onLogin }) => {
   return (
     <Container
       component="main"
-      maxWidth="md"
+      maxWidth={false}
       sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh'
+        height: '100vh',
+        width: '100vw',
+        background: '#FFFFFF',
+        padding: 0,
+        margin: 0,
       }}
     >
-      <Paper
-        elevation={5}
+      <Box
         sx={{
-          p: 6,
-          borderRadius: 4,
+          display: 'flex',
           width: '100%',
-          maxWidth: 350
+          maxWidth: 800,
+          height: 450,
+          borderRadius: 4,
+          overflow: 'hidden',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
         }}
       >
-        {/* Título */}
-        <Typography
-          component="h1"
-          variant="h5"
+        <Box
           sx={{
-            mb: 4,
-            fontWeight: 'bold',
-            textAlign: 'center'
+            flex: 1,
+            background: 'linear-gradient(135deg, #27AE60 0%, #2ECC71 100%)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            p: 6,
+            color: '#FFFFFF',
           }}
         >
-          Login
-        </Typography>
-
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-          {/* Campo de Email */}
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onFocus={() => setFocusedField('email')}
-            onBlur={() => setFocusedField(null)}
-            error={!!email && !isEmailValid()}
-            helperText={!!email && !isEmailValid() ? 'Email inválido' : ''}
-            variant="outlined"
-            InputLabelProps={{
-              shrink: focusedField === 'email' || email !== '',
-              sx: {
-                color: focusedField === 'email' || email !== '',
-                fontSize: focusedField === 'email' || email !== '' ? '0.85rem' : '1rem',
-                transform: focusedField === 'email' || email !== '' ? 'translate(14px, -6px) scale(0.85)' : 'translate(14px, 16px) scale(1)',
-                transition: 'transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out',
-              },
-            }}
-          />
-
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Senha"
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onFocus={() => setFocusedField('password')}
-            onBlur={() => setFocusedField(null)}
-            variant="outlined"
-            InputLabelProps={{
-              shrink: focusedField === 'password' || password !== '',
-              sx: {
-                color: focusedField === 'password' || password !== '' ? 'primary.main' : 'text.secondary',
-                fontSize: focusedField === 'password' || password !== '' ? '0.85rem' : '1rem',
-                transform: focusedField === 'password' || password !== '' ? 'translate(14px, -6px) scale(0.85)' : 'translate(14px, 16px) scale(1)',
-                transition: 'transform 0.2s ease-out, font-size 0.2s ease-out, color 0.2s ease-out'
-              }
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleTogglePasswordVisibility}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          {/* Errors */}
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 0 }}>
-              {error}
-            </Typography>
-          )}
-
-          {/* "Esqueceu a senha?" */}
-          <Box
+          <Typography
+            variant="h5"
             sx={{
-              display: 'flex',
-              justifyContent: 'flex-start',
-              mt: 0.5,
+              textAlign: 'center',
+              maxWidth: '90%',
+              lineHeight: 1.4,
+              fontWeight: 'bold',
             }}
           >
-            <Button
-              sx={{
-                textTransform: 'none',
-                fontSize: '0.875rem',
-                color: 'primary.main',
-                '&:hover': { textDecoration: 'underline' }
+            Seja Bem-Vindo! Coordenação Técnica Pedagógica
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            flex: 1.5,
+            backgroundColor: '#FFFFFF',
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography
+            component="h1"
+            variant="h5"
+            sx={{
+              mb: 3,
+              fontWeight: 'bold',
+              textAlign: 'center',
+              color: '#000000',
+            }}
+          >
+            Login
+          </Typography>
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onFocus={() => setFocusedField('email')}
+              onBlur={() => setFocusedField(null)}
+              error={!!email && !isEmailValid()}
+              helperText={!!email && !isEmailValid() ? 'Email inválido' : ''}
+              variant="outlined"
+              InputLabelProps={{
+                shrink: focusedField === 'email' || email !== '',
+                sx: {
+                  color: focusedField === 'email' || email !== '' ? '#27AE60' : 'text.secondary',
+                  fontSize: '1rem',
+                },
               }}
-              onClick={() => navigate('/forgot-password')}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '8px',
+                  '& fieldset': {
+                    borderColor: '#E0E0E0',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#27AE60',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#27AE60',
+                  },
+                },
+              }}
+            />
+
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Senha"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onFocus={() => setFocusedField('password')}
+              onBlur={() => setFocusedField(null)}
+              variant="outlined"
+              InputLabelProps={{
+                shrink: focusedField === 'password' || password !== '',
+                sx: {
+                  color: focusedField === 'password' || password !== '' ? '#27AE60' : 'text.secondary',
+                  fontSize: '1rem',
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleTogglePasswordVisibility}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '8px',
+                  '& fieldset': {
+                    borderColor: '#E0E0E0',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#27AE60',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#27AE60',
+                  },
+                },
+              }}
+            />
+
+            {error && (
+              <Typography color="error" variant="body2" sx={{ mt: 1, textAlign: 'left' }}>
+                {error}
+              </Typography>
+            )}
+
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                mt: 1,
+              }}
             >
-              Esqueceu a senha?
+              <Button
+                sx={{
+                  textTransform: 'none',
+                  fontSize: '0.875rem',
+                  color: '#27AE60',
+                  '&:hover': { textDecoration: 'underline', color: '#2ECC71' },
+                }}
+                onClick={() => navigate('/forgot-password')}
+              >
+                Esqueceu a senha?
+              </Button>
+            </Box>
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading || !isEmailValid() || !password}
+              onClick={() => navigate('/MainScreen')}
+              sx={{
+                mt: 3,
+                mb: 2,
+                py: 1.5,
+                bgcolor: loading || !isEmailValid() || !password ? '#E0E0E0' : '#27AE60',
+                color: loading || !isEmailValid() || !password ? '#333333' : '#FFFFFF',
+                '&:hover': {
+                  bgcolor: loading || !isEmailValid() || !password ? '#D0D0D0' : '#2ECC71',
+                },
+                borderRadius: '8px',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+              }}
+            >
+              {loading ? <CircularProgress size={25} /> : 'Entrar'}
             </Button>
           </Box>
-
-          {/* Login */}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            disabled={loading || !isEmailValid() || !password}
-            onClick={() => navigate('/MainScreen')}
-            sx={{ mt: 3, mb: 2, py: 1.5, bgcolor: '#387c34', '&:hover': { bgcolor: '#2e622b' } }}
-          >
-            {loading ? <CircularProgress size={24} /> : 'Entrar'}
-          </Button>
         </Box>
-      </Paper>
+      </Box>
     </Container>
   );
 };
