@@ -8,6 +8,7 @@ import { styled } from '@mui/material/styles';
 import api from '../../service/api';
 import UserListsDemands from './UserListsDemands';
 import AmparoLegalList from './AmparoLegalList';
+import CondicaoList from './CondicaoList';
 import { jwtDecode } from 'jwt-decode';
 import SearchIcon from '@mui/icons-material/Search';
 import SaveIcon from '@mui/icons-material/Save';
@@ -65,7 +66,7 @@ const DemandaRegisterPage = () => {
     status: true,
     nivel: '',
     disciplina: '',
-    condicao: '',
+    condicao: '', 
     usuariosEncaminhados: [],
     alunos: [],
     amparoLegal: [],
@@ -106,7 +107,6 @@ const DemandaRegisterPage = () => {
   };
 
   const handleMatriculaChange = (index, value) => {
-    // Aceita apenas números
     const numericValue = value.replace(/[^0-9]/g, '');
     const newMatriculaInputs = [...matriculaInputs];
     newMatriculaInputs[index] = numericValue;
@@ -136,17 +136,17 @@ const DemandaRegisterPage = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-    });
+      });
       const student = response.data;
-      console.log('Dados retornados do backend:', student); 
+      console.log('Dados retornados do backend:', student);
 
       if (student?.nome) {
         const mappedStudent = {
-          id: student.matricula, 
+          id: student.matricula,
           nome: student.nome,
           email: student.email,
           curso: student.curso,
-          condicao: '',
+          condicoes: [], 
         };
         const newStudentsData = [...studentsData];
         newStudentsData[index] = mappedStudent;
@@ -155,7 +155,7 @@ const DemandaRegisterPage = () => {
         setFormData((prev) => {
           const newAlunos = [...prev.alunos];
           const isAlreadyAdded = newAlunos.some((a) => a.id === mappedStudent.id);
-          if (!isAlreadyAdded) {
+          if (!isAlreadyAdded || !newAlunos[index]) {
             newAlunos[index] = mappedStudent;
           }
           return { ...prev, alunos: newAlunos };
@@ -182,7 +182,7 @@ const DemandaRegisterPage = () => {
     setStudentsData([...studentsData, null]);
     setFormData((prev) => ({
       ...prev,
-      alunos: [...prev.alunos, { id: '', nome: '', email: '', curso: '', condicao: '' }],
+      alunos: [...prev.alunos, { id: '', nome: '', email: '', curso: '', condicoes: [] }],
     }));
   };
 
@@ -195,9 +195,9 @@ const DemandaRegisterPage = () => {
     }));
   };
 
-  const handleCondicaoChange = (index, value) => {
+  const handleCondicaoChange = (index, newSelectedCondicoes) => {
     const newAlunos = [...formData.alunos];
-    newAlunos[index] = { ...newAlunos[index], condicao: value };
+    newAlunos[index] = { ...newAlunos[index], condicoes: newSelectedCondicoes };
     setFormData((prev) => ({ ...prev, alunos: newAlunos }));
   };
 
@@ -212,9 +212,11 @@ const DemandaRegisterPage = () => {
         status: formData.status,
         nivel: formData.nivel,
         disciplina: formData.disciplina,
-        condicao: formData.condicao,
         usuariosEncaminhados: formData.usuariosEncaminhados.map((user) => user.id),
-        alunos: formData.alunos.map((aluno) => aluno.id).filter((id) => id),
+        alunos: formData.alunos.map((aluno) => ({
+          id: aluno.id,
+          condicoes: aluno.condicoes.map(c => c.id), 
+        })).filter((aluno) => aluno.id),
         amparoLegal: formData.amparoLegal.map((amparo) => amparo.id),
       });
       setSuccess('Demanda cadastrada com sucesso!');
@@ -253,7 +255,6 @@ const DemandaRegisterPage = () => {
           Nova Demanda
         </Typography>
 
-        {/* Dados do Aluno - Múltiplos Alunos */}
         {matriculaInputs.map((matriculaInput, index) => (
           <StyledPaper key={index} elevation={3} sx={{ mb: 4 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'medium', color: INSTITUTIONAL_COLOR }}>
@@ -266,7 +267,7 @@ const DemandaRegisterPage = () => {
                 value={matriculaInput}
                 onChange={(e) => handleMatriculaChange(index, e.target.value)}
                 variant="outlined"
-                inputProps={{ maxLength: 14, pattern: '[0-9]*' }} // Limita a 14 dígitos e só números
+                inputProps={{ maxLength: 14, pattern: '[0-9]*' }}
                 sx={{ bgcolor: '#fff', borderRadius: '8px' }}
               />
               <StyledButton
@@ -301,15 +302,12 @@ const DemandaRegisterPage = () => {
                 disabled
                 sx={{ bgcolor: '#fff', borderRadius: '8px' }}
               />
-              <StyledTextField
-                label="Condição"
-                name="condicao"
-                value={formData.alunos[index]?.condicao || ''}
-                onChange={(e) => handleCondicaoChange(index, e.target.value)}
-                variant="outlined"
-                inputProps={{ maxLength: 50 }}
-                sx={{ bgcolor: '#fff', borderRadius: '8px' }}
-              />
+              <Box sx={{ gridColumn: { xs: '1 / 2', sm: '2 / 3' } }}>
+                <CondicaoList
+                  selectedCondicoes={formData.alunos[index]?.condicoes || []}
+                  onCondicaoChange={(newCondicoes) => handleCondicaoChange(index, newCondicoes)}
+                />
+              </Box>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: 2, mt: 2 }}>
               {index === matriculaInputs.length - 1 && (
@@ -338,7 +336,6 @@ const DemandaRegisterPage = () => {
 
         <Divider sx={{ my: 4, borderColor: '#e0e0e0', width: '100%' }} />
 
-        {/* Dados da Demanda */}
         <StyledPaper elevation={3} sx={{ mb: 4 }}>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 'medium', color: INSTITUTIONAL_COLOR }}>
             Dados da Demanda
@@ -401,7 +398,6 @@ const DemandaRegisterPage = () => {
 
         <Divider sx={{ my: 4, borderColor: '#e0e0e0', width: '100%' }} />
 
-        {/* Encaminhamento */}
         <StyledPaper elevation={3} sx={{ mb: 4 }}>
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 'medium', color: INSTITUTIONAL_COLOR }}>
             Encaminhamento
@@ -409,7 +405,6 @@ const DemandaRegisterPage = () => {
           <UserListsDemands selectedUsers={formData.usuariosEncaminhados} onUserChange={handleUserChange} />
         </StyledPaper>
 
-        {/* Mensagens de feedback */}
         {error && (
           <Typography
             color="error"
