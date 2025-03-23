@@ -15,7 +15,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
     <Routes>
       <Route
         path="/login"
-        element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/MainScreen" />}
+        element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/demands" />}
       />
 
       {/* Rota após autenticação */}
