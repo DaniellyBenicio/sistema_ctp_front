@@ -5,14 +5,12 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import axios from 'axios';
 import api from '../../service/api';
 import UserListsDemands from './UserListsDemands';
 import AmparoLegalList from './AmparoLegalList';
 import { jwtDecode } from 'jwt-decode';
 import SearchIcon from '@mui/icons-material/Search';
 import SaveIcon from '@mui/icons-material/Save';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CloseIcon from '@mui/icons-material/Close';
@@ -108,8 +106,10 @@ const DemandaRegisterPage = () => {
   };
 
   const handleMatriculaChange = (index, value) => {
+    // Aceita apenas números
+    const numericValue = value.replace(/[^0-9]/g, '');
     const newMatriculaInputs = [...matriculaInputs];
-    newMatriculaInputs[index] = value;
+    newMatriculaInputs[index] = numericValue;
     setMatriculaInputs(newMatriculaInputs);
   };
 
@@ -130,17 +130,22 @@ const DemandaRegisterPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const apiToken = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      const response = await axios.get('/api/student-by-enrollment', {
-        params: { enrollment: matriculaInput, token: apiToken },
-      });
+      console.log('Buscando matrícula:', matriculaInput);
+      console.log('URL completa:', `${api.defaults.baseURL}/alunos/${matriculaInput}`);
+      const response = await api.get(`/alunos/${matriculaInput}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+    });
       const student = response.data;
-      if (student?.name) {
+      console.log('Dados retornados do backend:', student); 
+
+      if (student?.nome) {
         const mappedStudent = {
-          id: student.id,
-          nome: student.name,
-          email: student.user?.[0]?.email || '',
-          curso: student.course?.description || '',
+          id: student.matricula, 
+          nome: student.nome,
+          email: student.email,
+          curso: student.curso,
           condicao: '',
         };
         const newStudentsData = [...studentsData];
@@ -163,7 +168,7 @@ const DemandaRegisterPage = () => {
       }
     } catch (err) {
       setError('Erro ao buscar aluno. Verifique a matrícula e tente novamente.');
-      console.error('Erro ao buscar aluno:', err);
+      console.error('Erro ao buscar aluno:', err.response?.data || err.message);
       const newStudentsData = [...studentsData];
       newStudentsData[index] = null;
       setStudentsData(newStudentsData);
@@ -216,6 +221,7 @@ const DemandaRegisterPage = () => {
       setTimeout(() => navigate('/demands'), 2000);
     } catch (err) {
       setError(err.response?.data?.mensagem || 'Erro ao cadastrar a demanda');
+      console.error('Erro ao criar demanda:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
@@ -260,6 +266,7 @@ const DemandaRegisterPage = () => {
                 value={matriculaInput}
                 onChange={(e) => handleMatriculaChange(index, e.target.value)}
                 variant="outlined"
+                inputProps={{ maxLength: 14, pattern: '[0-9]*' }} // Limita a 14 dígitos e só números
                 sx={{ bgcolor: '#fff', borderRadius: '8px' }}
               />
               <StyledButton
