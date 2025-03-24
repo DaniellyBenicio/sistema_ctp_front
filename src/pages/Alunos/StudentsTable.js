@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Typography, useMediaQuery, TextField, Button, CircularProgress
+    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Typography, useMediaQuery, CircularProgress
 } from "@mui/material";
 
 const StudentsTable = () => { 
@@ -78,23 +78,6 @@ const StudentsTable = () => {
 
     return (
         <Stack spacing={3} sx={{ width: '100%', maxWidth: '1200px', margin: '0 auto', paddingTop: '40px' }}>
-            {/* Campo de busca e botão Novo */}
-            <Stack direction="row" spacing={2} justifyContent="space-between" alignItems="center">
-                <TextField
-                    label="Buscar estudante"
-                    variant="outlined"
-                    size="small"
-                    sx={{ flexGrow: 1, maxWidth: '400px' }}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ backgroundColor: '#2f9e41', '&:hover': { backgroundColor: '#287f36' } }}
-                >
-                    Novo
-                </Button>
-            </Stack>
-
             {/* Tabela */}
             {loading ? (
                 <Stack alignItems="center">

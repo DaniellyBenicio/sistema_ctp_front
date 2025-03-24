@@ -5,15 +5,13 @@ import MainScreen from '../pages/mainHome/MainScreen';
 import UsersList from '../pages/admin/UsersList';
 import Demands from '../pages/demandas/Demands.js';
 import DemandaRegisterPage from '../pages/demandas/DemandaRegisterPage';
-import StudentsTable from '../pages/Alunos/StudentsTable.js';
+import Students from '../pages/Alunos/Students';
+import StudentRegisterPage from '../pages/Alunos/StudentRegisterPage'; 
 
-const AppRoutes = ({ isAuthenticated, setAuthenticated, students }) => {
+const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
     setAuthenticated(true);
   };
-
-  const handleSend = (matricula) => console.log("Enviar:", matricula);
-  const handleViewDetails = (student) => console.log("Detalhes:", student);
 
   return (
     <Routes>
@@ -21,6 +19,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated, students }) => {
         path="/login"
         element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/demands" />}
       />
+
       <Route
         path="/"
         element={
@@ -34,11 +33,10 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated, students }) => {
         <Route path="users" element={<UsersList />} />
         <Route path="demands" element={<Demands />} />
         <Route path="demands/register" element={<DemandaRegisterPage />} />
-        <Route
-          path="/alunos"
-          element={<StudentsTable students={students} onSend={handleSend} onViewDetails={handleViewDetails} />}
-        />
+        <Route path="alunos" element={<Students />} />
+        <Route path="alunos/register" element={<StudentRegisterPage />} />
       </Route>
+
       <Route path="*" element={<Navigate to={isAuthenticated ? '/' : '/login'} />} />
     </Routes>
   );
