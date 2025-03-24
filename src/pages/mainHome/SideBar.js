@@ -46,16 +46,19 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                 </Typography>
             </ListItem>
             <Divider sx={{ backgroundColor: 'white', marginBottom: 1 }} />
+
             {useRole === 'Admin' ? (
-                <ListItem
-                    button
-                    onClick={() => handleItemClick('/users', 'users')}
-                    sx={getListItemStyle(selectedItem, 'users')}
-                >
-                    <People sx={{ mr: 1 }} />
-                    <ListItemText primary="Usuários" />
-                </ListItem>
-            ) : (
+                <>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/users', 'users')}
+                        sx={getListItemStyle(selectedItem, 'users')}
+                    >
+                        <People sx={{ mr: 1 }} />
+                        <ListItemText primary="Usuários" />
+                    </ListItem>
+                </>
+            ) : useRole === 'Funcionario CTP' ? (
                 <>
                     <ListItem
                         button
@@ -98,7 +101,35 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                         <ListItemText primary="Suporte" />
                     </ListItem>
                 </>
+            ) : (
+                <>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/demands', 'demands')}
+                        sx={getListItemStyle(selectedItem, 'demands')}
+                    >
+                        <Assignment sx={{ mr: 1 }} />
+                        <ListItemText primary="Demandas" />
+                    </ListItem>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/perfil', 'perfil')}
+                        sx={getListItemStyle(selectedItem, 'perfil')}
+                    >
+                        <Person sx={{ mr: 1 }} />
+                        <ListItemText primary="Perfil" />
+                    </ListItem>
+                    <ListItem
+                        button
+                        onClick={() => handleItemClick('/suporte', 'suporte')}
+                        sx={getListItemStyle(selectedItem, 'suporte')}
+                    >
+                        <Support sx={{ mr: 1 }} />
+                        <ListItemText primary="Suporte" />
+                    </ListItem>
+                </>
             )}
+
             <ListItem
                 button
                 onClick={handleOpenConfirmDialog}

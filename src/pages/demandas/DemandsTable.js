@@ -15,7 +15,7 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                         <Stack spacing={0.5}>
                             <Typography><strong>Descrição:</strong> {demand.descricao}</Typography>
                             <Typography><strong>Status:</strong> {demand.status ? 'Ativo' : 'Inativo'}</Typography>
-                            <Typography><strong>Nível:</strong> {demand.nivel}</Typography>
+                            <Typography><strong>Disciplina:</strong> {demand.disciplina}</Typography>
                             <Typography><strong>Usuário ID:</strong> {demand.usuario_id}</Typography>
                             <Stack direction="row" spacing={1} justifyContent="center">
                                 <IconButton
@@ -91,7 +91,7 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                                 lineHeight: '30px',
                             }}
                         >
-                            Nível
+                            Disciplina
                         </TableCell>
                         <TableCell
                             align="center"
