@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Typography, useMediaQuery, CircularProgress
+    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Typography, useMediaQuery, CircularProgress, IconButton
 } from "@mui/material";
 
-const StudentsTable = () => { 
+import { Edit } from "@mui/icons-material";
+
+const StudentsTable = () => {
     const isMobile = useMediaQuery('(max-width:600px)');
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -35,13 +37,13 @@ const StudentsTable = () => {
                 matricula: aluno.matricula,
                 nome: aluno.nome,
                 email: aluno.email,
-                curso: aluno.curso, 
-                condicao: aluno.condicao || 'Ativo', // Define 'Ativo' como padrão se não houver condição
+                curso: aluno.curso,
+                condicao: aluno.condicoes || 'Ativo', // Define 'Ativo' como padrão se não houver condição
             }));
             setStudents(formattedStudents);
         } catch (error) {
             console.error('Erro ao buscar alunos:', error);
-            setStudents([]); 
+            setStudents([]);
         } finally {
             setLoading(false);
         }
@@ -104,6 +106,9 @@ const StudentsTable = () => {
                                 <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: '#2f9e41', color: '#fff', borderRight: '1px solid #fff', padding: { xs: '4px', sm: '6px' }, height: '30px', lineHeight: '30px' }}>
                                     Condição
                                 </TableCell>
+                                <TableCell align="center" sx={{ fontWeight: 'bold', backgroundColor: '#2f9e41', color: '#fff', borderRight: '1px solid #fff', padding: { xs: '4px', sm: '6px' }, height: '30px', lineHeight: '30px' }}>
+                                    Ações
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -123,7 +128,12 @@ const StudentsTable = () => {
                                             {student.curso}
                                         </TableCell>
                                         <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0', padding: { xs: '4px', sm: '6px' }, height: '30px', lineHeight: '30px' }}>
-                                            {student.condicao}
+                                            {student.condicao+" "}
+                                        </TableCell>
+                                        <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0', padding: { xs: '4px', sm: '6px' }, height: '30px', lineHeight: '30px' }}>
+                                            <IconButton color='primary' onClick={() =>{}}>
+                                                <Edit />
+                                            </IconButton>
                                         </TableCell>
                                     </TableRow>
                                 ))

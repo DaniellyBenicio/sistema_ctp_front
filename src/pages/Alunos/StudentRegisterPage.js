@@ -82,7 +82,7 @@ const StudentRegisterPage = () => {
         id: student.matricula,
         nome: student.nome,
         email: student.email,
-        curso: student.curso,
+        curso: student.curso.nome,
         condicoes: student.condicoes || [], // Carrega condições existentes do backend
       };
       const newStudentsData = [...studentsData];
@@ -139,7 +139,7 @@ const StudentRegisterPage = () => {
         if (aluno.id) { // Só envia se o aluno foi buscado/cadastrado
           const condicoesIds = aluno.condicoes.map((condicao) => condicao.id);
           await api.post(
-            '/alunos/condicoes',
+            '/alunos/adicionar-condicao',
             { matricula: aluno.id, condicoes: condicoesIds },
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -307,7 +307,7 @@ const StudentRegisterPage = () => {
           sx={{ maxWidth: '150px' }}
         >
           Fechar
-       357      </Button>
+        </Button>
       </Box>
     </Box>
   );

@@ -58,7 +58,6 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
       }
     }
 
-    console.log('Novas condições selecionadas:', newSelectedCondicoes); 
     onCondicaoChange(newSelectedCondicoes);
   };
 

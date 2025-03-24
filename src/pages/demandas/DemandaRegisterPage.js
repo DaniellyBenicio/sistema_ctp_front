@@ -137,8 +137,8 @@ const DemandaRegisterPage = () => {
           id: student.matricula,
           nome: student.nome,
           email: student.email,
-          curso: student.curso,
-          condicoes: [],
+          curso: student.curso.nome,
+          condicoes:student.condicoes|| [],
         };
         const newStudentsData = [...studentsData];
         newStudentsData[index] = mappedStudent;
@@ -202,7 +202,6 @@ const DemandaRegisterPage = () => {
         usuario_id: userId,
         descricao: formData.descricao,
         status: formData.status,
-        nivel: formData.nivel,
         disciplina: formData.disciplina,
         usuariosEncaminhados: formData.usuariosEncaminhados.map((user) => user.id),
         alunos: formData.alunos.map((aluno) => ({
@@ -376,24 +375,6 @@ const DemandaRegisterPage = () => {
               inputProps={{ maxLength: 100 }}
               sx={{ bgcolor: '#fff', borderRadius: '8px', flex: '1 1 200px', minWidth: '200px' }}
             />
-            <FormControl sx={{ flex: '1 1 200px', minWidth: '200px' }}>
-              <InputLabel sx={{ fontSize: '0.875rem', color: formData.nivel ? INSTITUTIONAL_COLOR : 'rgba(0, 0, 0, 0.6)' }}>
-                Nível *
-              </InputLabel>
-              <StyledSelect
-                name="nivel"
-                value={formData.nivel}
-                onChange={handleChange}
-                required
-                sx={{ bgcolor: '#fff', borderRadius: '8px' }}
-              >
-                {nivelOptions.map((nivelItem) => (
-                  <MenuItem key={nivelItem.id} value={nivelItem.id}>
-                    {nivelItem.nome}
-                  </MenuItem>
-                ))}
-              </StyledSelect>
-            </FormControl>
             <StyledTextField
               label="Status"
               value="Aberta"
