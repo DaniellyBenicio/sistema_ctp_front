@@ -54,6 +54,8 @@ const StudentRegisterPage = () => {
     alunos: [],
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
 
   const handleMatriculaChange = (index, value) => {
@@ -66,10 +68,11 @@ const StudentRegisterPage = () => {
   const handleSearchByMatricula = async (index) => {
     const matriculaInput = matriculaInputs[index];
     if (!matriculaInput) {
-      console.log('Por favor, insira um número de matrícula.');
+      setError('Por favor, insira um número de matrícula.');
       return;
     }
     setLoading(true);
+    setError(null);
     try {
       const token = localStorage.getItem('token');
       const response = await api.get(`/alunos/${matriculaInput}`, {
@@ -82,8 +85,8 @@ const StudentRegisterPage = () => {
         id: student.matricula,
         nome: student.nome,
         email: student.email,
-        curso: student.curso.nome,
-        condicoes: student.condicoes || [], // Carrega condições existentes do backend
+        curso: student.curso || 'Curso não informado',
+        condicoes: student.condicoes || [],
       };
       const newStudentsData = [...studentsData];
       newStudentsData[index] = mappedStudent;
@@ -91,14 +94,12 @@ const StudentRegisterPage = () => {
 
       setFormData((prev) => {
         const newAlunos = [...prev.alunos];
-        const isAlreadyAdded = newAlunos.some((a) => a.id === mappedStudent.id);
-        if (!isAlreadyAdded || !newAlunos[index]) {
-          newAlunos[index] = mappedStudent;
-        }
+        newAlunos[index] = mappedStudent;
         return { ...prev, alunos: newAlunos };
       });
     } catch (err) {
-      console.error('Erro ao buscar aluno:', err);
+      setError('Aluno não encontrado. Verifique a matrícula e tente novamente.');
+      console.error('Erro ao buscar aluno:', err.response?.data || err.message);
       const newStudentsData = [...studentsData];
       newStudentsData[index] = null;
       setStudentsData(newStudentsData);
@@ -131,25 +132,48 @@ const StudentRegisterPage = () => {
     setFormData((prev) => ({ ...prev, alunos: newAlunos }));
   };
 
+  const isSaveEnabled = () => {
+    return (
+      formData.alunos.length > 0 &&
+      formData.alunos.every((aluno) => aluno.id && aluno.condicoes.length > 0)
+    );
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
+    setError(null);
+    setSuccess(null);
+
     try {
+      localStorage.setItem('alunos_draft', JSON.stringify(formData.alunos));
+      setSuccess('Dados salvos localmente. Enviando ao servidor...');
+
       const token = localStorage.getItem('token');
       for (const aluno of formData.alunos) {
-        if (aluno.id) { // Só envia se o aluno foi buscado/cadastrado
+        if (aluno.id) {
           const condicoesIds = aluno.condicoes.map((condicao) => condicao.id);
-          await api.post(
-            '/alunos/adicionar-condicao',
-            { matricula: aluno.id, condicoes: condicoesIds },
-            { headers: { Authorization: `Bearer ${token}` } }
+          const response = await api.post(
+            '/cadastrar-aluno',
+            {
+              matricula: aluno.id,
+              nome: aluno.nome,
+              email: aluno.email,
+              curso: aluno.curso,
+              condicoes: condicoesIds,
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
           );
+          console.log('Aluno cadastrado:', response.data);
         }
       }
-      alert('Condições salvas com sucesso!');
-      navigate('/alunos');
+      setSuccess('Alunos cadastrados com sucesso!');
+      localStorage.removeItem('alunos_draft');
+      setTimeout(() => navigate('/alunos'), 2000);
     } catch (err) {
-      console.error('Erro ao salvar condições:', err);
-      alert('Erro ao salvar as condições. Tente novamente.');
+      setError(err.response?.data?.mensagem || 'Erro ao cadastrar alunos');
+      console.error('Erro ao cadastrar alunos:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
@@ -291,11 +315,22 @@ const StudentRegisterPage = () => {
         </StyledPaper>
       ))}
 
+      {error && (
+        <Typography color="error" align="center" sx={{ my: 2 }}>
+          {error}
+        </Typography>
+      )}
+      {success && (
+        <Typography color="success.main" align="center" sx={{ my: 2 }}>
+          {success}
+        </Typography>
+      )}
+
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <StyledButton
           variant="contained"
           onClick={handleSubmit}
-          disabled={loading || formData.alunos.length === 0 || !formData.alunos.some(aluno => aluno.id)}
+          disabled={loading || !isSaveEnabled()}
           sx={{ bgcolor: INSTITUTIONAL_COLOR, '&:hover': { bgcolor: '#265b28' } }}
         >
           {loading ? <CircularProgress size={24} color="inherit" /> : 'Salvar'}

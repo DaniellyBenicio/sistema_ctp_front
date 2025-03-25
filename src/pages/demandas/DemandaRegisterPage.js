@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Button, TextField, CircularProgress, FormControl, Select, MenuItem,
-  Typography, Divider, Box, Paper, InputLabel
+  Button, TextField, CircularProgress, FormControl, Select, InputLabel,
+  Typography, Divider, Box, Paper
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import api from '../../service/api';
-import UserListsDemands from './UserListsDemands';
 import AmparoLegalList from './AmparoLegalList';
 import CondicaoList from './CondicaoList';
 import { jwtDecode } from 'jwt-decode';
@@ -15,6 +14,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CloseIcon from '@mui/icons-material/Close';
+import CustomAlert from '../../components/alert/CustomAlert';
 
 const INSTITUTIONAL_COLOR = '#307c34';
 
@@ -60,10 +60,7 @@ const DemandaRegisterPage = () => {
   const [formData, setFormData] = useState({
     descricao: '',
     status: true,
-    nivel: '',
     disciplina: '',
-    condicao: '',
-    usuariosEncaminhados: [],
     alunos: [],
     amparoLegal: [],
   });
@@ -72,20 +69,10 @@ const DemandaRegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [nivelOptions, setNivelOptions] = useState([]);
+  const [alertOpen, setAlertOpen] = useState(false);
   const token = localStorage.getItem('token');
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-
-  const fetchOptions = async () => {
-    try {
-      const nivelResponse = await api.get('/demandaniveis');
-      setNivelOptions(nivelResponse.data);
-    } catch (err) {
-      setError('Erro ao buscar opções de níveis');
-      console.error('Erro ao buscar opções:', err);
-    }
-  };
 
   const getUserId = () => {
     const decoded = jwtDecode(token);
@@ -93,7 +80,6 @@ const DemandaRegisterPage = () => {
   };
 
   useEffect(() => {
-    fetchOptions();
     getUserId();
   }, []);
 
@@ -109,20 +95,12 @@ const DemandaRegisterPage = () => {
     setMatriculaInputs(newMatriculaInputs);
   };
 
-  const handleUserChange = (newSelectedUsers) => {
-    setFormData((prev) => ({ ...prev, usuariosEncaminhados: newSelectedUsers }));
-  };
-
   const handleAmparoChange = (newSelectedAmparos) => {
     setFormData((prev) => ({ ...prev, amparoLegal: newSelectedAmparos }));
   };
 
   const handleSearchByMatricula = async (index) => {
     const matriculaInput = matriculaInputs[index];
-    if (!matriculaInput) {
-      setError('Por favor, insira um número de matrícula.');
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
@@ -134,11 +112,11 @@ const DemandaRegisterPage = () => {
       const student = response.data;
       if (student?.nome) {
         const mappedStudent = {
-          id: student.matricula,
+          id: student.matricula || `temp-${Date.now()}-${index}`,
           nome: student.nome,
-          email: student.email,
-          curso: student.curso.nome,
-          condicoes:student.condicoes|| [],
+          email: student.email || '',
+          curso: student.curso || 'Curso não informado',
+          condicoes: student.condicoes || [],
         };
         const newStudentsData = [...studentsData];
         newStudentsData[index] = mappedStudent;
@@ -154,12 +132,14 @@ const DemandaRegisterPage = () => {
         });
       } else {
         setError('Aluno não encontrado.');
+        setAlertOpen(true);
         const newStudentsData = [...studentsData];
         newStudentsData[index] = null;
         setStudentsData(newStudentsData);
       }
     } catch (err) {
       setError('Erro ao buscar aluno. Verifique a matrícula e tente novamente.');
+      setAlertOpen(true);
       console.error('Erro ao buscar aluno:', err.response?.data || err.message);
       const newStudentsData = [...studentsData];
       newStudentsData[index] = null;
@@ -202,22 +182,29 @@ const DemandaRegisterPage = () => {
         usuario_id: userId,
         descricao: formData.descricao,
         status: formData.status,
-        disciplina: formData.disciplina,
-        usuariosEncaminhados: formData.usuariosEncaminhados.map((user) => user.id),
+        disciplina: formData.disciplina || null,
         alunos: formData.alunos.map((aluno) => ({
-          id: aluno.id,
+          id: aluno.id || null,
           condicoes: aluno.condicoes.map(c => c.id),
-        })).filter((aluno) => aluno.id),
+        })).filter((aluno) => aluno.id || aluno.nome),
         amparoLegal: formData.amparoLegal.map((amparo) => amparo.id),
       });
       setSuccess('Demanda cadastrada com sucesso!');
+      setAlertOpen(true);
       setTimeout(() => navigate('/demands'), 2000);
     } catch (err) {
       setError(err.response?.data?.mensagem || 'Erro ao cadastrar a demanda');
+      setAlertOpen(true);
       console.error('Erro ao criar demanda:', err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
+    setError(null);
+    setSuccess(null);
   };
 
   return (
@@ -264,7 +251,6 @@ const DemandaRegisterPage = () => {
               <StyledButton
                 variant="contained"
                 onClick={() => handleSearchByMatricula(index)}
-                disabled={loading}
                 startIcon={<SearchIcon />}
                 sx={{ bgcolor: INSTITUTIONAL_COLOR, '&:hover': { bgcolor: '#265b28' }, minWidth: '120px', height: '40px' }}
               >
@@ -277,6 +263,16 @@ const DemandaRegisterPage = () => {
                 value={studentsData[index]?.nome || ''}
                 variant="outlined"
                 disabled
+                onChange={(e) => {
+                  const newStudentsData = [...studentsData];
+                  newStudentsData[index] = { ...newStudentsData[index], nome: e.target.value, id: `temp-${Date.now()}-${index}` };
+                  setStudentsData(newStudentsData);
+                  setFormData((prev) => {
+                    const newAlunos = [...prev.alunos];
+                    newAlunos[index] = { ...newAlunos[index], nome: e.target.value, id: `temp-${Date.now()}-${index}` };
+                    return { ...prev, alunos: newAlunos };
+                  });
+                }}
                 sx={{ bgcolor: '#fff', borderRadius: '8px' }}
               />
               <StyledTextField
@@ -284,6 +280,16 @@ const DemandaRegisterPage = () => {
                 value={studentsData[index]?.email || ''}
                 variant="outlined"
                 disabled
+                onChange={(e) => {
+                  const newStudentsData = [...studentsData];
+                  newStudentsData[index] = { ...newStudentsData[index], email: e.target.value };
+                  setStudentsData(newStudentsData);
+                  setFormData((prev) => {
+                    const newAlunos = [...prev.alunos];
+                    newAlunos[index] = { ...newAlunos[index], email: e.target.value };
+                    return { ...prev, alunos: newAlunos };
+                  });
+                }}
                 sx={{ bgcolor: '#fff', borderRadius: '8px' }}
               />
               <StyledTextField
@@ -291,6 +297,16 @@ const DemandaRegisterPage = () => {
                 value={studentsData[index]?.curso || ''}
                 variant="outlined"
                 disabled
+                onChange={(e) => {
+                  const newStudentsData = [...studentsData];
+                  newStudentsData[index] = { ...newStudentsData[index], curso: e.target.value };
+                  setStudentsData(newStudentsData);
+                  setFormData((prev) => {
+                    const newAlunos = [...prev.alunos];
+                    newAlunos[index] = { ...newAlunos[index], curso: e.target.value };
+                    return { ...prev, alunos: newAlunos };
+                  });
+                }}
                 sx={{ bgcolor: '#fff', borderRadius: '8px' }}
               />
               <Box sx={{ gridColumn: { xs: '1 / 2', sm: '2 / 3' } }}>
@@ -301,6 +317,7 @@ const DemandaRegisterPage = () => {
                   <StyledSelect
                     value={formData.alunos[index]?.condicoes.map(c => c.id) || []}
                     multiple
+                    disabled
                     renderValue={(selected) => formData.alunos[index]?.condicoes.map(c => c.nome).join(', ') || 'Nenhuma condição selecionada'}
                     sx={{ bgcolor: '#fff', borderRadius: '8px' }}
                     MenuProps={{
@@ -366,12 +383,11 @@ const DemandaRegisterPage = () => {
           />
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', width: '100%' }}>
             <StyledTextField
-              label="Disciplina"
+              label="Disciplina (opcional)"
               name="disciplina"
               value={formData.disciplina}
               onChange={handleChange}
               variant="outlined"
-              required
               inputProps={{ maxLength: 100 }}
               sx={{ bgcolor: '#fff', borderRadius: '8px', flex: '1 1 200px', minWidth: '200px' }}
             />
@@ -389,32 +405,12 @@ const DemandaRegisterPage = () => {
           <AmparoLegalList selectedAmparos={formData.amparoLegal} onAmparoChange={handleAmparoChange} />
         </StyledPaper>
 
-        <Divider sx={{ my: 4, borderColor: '#e0e0e0', width: '100%' }} />
-
-        <StyledPaper elevation={3} sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ mb: 2, fontWeight: 'medium', color: INSTITUTIONAL_COLOR }}>
-            Encaminhamento
-          </Typography>
-          <UserListsDemands selectedUsers={formData.usuariosEncaminhados} onUserChange={handleUserChange} />
-        </StyledPaper>
-
-        {error && (
-          <Typography
-            color="error"
-            align="center"
-            sx={{ my: 2, bgcolor: '#ffebee', p: 1, borderRadius: '8px', width: '100%' }}
-          >
-            {error}
-          </Typography>
-        )}
-        {success && (
-          <Typography
-            color="success"
-            align="center"
-            sx={{ my: 2, bgcolor: '#e8f5e9', p: 1, borderRadius: '8px', width: '100%' }}
-          >
-            {success}
-          </Typography>
+        {alertOpen && (
+          <CustomAlert
+            message={success || error}
+            type={success ? 'success' : 'error'}
+            onClose={handleCloseAlert}
+          />
         )}
 
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, width: '100%' }}>
@@ -424,11 +420,8 @@ const DemandaRegisterPage = () => {
             disabled={
               loading ||
               !formData.descricao ||
-              !formData.nivel ||
-              !formData.disciplina ||
-              formData.usuariosEncaminhados.length === 0 ||
               formData.alunos.length === 0 ||
-              formData.alunos.some((aluno) => !aluno.id)
+              formData.alunos.some((aluno) => !aluno.nome || aluno.condicoes.length === 0)
             }
             startIcon={<SaveIcon />}
             sx={{ bgcolor: INSTITUTIONAL_COLOR, '&:hover': { bgcolor: '#265b28' }, minWidth: '150px', height: '40px' }}

@@ -2,54 +2,44 @@ import React, { useEffect, useState } from 'react';
 import {
     Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Typography, useMediaQuery, CircularProgress, IconButton
 } from "@mui/material";
-
 import { Edit } from "@mui/icons-material";
+import api from '../../service/api';
 
 const StudentsTable = () => {
     const isMobile = useMediaQuery('(max-width:600px)');
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    // Função para buscar os alunos da API
     const fetchStudents = async () => {
         setLoading(true);
+        setError(null);
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Token não encontrado');
+            const response = await api.get('/alunos');
+            if (!response.data || !Array.isArray(response.data)) {
+                throw new Error('Formato de resposta inválido');
             }
-
-            const response = await fetch('http://localhost:3000/api/alunos', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao buscar alunos');
-            }
-
-            const data = await response.json();
-            // Formata os dados para corresponder ao esperado pelo StudentsTable
-            const formattedStudents = data.map(aluno => ({
+            const formattedStudents = response.data.map(aluno => ({
                 matricula: aluno.matricula,
                 nome: aluno.nome,
                 email: aluno.email,
                 curso: aluno.curso,
-                condicao: aluno.condicoes || 'Ativo', // Define 'Ativo' como padrão se não houver condição
+                condicao: aluno.condicoes.length > 0 ? aluno.condicoes[0] : 'Ativo',
             }));
             setStudents(formattedStudents);
-        } catch (error) {
-            console.error('Erro ao buscar alunos:', error);
+        } catch (err) {
+            setError('Erro ao carregar alunos');
+            console.error('Erro ao buscar alunos:', err);
+            if (err.response) {
+                console.error('Status:', err.response.status);
+                console.error('Dados do erro:', err.response.data);
+            }
             setStudents([]);
         } finally {
             setLoading(false);
         }
     };
 
-    // Busca os alunos ao montar o componente
     useEffect(() => {
         fetchStudents();
     }, []);
@@ -59,6 +49,8 @@ const StudentsTable = () => {
             <Stack spacing={1} sx={{ width: '100%' }}>
                 {loading ? (
                     <Typography align="center">Carregando...</Typography>
+                ) : error ? (
+                    <Typography align="center" color="error">{error}</Typography>
                 ) : students.length > 0 ? (
                     students.map((student) => (
                         <Paper key={student.matricula} sx={{ p: 1 }}>
@@ -80,12 +72,13 @@ const StudentsTable = () => {
 
     return (
         <Stack spacing={3} sx={{ width: '100%', maxWidth: '1200px', margin: '0 auto', paddingTop: '40px' }}>
-            {/* Tabela */}
             {loading ? (
                 <Stack alignItems="center">
                     <CircularProgress />
                     <Typography>Carregando...</Typography>
                 </Stack>
+            ) : error ? (
+                <Typography align="center" color="error">{error}</Typography>
             ) : (
                 <TableContainer component={Paper}>
                     <Table>
@@ -128,10 +121,10 @@ const StudentsTable = () => {
                                             {student.curso}
                                         </TableCell>
                                         <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0', padding: { xs: '4px', sm: '6px' }, height: '30px', lineHeight: '30px' }}>
-                                            {student.condicao+" "}
+                                            {student.condicao}
                                         </TableCell>
                                         <TableCell align="center" sx={{ borderRight: '1px solid #e0e0e0', padding: { xs: '4px', sm: '6px' }, height: '30px', lineHeight: '30px' }}>
-                                            <IconButton color='primary' onClick={() =>{}}>
+                                            <IconButton color="primary" onClick={() => { }}>
                                                 <Edit />
                                             </IconButton>
                                         </TableCell>
@@ -139,7 +132,7 @@ const StudentsTable = () => {
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center">
+                                    <TableCell colSpan={6} align="center">
                                         Nenhum estudante encontrado.
                                     </TableCell>
                                 </TableRow>
