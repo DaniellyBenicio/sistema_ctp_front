@@ -3,18 +3,16 @@ import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SearchBar from "../../components/SearchBar";
 import StudentsTable from './StudentsTable';
-import StudentRegisterPage from './StudentRegisterPage';
 
 const Students = () => {
   const [searchValue, setSearchValue] = useState('');
-  const navigate = useNavigate(); // Hook para navegação
-
+  const navigate = useNavigate(); 
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   };
 
   const handleNewStudent = () => {
-    navigate('/alunos/register'); // Redireciona para a nova rota
+    navigate('/alunos/register'); 
   };
 
   return (

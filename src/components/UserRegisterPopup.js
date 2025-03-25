@@ -1,15 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, FormControl, FormHelperText, Select, MenuItem, Typography, IconButton } from '@mui/material';
-import { Email, Lock, Close } from '@mui/icons-material';
-import api from '../service/api';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  CircularProgress,
+  FormControl,
+  FormHelperText,
+  Select,
+  MenuItem,
+  Typography,
+  IconButton,
+} from "@mui/material";
+import { Email, Lock, Close } from "@mui/icons-material";
+import api from "../service/api";
 
 const UserRegisterPopup = ({ open, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    nome: '',
-    matricula: '',
-    email: '',
-    senha: '',
-    cargo: '',
+    nome: "",
+    matricula: "",
+    email: "",
+    senha: "",
+    cargo: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,12 +32,14 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
 
   const fetchCargos = async () => {
     try {
-      const response = await api.get('/cargos');
-      const filteredCargos = response.data.filter(cargo => cargo.nome.toLowerCase() !== 'admin');
+      const response = await api.get("/cargos");
+      const filteredCargos = response.data.filter(
+        (cargo) => cargo.nome.toLowerCase() !== "admin"
+      );
       setCargos(filteredCargos);
     } catch (err) {
-      setError('Erro ao buscar os cargos');
-      console.error('Erro ao buscar cargos:', err);
+      setError("Erro ao buscar os cargos");
+      console.error("Erro ao buscar cargos:", err);
     }
   };
 
@@ -42,17 +58,17 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-  
+
     try {
-      const response = await api.post('/auth/cadastro', formData);
-      setSuccess('Usuário cadastrado com sucesso!');
+      const response = await api.post("/auth/cadastro", formData);
+      setSuccess("Usuário cadastrado com sucesso!");
       onSave(response.data);
-      setFormData({ nome: '', matricula: '', email: '', senha: '', cargo: '' });
+      setFormData({ nome: "", matricula: "", email: "", senha: "", cargo: "" });
       setTimeout(() => {
         onClose();
       }, 2000);
     } catch (err) {
-      setError(err.response?.data?.mensagem || 'Erro ao cadastrar o usuário');
+      setError(err.response?.data?.mensagem || "Erro ao cadastrar o usuário");
     } finally {
       setLoading(false);
     }
@@ -62,23 +78,29 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Typography component="h1" variant="h5" sx={{ textAlign: 'center', mb: 2 }}>
+        <Typography
+          component="h1"
+          variant="h5"
+          sx={{ textAlign: "center", mb: 2 }}
+        >
           Cadastrar Usuário
         </Typography>
         <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: 'absolute',
+            position: "absolute",
             right: 8,
             top: 8,
-            color: 'grey.500',
+            color: "grey.500",
           }}
         >
           <Close />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <DialogContent
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      >
         <TextField
           fullWidth
           margin="normal"
@@ -97,9 +119,11 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           value={formData.email}
           onChange={handleChange}
           error={!!formData.email && !isEmailValid()}
-          helperText={!!formData.email && !isEmailValid() ? 'Email inválido' : ''}
+          helperText={
+            !!formData.email && !isEmailValid() ? "Email inválido" : ""
+          }
           InputProps={{
-            startAdornment: <Email sx={{ color: 'action.active', mr: 1 }} />,
+            startAdornment: <Email sx={{ color: "action.active", mr: 1 }} />,
           }}
         />
         <TextField
@@ -111,7 +135,7 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           value={formData.senha}
           onChange={handleChange}
           InputProps={{
-            startAdornment: <Lock sx={{ color: 'action.active', mr: 1 }} />,
+            startAdornment: <Lock sx={{ color: "action.active", mr: 1 }} />,
           }}
         />
         <TextField
@@ -150,23 +174,25 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           </Typography>
         )}
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'center', pb: 2 }}>
+      <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
         <Button
           type="button"
           fullWidth
           variant="contained"
-          disabled={loading || !isEmailValid() || !formData.nome || !formData.senha}
+          disabled={
+            loading || !isEmailValid() || !formData.nome || !formData.senha
+          }
           sx={{
             mt: 3,
             mb: 2,
-            bgcolor: '#2f9e41',
-            '&:hover': {
-              bgcolor: '#278735'
-            }
+            bgcolor: "#2f9e41",
+            "&:hover": {
+              bgcolor: "#278735",
+            },
           }}
           onClick={handleSubmit}
         >
-          {loading ? <CircularProgress size={24} /> : 'Cadastrar'}
+          {loading ? <CircularProgress size={24} /> : "Cadastrar"}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,31 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  FormControl, FormHelperText, List, ListItem, ListItemText, Checkbox, Typography, Box,
-  TextField, Button
-} from '@mui/material';
-import api from '../../service/api';
+  FormControl,
+  FormHelperText,
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
+  Typography,
+  Box,
+  TextField,
+  Button,
+} from "@mui/material";
+import api from "../../service/api";
 
 const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
   const [amparos, setAmparos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [novoAmparo, setNovoAmparo] = useState('');
+  const [novoAmparo, setNovoAmparo] = useState("");
   const [outraSelecionada, setOutraSelecionada] = useState(false);
 
   const fetchAmparos = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/amparos-legais');
+      const response = await api.get("/amparos-legais");
       if (!Array.isArray(response.data)) {
-        throw new Error('Formato de resposta inválido');
+        throw new Error("Formato de resposta inválido");
       }
       setAmparos(response.data);
     } catch (err) {
-      setError('Erro ao carregar amparos legais');
-      console.error('Erro ao buscar amparos:', err);
+      setError("Erro ao carregar amparos legais");
+      console.error("Erro ao buscar amparos:", err);
       if (err.response) {
-        console.error('Status:', err.response.status);
-        console.error('Dados do erro:', err.response.data);
+        console.error("Status:", err.response.status);
+        console.error("Dados do erro:", err.response.data);
       }
     } finally {
       setLoading(false);
@@ -37,34 +45,36 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
   }, []);
 
   const handleToggle = (amparo) => {
-    const isOutra = amparo.nome.toLowerCase() === 'outra';
+    const isOutra = amparo.nome.toLowerCase() === "outra";
     let newSelectedAmparos = [...selectedAmparos];
-    // Usa 'id' se existir, senão usa 'nome' como fallback
-    const identifier = amparo.id !== undefined ? 'id' : 'nome';
-    const currentIndex = newSelectedAmparos.findIndex(a => a[identifier] === amparo[identifier]);
+    const identifier = amparo.id !== undefined ? "id" : "nome";
+    const currentIndex = newSelectedAmparos.findIndex(
+      (a) => a[identifier] === amparo[identifier]
+    );
 
     if (isOutra) {
       if (currentIndex === -1) {
-        newSelectedAmparos = [amparo]; // Apenas "Outra"
+        newSelectedAmparos = [];
         setOutraSelecionada(true);
       } else {
-        newSelectedAmparos = []; // Remove "Outra"
+        newSelectedAmparos = [];
         setOutraSelecionada(false);
-        setNovoAmparo('');
+        setNovoAmparo("");
       }
     } else {
       if (currentIndex === -1) {
-        newSelectedAmparos.push(amparo); // Adiciona o item clicado
+        newSelectedAmparos.push(amparo);
       } else {
-        newSelectedAmparos.splice(currentIndex, 1); // Remove o item clicado
+        newSelectedAmparos.splice(currentIndex, 1);
       }
-      // Remove "Outra" se estiver presente
-      newSelectedAmparos = newSelectedAmparos.filter(a => a.nome.toLowerCase() !== 'outra');
+      newSelectedAmparos = newSelectedAmparos.filter(
+        (a) => a.nome.toLowerCase() !== "outra"
+      );
       setOutraSelecionada(false);
-      setNovoAmparo('');
+      setNovoAmparo("");
     }
 
-    console.log('Novo selectedAmparos:', newSelectedAmparos); // Para depuração
+    console.log("Novo selectedAmparos:", newSelectedAmparos);
     onAmparoChange(newSelectedAmparos);
   };
 
@@ -75,28 +85,30 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
   const handleSalvarAmparo = async (e) => {
     e.stopPropagation();
     if (!novoAmparo.trim()) {
-      setError('Digite um amparo legal válido');
+      setError("Digite um amparo legal válido");
       return;
     }
 
     setLoading(true);
     try {
-      await api.post('/amparos-legais', { nome: novoAmparo });
-      setNovoAmparo('');
+      const response = await api.post("/amparos-legais", { nome: novoAmparo });
+      const novoAmparoAdicionado = response.data;
+      setNovoAmparo("");
       setOutraSelecionada(false);
       await fetchAmparos();
       setError(null);
-      const updatedAmparos = await api.get('/amparos-legais');
-      const novoAmparoAdicionado = updatedAmparos.data.find(a => a.nome === novoAmparo);
-      if (novoAmparoAdicionado) {
-        onAmparoChange([...selectedAmparos.filter(a => a.nome.toLowerCase() !== 'outra'), novoAmparoAdicionado]);
-      }
+
+      const newSelectedAmparos = [
+        ...selectedAmparos.filter((a) => a.nome.toLowerCase() !== "outra"),
+        novoAmparoAdicionado,
+      ];
+      onAmparoChange(newSelectedAmparos);
     } catch (err) {
-      setError(err.response?.data?.mensagem || 'Erro ao salvar o novo amparo');
-      console.error('Erro ao salvar amparo:', err);
+      setError(err.response?.data?.mensagem || "Erro ao salvar o novo amparo");
+      console.error("Erro ao salvar amparo:", err);
       if (err.response) {
-        console.error('Status:', err.response.status);
-        console.error('Dados do erro:', err.response.data);
+        console.error("Status:", err.response.status);
+        console.error("Dados do erro:", err.response.data);
       }
     } finally {
       setLoading(false);
@@ -105,14 +117,14 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
 
   return (
     <FormControl fullWidth margin="normal">
-      <FormHelperText id="amparos">Amparo Legal</FormHelperText>
+      <FormHelperText id="amparos"></FormHelperText>
       <Box
         sx={{
           maxHeight: 200,
-          overflow: 'auto',
-          border: '1px solid #ccc',
+          overflow: "auto",
+          border: "1px solid #ccc",
           borderRadius: 1,
-          bgcolor: '#fff',
+          bgcolor: "#fff",
         }}
       >
         {loading ? (
@@ -127,9 +139,11 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
           <List>
             {amparos.map((amparo) => {
               const labelId = `checkbox-list-label-${amparo.id || amparo.nome}`;
-              const identifier = amparo.id !== undefined ? 'id' : 'nome';
-              const isSelected = selectedAmparos.some(a => a[identifier] === amparo[identifier]);
-              const isOutra = amparo.nome.toLowerCase() === 'outra';
+              const identifier = amparo.id !== undefined ? "id" : "nome";
+              const isSelected = selectedAmparos.some(
+                (a) => a[identifier] === amparo[identifier]
+              );
+              const isOutra = amparo.nome.toLowerCase() === "outra";
 
               return (
                 <ListItem
@@ -140,10 +154,17 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
                     e.stopPropagation();
                     handleToggle(amparo);
                   }}
-                  sx={{ padding: '0 8px' }}
+                  sx={{ padding: "0 8px" }}
                 >
                   {isOutra && outraSelecionada ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', gap: 1 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        width: "100%",
+                        gap: 1,
+                      }}
+                    >
                       <TextField
                         fullWidth
                         value={novoAmparo}
@@ -159,9 +180,9 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
                         onClick={handleSalvarAmparo}
                         disabled={loading || !novoAmparo.trim()}
                         sx={{
-                          bgcolor: '#2f9e41',
-                          '&:hover': { bgcolor: '#278735' },
-                          minWidth: '80px',
+                          bgcolor: "#2f9e41",
+                          "&:hover": { bgcolor: "#278735" },
+                          minWidth: "80px",
                         }}
                       >
                         Salvar
@@ -174,7 +195,7 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
                         checked={isSelected}
                         tabIndex={-1}
                         disableRipple
-                        inputProps={{ 'aria-labelledby': labelId }}
+                        inputProps={{ "aria-labelledby": labelId }}
                       />
                       <ListItemText id={labelId} primary={amparo.nome} />
                     </>

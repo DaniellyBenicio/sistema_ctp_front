@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
@@ -9,33 +9,33 @@ import DemandsTable from "./DemandsTable";
 export const Demands = () => {
   const [demands, setDemands] = useState([]);
   const [filteredDemands, setFilteredDemands] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const { userRole } = useOutletContext();
-  const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+  const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('User Role:', userRole);
+    console.log("User Role:", userRole);
     fetchDemands();
   }, [navigate, userRole]);
 
   const fetchDemands = async () => {
     try {
-      const response = await api.get('/minhas-demandas');
-      console.log('Dados da API:', response.data);
+      const response = await api.get("/minhas-demandas");
+      console.log("Dados da API:", response.data);
       const demandsData = response.data.demandas;
       if (!demandsData || !Array.isArray(demandsData)) {
-        throw new Error('Erro ao buscar demandas: formato inválido.');
+        throw new Error("Erro ao buscar demandas: formato inválido.");
       }
       setDemands(demandsData);
       setFilteredDemands(demandsData);
-      console.log('Demands atualizado:', demandsData);
+      console.log("Demands atualizado:", demandsData);
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      console.error("Erro na requisição:", error);
       setAlert({
         show: true,
-        message: 'Erro ao buscar demandas',
-        type: 'error'
+        message: "Erro ao buscar demandas",
+        type: "error",
       });
       setDemands([]);
       setFilteredDemands([]);
@@ -45,14 +45,14 @@ export const Demands = () => {
   const fetchDemandsByTermo = async (termo) => {
     try {
       const response = await api.get(`/demanda/busca/${termo}`);
-      console.log('Dados da busca:', response.data);
+      console.log("Dados da busca:", response.data);
       const demandsData = response.data.demandas || response.data;
       if (!demandsData || !Array.isArray(demandsData)) {
-        throw new Error('Erro ao buscar demandas por termo.');
+        throw new Error("Erro ao buscar demandas por termo.");
       }
       return demandsData;
     } catch (error) {
-      console.error('Erro ao buscar por termo:', error);
+      console.error("Erro ao buscar por termo:", error);
       return [];
     }
   };
@@ -63,68 +63,76 @@ export const Demands = () => {
 
     if (!value) {
       setFilteredDemands(demands);
-      console.log('FilteredDemands resetado para demands:', demands);
-      setAlert({ show: false, message: '', type: '' });
+      console.log("FilteredDemands resetado para demands:", demands);
+      setAlert({ show: false, message: "", type: "" });
       return;
     }
 
     const demandsByTermo = await fetchDemandsByTermo(value);
     if (demandsByTermo && demandsByTermo.length > 0) {
       setFilteredDemands(demandsByTermo);
-      console.log('FilteredDemands atualizado com busca:', demandsByTermo);
-      setAlert({ show: false, message: '', type: '' });
+      console.log("FilteredDemands atualizado com busca:", demandsByTermo);
+      setAlert({ show: false, message: "", type: "" });
       return;
     }
 
     setFilteredDemands([]);
-    console.log('FilteredDemands zerado por falta de resultados');
-    setAlert({ show: false, message: '', type: '' });
+    console.log("FilteredDemands zerado por falta de resultados");
+    setAlert({ show: false, message: "", type: "" });
   };
 
   const handleSendDemand = async (id) => {
     try {
       setDemands((prev) => prev.filter((d) => d.id !== id));
       setFilteredDemands((prev) => prev.filter((d) => d.id !== id));
-      setAlert({ show: true, message: 'Demanda enviada com sucesso', type: 'success' });
+      setAlert({
+        show: true,
+        message: "Demanda enviada com sucesso",
+        type: "success",
+      });
     } catch (error) {
-      console.error('Erro ao enviar demanda:', error);
-      setAlert({ show: true, message: 'Erro ao enviar demanda', type: 'error' });
+      console.error("Erro ao enviar demanda:", error);
+      setAlert({
+        show: true,
+        message: "Erro ao enviar demanda",
+        type: "error",
+      });
     }
   };
 
   const handleUpdateDemand = (demand) => {
-    console.log('Atualizar demanda:', demand);
+    console.log("Atualizar demanda:", demand);
     // Lógica de atualização a ser implementada
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        width: '100%',
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+        width: "100%",
         marginTop: 0,
-        padding: { xs: '2% 5%', sm: '2% 0%' },
+        padding: { xs: "2% 5%", sm: "2% 0%" },
       }}
     >
       {alert.show && (
         <CustomAlert
           message={alert.message}
           type={alert.type}
-          onClose={() => setAlert({ show: false, message: '', type: '' })}
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
         />
       )}
 
       <Typography
         variant="h5"
         sx={{
-          fontWeight: 'bold',
-          color: '#333',
+          fontWeight: "bold",
+          color: "#333",
           mb: 1,
-          textAlign: 'center',
+          textAlign: "center",
           fontFamily: '"Open Sans", sans-serif',
-          marginBottom: { xs: '16px', sm: '30px' },
+          marginBottom: { xs: "16px", sm: "30px" },
         }}
       >
         Lista de Demandas
@@ -132,29 +140,29 @@ export const Demands = () => {
 
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          justifyContent: 'space-between',
-          alignItems: { xs: 'stretch', sm: 'center' },
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "center" },
           gap: { xs: 1, sm: 2 },
           mb: 2,
-          width: { xs: '100%', sm: '90%' },
-          maxWidth: '1200px',
-          alignSelf: 'center',
+          width: { xs: "100%", sm: "90%" },
+          maxWidth: "1200px",
+          alignSelf: "center",
         }}
       >
         <SearchBar
           value={searchValue}
           onChange={handleSearchChange}
           sx={{
-            width: { xs: '100%', sm: '40%' },
+            width: { xs: "100%", sm: "40%" },
             flexGrow: 0,
-            height: { xs: 'auto', sm: '35px' },
-            '& .MuiInputBase-root': {
-              height: '35px',
-              fontSize: '0.875rem',
-              display: 'flex',
-              alignItems: 'center',
+            height: { xs: "auto", sm: "35px" },
+            "& .MuiInputBase-root": {
+              height: "35px",
+              fontSize: "0.875rem",
+              display: "flex",
+              alignItems: "center",
             },
           }}
         />
@@ -162,19 +170,19 @@ export const Demands = () => {
         <Button
           variant="contained"
           sx={{
-            bgcolor: '#2f9e41',
-            '&:hover': { bgcolor: '#257a33' },
-            minWidth: { xs: '100%', sm: '150px', md: '150px' },
+            bgcolor: "#2f9e41",
+            "&:hover": { bgcolor: "#257a33" },
+            minWidth: { xs: "100%", sm: "150px", md: "150px" },
             px: 2,
-            height: { xs: '35px', sm: '38px' },
-            fontSize: { xs: '0.75rem', sm: '0.875rem' },
-            padding: { xs: '4px 8px', sm: '6px 12px' },
-            textTransform: 'none',
-            marginBottom: '15px',
-            display: 'flex',
-            alignItems: 'center',
+            height: { xs: "35px", sm: "38px" },
+            fontSize: { xs: "0.75rem", sm: "0.875rem" },
+            padding: { xs: "4px 8px", sm: "6px 12px" },
+            textTransform: "none",
+            marginBottom: "15px",
+            display: "flex",
+            alignItems: "center",
           }}
-          onClick={() => navigate('/demands/register')} // Navigate to new page
+          onClick={() => navigate("/demands/register")} // Navigate to new page
         >
           Abrir Demanda
         </Button>
@@ -182,10 +190,10 @@ export const Demands = () => {
 
       <Box
         sx={{
-          width: { xs: '100%', sm: '90%' },
-          maxWidth: '1200px',
-          alignSelf: 'center',
-          mx: 'auto',
+          width: { xs: "100%", sm: "90%" },
+          maxWidth: "1200px",
+          alignSelf: "center",
+          mx: "auto",
         }}
       >
         {filteredDemands.length === 0 ? (
@@ -193,9 +201,15 @@ export const Demands = () => {
             variant="body2"
             color="textSecondary"
             align="center"
-            sx={{ mt: 2, fontSize: '0.875rem', fontFamily: '"Open Sans", sans-serif' }}
+            sx={{
+              mt: 2,
+              fontSize: "0.875rem",
+              fontFamily: '"Open Sans", sans-serif',
+            }}
           >
-            {searchValue ? 'Nenhum resultado encontrado' : 'Nenhuma demanda disponível'}
+            {searchValue
+              ? "Nenhum resultado encontrado"
+              : "Nenhuma demanda disponível"}
           </Typography>
         ) : (
           <DemandsTable

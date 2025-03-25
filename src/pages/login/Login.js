@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   TextField,
   Container,
@@ -7,17 +7,17 @@ import {
   Box,
   CircularProgress,
   InputAdornment,
-  IconButton
-} from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+  IconButton,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import { login } from "../../service/auth";
 
 const Login = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [focusedField, setFocusedField] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,13 +26,13 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       await login(email, password);
       onLogin();
     } catch (err) {
-      setError('Credenciais inválidas');
+      setError("Credenciais inválidas");
     } finally {
       setLoading(false);
     }
@@ -49,46 +49,46 @@ const Login = ({ onLogin }) => {
       component="main"
       maxWidth={false}
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        width: '100vw',
-        background: '#FFFFFF',
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        background: "#FFFFFF",
         padding: 0,
         margin: 0,
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          width: '100%',
+          display: "flex",
+          width: "100%",
           maxWidth: 800,
           height: 450,
           borderRadius: 4,
-          overflow: 'hidden',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+          overflow: "hidden",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
         }}
       >
         <Box
           sx={{
             flex: 1,
-            background: 'linear-gradient(135deg, #27AE60 0%, #2ECC71 100%)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
+            background: "linear-gradient(135deg, #27AE60 0%, #2ECC71 100%)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
             p: 6,
-            color: '#FFFFFF',
+            color: "#FFFFFF",
           }}
         >
           <Typography
             variant="h5"
             sx={{
-              textAlign: 'center',
-              maxWidth: '90%',
+              textAlign: "center",
+              maxWidth: "90%",
               lineHeight: 1.4,
-              fontWeight: 'bold',
+              fontWeight: "bold",
             }}
           >
             Seja Bem-Vindo! Coordenação Técnica Pedagógica
@@ -98,11 +98,11 @@ const Login = ({ onLogin }) => {
         <Box
           sx={{
             flex: 1.5,
-            backgroundColor: '#FFFFFF',
+            backgroundColor: "#FFFFFF",
             p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
           }}
         >
           <Typography
@@ -110,15 +110,15 @@ const Login = ({ onLogin }) => {
             variant="h5"
             sx={{
               mb: 3,
-              fontWeight: 'bold',
-              textAlign: 'center',
-              color: '#000000',
+              fontWeight: "bold",
+              textAlign: "center",
+              color: "#000000",
             }}
           >
             Login
           </Typography>
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
             <TextField
               fullWidth
               margin="normal"
@@ -126,29 +126,32 @@ const Login = ({ onLogin }) => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onFocus={() => setFocusedField('email')}
+              onFocus={() => setFocusedField("email")}
               onBlur={() => setFocusedField(null)}
               error={!!email && !isEmailValid()}
-              helperText={!!email && !isEmailValid() ? 'Email inválido' : ''}
+              helperText={!!email && !isEmailValid() ? "Email inválido" : ""}
               variant="outlined"
               InputLabelProps={{
-                shrink: focusedField === 'email' || email !== '',
+                shrink: focusedField === "email" || email !== "",
                 sx: {
-                  color: focusedField === 'email' || email !== '' ? '#27AE60' : 'text.secondary',
-                  fontSize: '1rem',
+                  color:
+                    focusedField === "email" || email !== ""
+                      ? "#27AE60"
+                      : "text.secondary",
+                  fontSize: "1rem",
                 },
               }}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px',
-                  '& fieldset': {
-                    borderColor: '#E0E0E0',
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
                   },
-                  '&:hover fieldset': {
-                    borderColor: '#27AE60',
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
                   },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#27AE60',
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
                   },
                 },
               }}
@@ -158,17 +161,20 @@ const Login = ({ onLogin }) => {
               fullWidth
               margin="normal"
               label="Senha"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onFocus={() => setFocusedField('password')}
+              onFocus={() => setFocusedField("password")}
               onBlur={() => setFocusedField(null)}
               variant="outlined"
               InputLabelProps={{
-                shrink: focusedField === 'password' || password !== '',
+                shrink: focusedField === "password" || password !== "",
                 sx: {
-                  color: focusedField === 'password' || password !== '' ? '#27AE60' : 'text.secondary',
-                  fontSize: '1rem',
+                  color:
+                    focusedField === "password" || password !== ""
+                      ? "#27AE60"
+                      : "text.secondary",
+                  fontSize: "1rem",
                 },
               }}
               InputProps={{
@@ -185,42 +191,46 @@ const Login = ({ onLogin }) => {
                 ),
               }}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px',
-                  '& fieldset': {
-                    borderColor: '#E0E0E0',
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
                   },
-                  '&:hover fieldset': {
-                    borderColor: '#27AE60',
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
                   },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#27AE60',
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
                   },
                 },
               }}
             />
 
             {error && (
-              <Typography color="error" variant="body2" sx={{ mt: 1, textAlign: 'left' }}>
+              <Typography
+                color="error"
+                variant="body2"
+                sx={{ mt: 1, textAlign: "left" }}
+              >
                 {error}
               </Typography>
             )}
 
             <Box
               sx={{
-                display: 'flex',
-                justifyContent: 'flex-start',
+                display: "flex",
+                justifyContent: "flex-start",
                 mt: 1,
               }}
             >
               <Button
                 sx={{
-                  textTransform: 'none',
-                  fontSize: '0.875rem',
-                  color: '#27AE60',
-                  '&:hover': { textDecoration: 'underline', color: '#2ECC71' },
+                  textTransform: "none",
+                  fontSize: "0.875rem",
+                  color: "#27AE60",
+                  "&:hover": { textDecoration: "underline", color: "#2ECC71" },
                 }}
-                onClick={() => navigate('/forgot-password')}
+                onClick={() => navigate("/forgot-password")}
               >
                 Esqueceu a senha?
               </Button>
@@ -231,22 +241,31 @@ const Login = ({ onLogin }) => {
               fullWidth
               variant="contained"
               disabled={loading || !isEmailValid() || !password}
-              onClick={() => navigate('/MainScreen')}
+              onClick={() => navigate("/MainScreen")}
               sx={{
                 mt: 3,
                 mb: 2,
                 py: 1.5,
-                bgcolor: loading || !isEmailValid() || !password ? '#E0E0E0' : '#27AE60',
-                color: loading || !isEmailValid() || !password ? '#333333' : '#FFFFFF',
-                '&:hover': {
-                  bgcolor: loading || !isEmailValid() || !password ? '#D0D0D0' : '#2ECC71',
+                bgcolor:
+                  loading || !isEmailValid() || !password
+                    ? "#E0E0E0"
+                    : "#27AE60",
+                color:
+                  loading || !isEmailValid() || !password
+                    ? "#333333"
+                    : "#FFFFFF",
+                "&:hover": {
+                  bgcolor:
+                    loading || !isEmailValid() || !password
+                      ? "#D0D0D0"
+                      : "#2ECC71",
                 },
-                borderRadius: '8px',
-                textTransform: 'uppercase',
-                fontWeight: 'bold',
+                borderRadius: "8px",
+                textTransform: "uppercase",
+                fontWeight: "bold",
               }}
             >
-              {loading ? <CircularProgress size={25} /> : 'Entrar'}
+              {loading ? <CircularProgress size={25} /> : "Entrar"}
             </Button>
           </Box>
         </Box>

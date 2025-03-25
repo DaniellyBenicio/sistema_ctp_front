@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  FormControl, FormHelperText, List, ListItem, ListItemText, Checkbox, Typography, Box
-} from '@mui/material';
-import api from '../../service/api';
+  FormControl,
+  FormHelperText,
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
+  Typography,
+  Box,
+} from "@mui/material";
+import api from "../../service/api";
 
 const UserListsDemands = ({ selectedUsers, onUserChange }) => {
   const [usuarios, setUsuarios] = useState([]);
@@ -12,18 +19,20 @@ const UserListsDemands = ({ selectedUsers, onUserChange }) => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await api.get('/usuarios');
+      const response = await api.get("/usuarios");
       if (!response.data || !Array.isArray(response.data.usuarios)) {
-        throw new Error('Formato de resposta inválido');
+        throw new Error("Formato de resposta inválido");
       }
-      const filteredUsers = response.data.usuarios.filter(user => user.role !== 'admin' && user.perfil !== 'admin');
+      const filteredUsers = response.data.usuarios.filter(
+        (user) => user.role !== "admin" && user.perfil !== "admin"
+      );
       setUsuarios(filteredUsers);
     } catch (err) {
-      setError('Erro ao carregar usuários');
-      console.error('Erro ao buscar usuários:', err);
+      setError("Erro ao carregar usuários");
+      console.error("Erro ao buscar usuários:", err);
       if (err.response) {
-        console.error('Status:', err.response.status);
-        console.error('Dados do erro:', err.response.data);
+        console.error("Status:", err.response.status);
+        console.error("Dados do erro:", err.response.data);
       }
     } finally {
       setLoading(false);
@@ -35,7 +44,7 @@ const UserListsDemands = ({ selectedUsers, onUserChange }) => {
   }, []);
 
   const handleToggle = (user) => {
-    const currentIndex = selectedUsers.findIndex(u => u.id === user.id);
+    const currentIndex = selectedUsers.findIndex((u) => u.id === user.id);
     const newSelectedUsers = [...selectedUsers];
 
     if (currentIndex === -1) {
@@ -53,10 +62,10 @@ const UserListsDemands = ({ selectedUsers, onUserChange }) => {
       <Box
         sx={{
           maxHeight: 200,
-          overflow: 'auto',
-          border: '1px solid #ccc',
+          overflow: "auto",
+          border: "1px solid #ccc",
           borderRadius: 1,
-          bgcolor: '#fff',
+          bgcolor: "#fff",
         }}
       >
         {loading ? (
@@ -71,7 +80,7 @@ const UserListsDemands = ({ selectedUsers, onUserChange }) => {
           <List>
             {usuarios.map((user) => {
               const labelId = `checkbox-list-label-${user.id}`;
-              const isSelected = selectedUsers.some(u => u.id === user.id);
+              const isSelected = selectedUsers.some((u) => u.id === user.id);
 
               return (
                 <ListItem
@@ -79,14 +88,14 @@ const UserListsDemands = ({ selectedUsers, onUserChange }) => {
                   dense
                   button
                   onClick={() => handleToggle(user)}
-                  sx={{ padding: '0 8px' }}
+                  sx={{ padding: "0 8px" }}
                 >
                   <Checkbox
                     edge="start"
                     checked={isSelected}
                     tabIndex={-1}
                     disableRipple
-                    inputProps={{ 'aria-labelledby': labelId }}
+                    inputProps={{ "aria-labelledby": labelId }}
                   />
                   <ListItemText id={labelId} primary={user.nome} />
                 </ListItem>
