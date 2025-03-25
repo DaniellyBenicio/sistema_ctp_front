@@ -11,8 +11,9 @@ import {
   Stack,
   Typography,
   useMediaQuery,
+  Tooltip,
 } from "@mui/material";
-import { Send, Visibility } from "@mui/icons-material";
+import { Send, Visibility, Group } from "@mui/icons-material";
 
 const DemandsTable = ({ demands, onSend, onViewDetails }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -22,9 +23,20 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
       <Stack spacing={1} sx={{ width: "100%" }}>
         {demands.map((demand) => (
           <Paper key={demand.id} sx={{ p: 1 }}>
+            {/* Consoles para depuração */}
+            {console.log("Objeto demand completo:", demand)}
+            {console.log("DemandaAlunos:", demand.DemandaAlunos)}
+            {console.log(
+              "Nomes dos alunos:",
+              demand.DemandaAlunos?.map((da) => da.Aluno?.nome) ||
+                "Nenhum aluno encontrado"
+            )}
+
             <Stack spacing={0.5}>
               <Typography>
-                <strong>Descrição:</strong> {demand.descricao}
+                <strong>Alunos Envolvidos:</strong>{" "}
+                {demand.DemandaAlunos?.map((da) => da.Aluno?.nome).join(", ") ||
+                  "Nenhum aluno"}
               </Typography>
               <Typography>
                 <strong>Status:</strong> {demand.status ? "Ativo" : "Inativo"}
@@ -33,7 +45,18 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                 <strong>Disciplina:</strong> {demand.disciplina}
               </Typography>
               <Typography>
-                <strong>Usuário ID:</strong> {demand.usuario_id}
+                <strong>Destinatários:</strong>
+                <IconButton
+                  size="small"
+                  onClick={() =>
+                    alert(
+                      `Destinatários da demanda ${demand.id}: [Lógica a ser implementada]`
+                    )
+                  }
+                >
+                  <Group fontSize="small" />
+                </IconButton>
+                <span>{demand.destinatarios?.length || 0}</span>
               </Typography>
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
@@ -52,7 +75,6 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
       </Stack>
     );
   }
-
   // Caso não seja mobile, exibe os dados em uma tabela
   return (
     <TableContainer
@@ -78,7 +100,7 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                 lineHeight: "30px",
               }}
             >
-              Descrição
+              Alunos Envolvidos
             </TableCell>
             <TableCell
               align="center"
@@ -120,7 +142,7 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                 lineHeight: "30px",
               }}
             >
-              Usuário ID
+              Destinatários
             </TableCell>
             <TableCell
               align="center"
@@ -149,7 +171,8 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                   lineHeight: "30px",
                 }}
               >
-                {demand.descricao}
+                {demand.DemandaAlunos?.map((da) => da.Aluno?.nome).join(", ") ||
+                  "Nenhum aluno"}
               </TableCell>
               <TableCell
                 align="center"
@@ -182,7 +205,19 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                   lineHeight: "30px",
                 }}
               >
-                {demand.usuario_id}
+                <Tooltip title="Ver destinatários">
+                  <IconButton
+                    size="small"
+                    onClick={() =>
+                      alert(
+                        `Destinatários da demanda ${demand.id}: [Lógica a ser implementada]`
+                      )
+                    }
+                  >
+                    <Group fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <span>{demand.destinatarios?.length || 0}</span>
               </TableCell>
               <TableCell
                 align="center"

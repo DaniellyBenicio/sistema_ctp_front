@@ -475,7 +475,6 @@ const DemandaRegisterPage = () => {
             rows={4}
             variant="outlined"
             required
-            inputProps={{ maxLength: 255 }}
             sx={{ mb: 3, bgcolor: "#fff", borderRadius: "8px" }}
           />
           <Box
