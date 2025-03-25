@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   IconButton,
   Paper,
@@ -14,24 +14,28 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Send, Visibility, Group } from "@mui/icons-material";
+import ForwardingPopup from "../Encaminhamentos/ForwardingPopup";
 
-const DemandsTable = ({ demands, onSend, onViewDetails }) => {
+const DemandsTable = ({ demands, onSend, onViewDetails, usuarioLogadoId }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
+  const [openPopup, setOpenPopup] = useState(false);
+  const [selectedDemandId, setSelectedDemandId] = useState(null);
+
+  const handleOpenPopup = (demandId) => {
+    setSelectedDemandId(demandId);
+    setOpenPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setOpenPopup(false);
+    setSelectedDemandId(null);
+  };
 
   if (isMobile) {
     return (
       <Stack spacing={1} sx={{ width: "100%" }}>
         {demands.map((demand) => (
           <Paper key={demand.id} sx={{ p: 1 }}>
-            {/* Consoles para depuração */}
-            {console.log("Objeto demand completo:", demand)}
-            {console.log("DemandaAlunos:", demand.DemandaAlunos)}
-            {console.log(
-              "Nomes dos alunos:",
-              demand.DemandaAlunos?.map((da) => da.Aluno?.nome) ||
-                "Nenhum aluno encontrado"
-            )}
-
             <Stack spacing={0.5}>
               <Typography>
                 <strong>Alunos Envolvidos:</strong>{" "}
@@ -65,17 +69,26 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                 >
                   <Visibility />
                 </IconButton>
-                <IconButton color="primary" onClick={() => onSend(demand.id)}>
+                <IconButton
+                  color="success"
+                  onClick={() => handleOpenPopup(demand.id)}
+                >
                   <Send />
                 </IconButton>
               </Stack>
             </Stack>
           </Paper>
         ))}
+        <ForwardingPopup
+          open={openPopup}
+          onClose={handleClosePopup}
+          demandId={selectedDemandId}
+          usuarioLogadoId={usuarioLogadoId}
+        />
       </Stack>
     );
   }
-  // Caso não seja mobile, exibe os dados em uma tabela
+
   return (
     <TableContainer
       component={Paper}
@@ -194,7 +207,7 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                   lineHeight: "30px",
                 }}
               >
-                {demand.disciplina}
+                {demand.disciplina} {/* Corrigido aqui */}
               </TableCell>
               <TableCell
                 align="center"
@@ -233,7 +246,10 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                 >
                   <Visibility />
                 </IconButton>
-                <IconButton color="success" onClick={() => onSend(demand.id)}>
+                <IconButton
+                  color="success"
+                  onClick={() => handleOpenPopup(demand.id)}
+                >
                   <Send />
                 </IconButton>
               </TableCell>
@@ -241,6 +257,12 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
           ))}
         </TableBody>
       </Table>
+      <ForwardingPopup
+        open={openPopup}
+        onClose={handleClosePopup}
+        demandId={selectedDemandId}
+        usuarioLogadoId={usuarioLogadoId}
+      />
     </TableContainer>
   );
 };
