@@ -156,7 +156,7 @@ const DemandsTable = ({ demands, onSend, onViewDetails }) => {
                                     lineHeight: '30px',
                                 }}
                             >
-                                {demand.nivel}
+                                {demand.disciplina}
                             </TableCell>
                             <TableCell
                                 align="center"
