@@ -102,7 +102,10 @@ export const Demands = () => {
 
   const handleUpdateDemand = (demand) => {
     console.log("Atualizar demanda:", demand);
-    // Lógica de atualização a ser implementada
+  };
+
+  const handleViewDetails = (demand) => {
+    console.log("Visualizar detalhes:", demand);
   };
 
   return (
@@ -182,7 +185,7 @@ export const Demands = () => {
             display: "flex",
             alignItems: "center",
           }}
-          onClick={() => navigate("/demands/register")} // Navigate to new page
+          onClick={() => navigate("/demands/register")}
         >
           Abrir Demanda
         </Button>
@@ -216,7 +219,9 @@ export const Demands = () => {
             demands={filteredDemands}
             onSend={handleSendDemand}
             onUpdate={handleUpdateDemand}
-            userRole={userRole}
+            usuarioLogadoId={userRole?.id}
+            onDemandUpdated={fetchDemands}
+            onViewDetails={handleViewDetails}
           />
         )}
       </Box>
