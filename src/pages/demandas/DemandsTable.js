@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { Send, Visibility, Group } from "@mui/icons-material";
 import ForwardingPopup from "../Encaminhamentos/ForwardingPopup";
+import DemandDetailsPopup from "./DemandDetailsPopup"; // Importamos o novo componente
 
 const DemandsTable = ({
   demands,
@@ -29,6 +30,8 @@ const DemandsTable = ({
   const [selectedDemandId, setSelectedDemandId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedDemand, setSelectedDemand] = useState(null);
+  const [detailsOpen, setDetailsOpen] = useState(false); // Estado para o popup de detalhes
+  const [selectedDemandDetails, setSelectedDemandDetails] = useState(null); // Demanda selecionada para detalhes
 
   const handleOpenPopup = (demandId) => {
     setSelectedDemandId(demandId);
@@ -39,7 +42,7 @@ const DemandsTable = ({
     setOpenPopup(false);
     setSelectedDemandId(null);
     if (onDemandUpdated) {
-      onDemandUpdated(); // Chama a função do pai para atualizar os dados
+      onDemandUpdated();
     }
   };
 
@@ -51,6 +54,16 @@ const DemandsTable = ({
   const handleCloseRecipients = () => {
     setAnchorEl(null);
     setSelectedDemand(null);
+  };
+
+  const handleOpenDetails = (demand) => {
+    setSelectedDemandDetails(demand);
+    setDetailsOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setDetailsOpen(false);
+    setSelectedDemandDetails(null);
   };
 
   const open = Boolean(anchorEl);
@@ -85,7 +98,7 @@ const DemandsTable = ({
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
                   color="primary"
-                  onClick={() => onViewDetails(demand)}
+                  onClick={() => handleOpenDetails(demand)} // Abrir popup de detalhes
                 >
                   <Visibility />
                 </IconButton>
@@ -104,6 +117,11 @@ const DemandsTable = ({
           onClose={handleClosePopup}
           demandId={selectedDemandId}
           usuarioLogadoId={usuarioLogadoId}
+        />
+        <DemandDetailsPopup
+          open={detailsOpen}
+          onClose={handleCloseDetails}
+          demand={selectedDemandDetails}
         />
       </Stack>
     );
@@ -254,7 +272,7 @@ const DemandsTable = ({
               >
                 <IconButton
                   color="primary"
-                  onClick={() => onViewDetails(demand)}
+                  onClick={() => handleOpenDetails(demand)} // Abrir popup de detalhes
                 >
                   <Visibility />
                 </IconButton>
@@ -274,6 +292,11 @@ const DemandsTable = ({
         onClose={handleClosePopup}
         demandId={selectedDemandId}
         usuarioLogadoId={usuarioLogadoId}
+      />
+      <DemandDetailsPopup
+        open={detailsOpen}
+        onClose={handleCloseDetails}
+        demand={selectedDemandDetails}
       />
       <Popover
         open={open}
