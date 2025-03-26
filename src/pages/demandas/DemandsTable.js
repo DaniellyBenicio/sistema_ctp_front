@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Send, Visibility, Group } from "@mui/icons-material";
 import ForwardingPopup from "../Encaminhamentos/ForwardingPopup";
-import DemandDetailsPopup from "./DemandDetailsPopup"; // Importamos o novo componente
+import DemandDetailsPopup from "./DemandDetailsPopup";
 
 const DemandsTable = ({
   demands,
@@ -30,8 +30,8 @@ const DemandsTable = ({
   const [selectedDemandId, setSelectedDemandId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedDemand, setSelectedDemand] = useState(null);
-  const [detailsOpen, setDetailsOpen] = useState(false); // Estado para o popup de detalhes
-  const [selectedDemandDetails, setSelectedDemandDetails] = useState(null); // Demanda selecionada para detalhes
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedDemandDetails, setSelectedDemandDetails] = useState(null);
 
   const handleOpenPopup = (demandId) => {
     setSelectedDemandId(demandId);

@@ -233,7 +233,7 @@ const DemandaRegisterPage = () => {
         minHeight: "100vh",
         width: "100%",
         bgcolor: "#f0f2f5",
-        p: { xs: 2, sm: 4 },
+        p: { xs: 2, sm: 2 },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -242,7 +242,7 @@ const DemandaRegisterPage = () => {
     >
       <Box sx={{ width: "100%", maxWidth: "1200px" }}>
         <Typography
-          variant="h4"
+          variant="h5"
           align="center"
           gutterBottom
           sx={{
