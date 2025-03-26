@@ -26,7 +26,7 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
     cargo: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(null);
   const [cargos, setCargos] = useState([]);
 
@@ -37,8 +37,9 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
         (cargo) => cargo.nome.toLowerCase() !== "admin"
       );
       setCargos(filteredCargos);
+      console.log("Cargos fetched:", filteredCargos);
     } catch (err) {
-      setError("Erro ao buscar os cargos");
+      setErrors({ general: "Erro ao buscar os cargos" });
       console.error("Erro ao buscar cargos:", err);
     }
   };
@@ -46,19 +47,26 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
   useEffect(() => {
     if (open) {
       fetchCargos();
+      setFormData({ nome: "", matricula: "", email: "", senha: "", cargo: "" });
+      setErrors({});
+      setSuccess(null);
     }
   }, [open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
   };
 
   const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
+    setErrors({});
     setSuccess(null);
 
+    console.log("Submitting:", formData);
     try {
       const response = await api.post("/auth/cadastro", formData);
       setSuccess("Usuário cadastrado com sucesso!");
@@ -68,39 +76,48 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
         onClose();
       }, 2000);
     } catch (err) {
-      setError(err.response?.data?.mensagem || "Erro ao cadastrar o usuário");
+      console.log("API Error:", err.response || err);
+      const errorMsg = err.response?.data?.mensagem || "Erro no servidor. Tente novamente.";
+
+      if (errorMsg.includes("Email já está em uso")) {
+        setErrors({ email: errorMsg });
+      } else if (errorMsg.includes("Matrícula já está em uso")) {
+        setErrors({ matricula: errorMsg });
+      } else if (errorMsg.includes("A senha deve ter no mínimo 8 caracteres")) {
+        setErrors({ senha: errorMsg });
+      } else if (errorMsg.includes("Cargo não encontrado")) {
+        setErrors({ cargo: errorMsg });
+      } else {
+        setErrors({ general: errorMsg });
+      }
     } finally {
       setLoading(false);
     }
   };
+
   const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+  const isFormValid = () =>
+    isEmailValid() &&
+    formData.nome.trim() &&
+    formData.senha.length >= 8 &&
+    formData.matricula.trim() &&
+    formData.cargo;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Typography
-          component="h1"
-          variant="h5"
-          sx={{ textAlign: "center", mb: 2 }}
-        >
+        <Typography component="h1" variant="h5" sx={{ textAlign: "center", mb: 2 }}>
           Cadastrar Usuário
         </Typography>
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: "grey.500",
-          }}
+          sx={{ position: "absolute", right: 8, top: 8, color: "grey.500" }}
         >
           <Close />
         </IconButton>
       </DialogTitle>
-      <DialogContent
-        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-      >
+      <DialogContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <TextField
           fullWidth
           margin="normal"
@@ -109,6 +126,9 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           type="text"
           value={formData.nome}
           onChange={handleChange}
+          error={!!errors.nome}
+          helperText={errors.nome}
+          required
         />
         <TextField
           fullWidth
@@ -118,13 +138,12 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           type="email"
           value={formData.email}
           onChange={handleChange}
-          error={!!formData.email && !isEmailValid()}
+          error={!!formData.email && (!isEmailValid() || !!errors.email)}
           helperText={
-            !!formData.email && !isEmailValid() ? "Email inválido" : ""
+            !!formData.email && !isEmailValid() ? "Email inválido" : errors.email || ""
           }
-          InputProps={{
-            startAdornment: <Email sx={{ color: "action.active", mr: 1 }} />,
-          }}
+          InputProps={{ startAdornment: <Email sx={{ color: "action.active", mr: 1 }} /> }}
+          required
         />
         <TextField
           fullWidth
@@ -134,9 +153,14 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           type="password"
           value={formData.senha}
           onChange={handleChange}
-          InputProps={{
-            startAdornment: <Lock sx={{ color: "action.active", mr: 1 }} />,
-          }}
+          error={!!formData.senha && (formData.senha.length < 8 || !!errors.senha)}
+          helperText={
+            !!formData.senha && formData.senha.length < 8
+              ? "Mínimo 8 caracteres"
+              : errors.senha || ""
+          }
+          InputProps={{ startAdornment: <Lock sx={{ color: "action.active", mr: 1 }} /> }}
+          required
         />
         <TextField
           fullWidth
@@ -146,26 +170,34 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           type="number"
           value={formData.matricula}
           onChange={handleChange}
+          error={!!errors.matricula}
+          helperText={errors.matricula}
+          required
         />
-        <FormControl fullWidth margin="normal">
+        <FormControl fullWidth margin="normal" error={!!errors.cargo}>
           <FormHelperText id="cargo">Tipo de Cargo</FormHelperText>
           <Select
             labelId="cargo"
             name="cargo"
             value={formData.cargo}
             onChange={handleChange}
+            required
           >
+            <MenuItem value="" disabled>
+              Selecione um cargo
+            </MenuItem>
             {cargos.map((cargoItem) => (
               <MenuItem key={cargoItem.id} value={cargoItem.id}>
                 {cargoItem.nome}
               </MenuItem>
             ))}
           </Select>
+          {errors.cargo && <FormHelperText>{errors.cargo}</FormHelperText>}
         </FormControl>
 
-        {error && (
+        {errors.general && (
           <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-            {error}
+            {errors.general}
           </Typography>
         )}
         {success && (
@@ -179,16 +211,12 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           type="button"
           fullWidth
           variant="contained"
-          disabled={
-            loading || !isEmailValid() || !formData.nome || !formData.senha
-          }
+          disabled={loading || !isFormValid()}
           sx={{
             mt: 3,
             mb: 2,
             bgcolor: "#2f9e41",
-            "&:hover": {
-              bgcolor: "#278735",
-            },
+            "&:hover": { bgcolor: "#278735" },
           }}
           onClick={handleSubmit}
         >

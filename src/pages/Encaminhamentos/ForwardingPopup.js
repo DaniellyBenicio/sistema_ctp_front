@@ -13,9 +13,13 @@ import {
   Typography,
   CircularProgress,
   Box,
+  Chip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import axios from "axios";
+import SendIcon from "@mui/icons-material/Send";
+import CloseIcon from "@mui/icons-material/Close";
+import api from "../../service/api";
+import { CustomAlert } from "../../components/alert/CustomAlert";
 
 const INSTITUTIONAL_COLOR = "#307c34";
 
@@ -60,78 +64,96 @@ const StyledSelect = styled(Select)(({ theme }) => ({
   borderRadius: "8px",
 }));
 
-const ForwardingPopup = ({ open, onClose, demandId, usuarioLogadoId }) => {
+const formatDateToDisplay = (isoDate) => {
+  const [year, month, day] = isoDate.split("-");
+  return `${day}/${month}/${year}`;
+};
+
+const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [destinatarios, setDestinatarios] = useState([]);
   const [descricao, setDescricao] = useState("");
-  const [data, setData] = useState("");
+  const [data, setData] = useState(new Date().toISOString().split("T")[0]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (open) {
-      fetchUsuarios();
-    }
-  }, [open]);
+  const [alert, setAlert] = useState(null);
 
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:3000/usuarios", {
-        params: { usuarioLogadoId }, // Passa o ID do usuário logado
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await api.get("/usuarios-encaminhamento", {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      if (!response.data || !Array.isArray(response.data.usuarios)) {
+        throw new Error("Formato de resposta inválido");
+      }
       setUsuarios(response.data.usuarios);
-      setError(null);
+      setAlert(null);
     } catch (err) {
-      setError("Erro ao carregar usuários");
-      console.error("Erro na requisição:", err.response?.data || err.message);
+      setAlert({ message: "Erro ao carregar usuários", type: "error" });
+      console.error("Erro ao buscar usuários:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (open) {
+      fetchUsuarios();
+      setDestinatarios([]);
+      setDescricao("");
+      setData(new Date().toISOString().split("T")[0]);
+      setAlert(null);
+    }
+  }, [open]);
+
   const handleSubmit = async () => {
-    if (!descricao || !data || destinatarios.length === 0) {
-      setError("Preencha todos os campos obrigatórios");
+    if (!isFormValid()) {
+      setAlert({ message: "Preencha todos os campos obrigatórios", type: "warning" });
       return;
     }
 
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const payload = {
-        usuario_id: usuarioLogadoId,
-        demanda_id: demandId,
-        descricao,
-        data,
-        destinatariosManuais: destinatarios,
-      };
-      const response = await axios.post("http://localhost:3000/encaminhamento", payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const requests = destinatarios.map(async (destinatarioId) => {
+        const payload = {
+          destinatario_id: destinatarioId,
+          demanda_id: demandId,
+          descricao,
+          data,
+        };
+        console.log("Payload enviado:", payload);
+        return api.post("/encaminhamento", payload);
       });
-      console.log("Encaminhamento criado:", response.data);
-      setDescricao("");
-      setData("");
-      setDestinatarios([]);
-      onClose();
+
+      const responses = await Promise.all(requests);
+      console.log("Encaminhamentos criados:", responses.map((res) => res.data));
+      setAlert({ message: "Encaminhamento criado com sucesso!", type: "success" });
+      setTimeout(() => {
+        setAlert(null);
+        onClose();
+      }, 2000);
     } catch (err) {
-      setError("Erro ao criar encaminhamento");
+      setAlert({
+        message: "Erro ao criar encaminhamento: " + (err.response?.data?.error || err.message),
+        type: "error",
+      });
       console.error("Erro na requisição:", err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const isFormValid = () => descricao.trim() && destinatarios.length > 0;
+
+  const handleDeleteChip = (idToRemove) => {
+    setDestinatarios(destinatarios.filter((id) => id !== idToRemove));
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <StyledPaper>
-        <DialogTitle sx={{ p: 0, mb: 2 }}>
+        <DialogTitle sx={{ p: 0, mb: 2, textAlign: "center" }}>
           <Typography
             sx={{
               fontWeight: "bold",
@@ -147,11 +169,6 @@ const ForwardingPopup = ({ open, onClose, demandId, usuarioLogadoId }) => {
             <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
               <CircularProgress />
             </Box>
-          )}
-          {error && (
-            <Typography color="error" align="center" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
           )}
           <FormControl fullWidth margin="normal">
             <InputLabel
@@ -169,11 +186,22 @@ const ForwardingPopup = ({ open, onClose, demandId, usuarioLogadoId }) => {
               multiple
               value={destinatarios}
               onChange={(e) => setDestinatarios(e.target.value)}
-              renderValue={(selected) =>
-                selected
-                  .map((id) => usuarios.find((u) => u.id === id)?.nome || "Usuário não encontrado")
-                  .join(", ")
-              }
+              renderValue={(selected) => (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected.map((id) => {
+                    const usuario = usuarios.find((u) => u.id === id);
+                    return (
+                      <Chip
+                        key={id}
+                        label={usuario?.nome || "Usuário não encontrado"}
+                        onDelete={() => handleDeleteChip(id)}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        sx={{ height: "24px", fontSize: "0.75rem" }}
+                      />
+                    );
+                  })}
+                </Box>
+              )}
             >
               {usuarios.length > 0 ? (
                 usuarios.map((usuario) => (
@@ -194,50 +222,61 @@ const ForwardingPopup = ({ open, onClose, demandId, usuarioLogadoId }) => {
             margin="normal"
             multiline
             rows={3}
+            required
           />
           <StyledTextField
             label="Data"
-            type="date"
-            value={data}
-            onChange={(e) => setData(e.target.value)}
+            value={formatDateToDisplay(data)}
             fullWidth
             margin="normal"
-            InputLabelProps={{ shrink: true }}
+            InputProps={{ readOnly: true }}
+            disabled
+            sx={{ input: { cursor: "default" } }}
           />
-          <Typography
-            variant="caption"
-            color="textSecondary"
-            sx={{ mt: 1, display: "block" }}
-          >
-            *Os cargos padrão (CTP, Diretor Ensino, Diretor Geral) serão incluídos automaticamente.
-          </Typography>
         </DialogContent>
-        <DialogActions sx={{ p: 0, mt: 3 }}>
+        <DialogActions
+          sx={{
+            p: 0,
+            mt: 3,
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+          }}
+        >
           <StyledButton
-            variant="outlined"
+            variant="contained"
             onClick={onClose}
             disabled={loading}
             sx={{
-              borderColor: "#d32f2f",
-              color: "#d32f2f",
-              "&:hover": { borderColor: "#b71c1c", color: "#b71c1c" },
+              bgcolor: "#d32f2f",
+              color: "#fff",
+              "&:hover": { bgcolor: "#b71c1c" },
             }}
+            startIcon={<CloseIcon />}
           >
             Cancelar
           </StyledButton>
           <StyledButton
             variant="contained"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !isFormValid()}
             sx={{
               bgcolor: INSTITUTIONAL_COLOR,
               "&:hover": { bgcolor: "#265b28" },
             }}
+            endIcon={<SendIcon />}
           >
             {loading ? <CircularProgress size={24} color="inherit" /> : "Encaminhar"}
           </StyledButton>
         </DialogActions>
       </StyledPaper>
+      {alert && (
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
     </Dialog>
   );
 };
