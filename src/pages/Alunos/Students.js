@@ -6,13 +6,14 @@ import StudentsTable from './StudentsTable';
 
 const Students = () => {
   const [searchValue, setSearchValue] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
   const handleSearchChange = (event) => {
     setSearchValue(event.target.value);
   };
 
   const handleNewStudent = () => {
-    navigate('/alunos/register'); 
+    navigate('/alunos/register');
   };
 
   return (
@@ -23,7 +24,7 @@ const Students = () => {
         flexDirection: 'column',
         width: '100%',
         marginTop: 0,
-        padding: { xs: '2% 5%', sm: '2% 0%' },
+        padding: { xs: '8px 2px', sm: '8px 0' },
       }}
     >
       <Typography
@@ -34,7 +35,8 @@ const Students = () => {
           mb: 1,
           textAlign: 'center',
           fontFamily: '"Open Sans", sans-serif',
-          marginBottom: { xs: '16px', sm: '30px' },
+          marginBottom: { xs: '8px', sm: '20px' },
+          fontSize: { xs: '1.25rem', sm: '1.5rem' },
         }}
       >
         Lista de Alunos
@@ -46,10 +48,10 @@ const Students = () => {
           justifyContent: 'space-between',
           alignItems: { xs: 'stretch', sm: 'center' },
           gap: { xs: 1, sm: 2 },
-          mb: 2,
           width: { xs: '100%', sm: '90%' },
           maxWidth: '1200px',
           alignSelf: 'center',
+          px: { xs: 0, sm: 2 },
         }}
       >
         <SearchBar
@@ -79,7 +81,7 @@ const Students = () => {
             fontSize: { xs: '0.75rem', sm: '0.875rem' },
             padding: { xs: '4px 8px', sm: '6px 12px' },
             textTransform: 'none',
-            marginBottom: '15px',
+            marginBottom: { xs: '8px', sm: '15px' },
             display: 'flex',
             alignItems: 'center',
           }}
@@ -95,6 +97,7 @@ const Students = () => {
           maxWidth: '1200px',
           alignSelf: 'center',
           mx: 'auto',
+          px: { xs: 0, sm: 2 },
         }}
       >
         <StudentsTable searchValue={searchValue} />

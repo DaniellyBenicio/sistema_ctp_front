@@ -5,8 +5,8 @@ import MainScreen from "../pages/mainHome/MainScreen";
 import UsersList from "../pages/admin/UsersList";
 import Demands from "../pages/demandas/Demands.js";
 import DemandaRegisterPage from "../pages/demandas/DemandaRegisterPage";
-import Students from "../pages/Alunos/Students";
-import StudentRegisterPage from "../pages/Alunos/StudentRegisterPage";
+import Students from "../pages/alunos/Students";
+import StudentRegisterPage from "../pages/alunos/StudentRegisterPage";
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
@@ -41,6 +41,8 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         <Route path="demands/register" element={<DemandaRegisterPage />} />
         <Route path="alunos" element={<Students />} />
         <Route path="alunos/register" element={<StudentRegisterPage />} />
+        <Route path="editar-aluno/:matricula" element={<StudentRegisterPage />} />
+        <Route path="*" element={<div>Página não encontrada</div>} />
       </Route>
 
       <Route

@@ -15,7 +15,7 @@ import {
   Popover,
 } from "@mui/material";
 import { Send, Visibility, Group } from "@mui/icons-material";
-import ForwardingPopup from "../Encaminhamentos/ForwardingPopup";
+import ForwardingPopup from "../encaminhamentos/ForwardingPopup";
 import DemandDetailsPopup from "./DemandDetailsPopup";
 
 const DemandsTable = ({
@@ -72,7 +72,13 @@ const DemandsTable = ({
     return (
       <Stack spacing={1} sx={{ width: "100%" }}>
         {demands.map((demand) => (
-          <Paper key={demand.id} sx={{ p: 1 }}>
+          <Paper
+            key={demand.id}
+            sx={{
+              p: 1,
+              background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)", // Apply the same gradient
+            }}
+          >
             <Stack spacing={0.5}>
               <Typography>
                 <strong>Alunos Envolvidos:</strong>{" "}
@@ -98,7 +104,7 @@ const DemandsTable = ({
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
                   color="primary"
-                  onClick={() => handleOpenDetails(demand)} // Abrir popup de detalhes
+                  onClick={() => handleOpenDetails(demand)}
                 >
                   <Visibility />
                 </IconButton>
@@ -130,7 +136,12 @@ const DemandsTable = ({
   return (
     <TableContainer
       component={Paper}
-      sx={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}
+      sx={{
+        width: "100%",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
+      }}
     >
       <Table>
         <TableHead>
@@ -272,7 +283,7 @@ const DemandsTable = ({
               >
                 <IconButton
                   color="primary"
-                  onClick={() => handleOpenDetails(demand)} // Abrir popup de detalhes
+                  onClick={() => handleOpenDetails(demand)}
                 >
                   <Visibility />
                 </IconButton>

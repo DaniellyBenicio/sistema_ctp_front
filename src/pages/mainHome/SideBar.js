@@ -177,6 +177,7 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                 aria-label="open drawer"
                 edge="start"
                 onClick={handleDrawerToggle}
+                sx={{ mr: 2 }}
               >
                 <MenuIcon />
               </IconButton>
@@ -195,6 +196,7 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
                 width: 240,
                 backgroundColor: "#2E7D32",
                 color: "white",
+                zIndex: (theme) => theme.zIndex.drawer,
               },
             }}
           >
@@ -205,7 +207,7 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
         <Drawer
           variant="permanent"
           sx={{
-            width: 220,
+            width: 240,
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: 240,

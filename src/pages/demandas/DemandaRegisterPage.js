@@ -31,8 +31,10 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: "12px",
   boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
   background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
-  width: "100%",
+  width: "70%",
   boxSizing: "border-box",
+  marginLeft: "auto",
+  marginRight: "auto",
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -456,7 +458,7 @@ const DemandaRegisterPage = () => {
           </StyledPaper>
         ))}
 
-        <Divider sx={{ my: 4, borderColor: "#e0e0e0", width: "100%" }} />
+        <Divider sx={{ my: 4, borderColor: "#e0e0e0", width: "70%", mx: "auto", borderBottomWidth: 3 }} />
 
         <StyledPaper elevation={3} sx={{ mb: 4 }}>
           <Typography

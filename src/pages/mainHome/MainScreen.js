@@ -19,14 +19,14 @@ const MainScreen = ({ setAuthenticated }) => {
   }, []);
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden" }}>
       {/* Sidebar com largura fixa */}
-      <div style={{ width: "240px" }}>
+      <div style={{ width: "240px", flexShrink: 0 }}>
         <Sidebar setAuthenticated={setAuthenticated} useRole={userRole} />
       </div>
 
-      {/* Conteúdo da página (Outlet) ocupa o restante do espaço */}
-      <div style={{ flexGrow: 1, overflowY: "auto" }}>
+      {/* Conteúdo da página ocupa o restante do espaço */}
+      <div style={{ flexGrow: 1, width: "100%", overflowY: "auto", background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)" }}>
         <Outlet context={{ userRole }} />
       </div>
     </div>
