@@ -52,34 +52,40 @@ const Login = ({ onLogin }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        minHeight: "100vh",
         width: "100vw",
         background: "#FFFFFF",
         padding: 0,
         margin: 0,
+        overflowX: "hidden",
       }}
     >
       <Box
         sx={{
           display: "flex",
-          width: "100%",
-          maxWidth: 800,
-          height: 450,
+          flexDirection: { xs: "column", md: "row" },
+          width: { xs: "85%", sm: "75%", md: "100%" },
+          maxWidth: { xs: "100%", sm: 600, md: 800 },
+          minHeight: { xs: "auto", md: 450 },
           borderRadius: 4,
           overflow: "hidden",
           boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+          boxSizing: "border-box",
+          margin: { xs: "0 auto", sm: "0 auto" },
         }}
       >
         <Box
           sx={{
-            flex: 1,
+            flex: { xs: "none", md: 1 },
             background: "linear-gradient(135deg, #27AE60 0%, #2ECC71 100%)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            p: 6,
+            p: { xs: 3, md: 6 },
             color: "#FFFFFF",
+            width: { xs: "100%", md: "auto" },
+            boxSizing: "border-box",
           }}
         >
           <Typography
@@ -89,20 +95,23 @@ const Login = ({ onLogin }) => {
               maxWidth: "90%",
               lineHeight: 1.4,
               fontWeight: "bold",
+              fontSize: { xs: "1.25rem", md: "1.5rem" },
             }}
           >
-            Seja Bem-Vindo! Coordenação Técnica Pedagógica
+            Seja Bem-Vindo! <br /> Coordenação Técnica Pedagógica
           </Typography>
         </Box>
 
         <Box
           sx={{
-            flex: 1.5,
+            flex: { xs: "none", md: 1.5 },
             backgroundColor: "#FFFFFF",
-            p: 4,
+            p: { xs: 3, md: 4 },
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            width: { xs: "100%", md: "auto" },
+            boxSizing: "border-box",
           }}
         >
           <Typography
@@ -113,6 +122,7 @@ const Login = ({ onLogin }) => {
               fontWeight: "bold",
               textAlign: "center",
               color: "#000000",
+              fontSize: { xs: "1.5rem", md: "1.75rem" },
             }}
           >
             Login
@@ -138,7 +148,7 @@ const Login = ({ onLogin }) => {
                     focusedField === "email" || email !== ""
                       ? "#27AE60"
                       : "text.secondary",
-                  fontSize: "1rem",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
                 },
               }}
               sx={{
@@ -174,7 +184,7 @@ const Login = ({ onLogin }) => {
                     focusedField === "password" || password !== ""
                       ? "#27AE60"
                       : "text.secondary",
-                  fontSize: "1rem",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
                 },
               }}
               InputProps={{
@@ -210,7 +220,7 @@ const Login = ({ onLogin }) => {
               <Typography
                 color="error"
                 variant="body2"
-                sx={{ mt: 1, textAlign: "left" }}
+                sx={{ mt: 1, textAlign: "left", fontSize: { xs: "0.8rem", md: "0.875rem" } }}
               >
                 {error}
               </Typography>
@@ -226,7 +236,7 @@ const Login = ({ onLogin }) => {
               <Button
                 sx={{
                   textTransform: "none",
-                  fontSize: "0.875rem",
+                  fontSize: { xs: "0.75rem", md: "0.875rem" },
                   color: "#27AE60",
                   "&:hover": { textDecoration: "underline", color: "#2ECC71" },
                 }}
@@ -263,6 +273,7 @@ const Login = ({ onLogin }) => {
                 borderRadius: "8px",
                 textTransform: "uppercase",
                 fontWeight: "bold",
+                fontSize: { xs: "0.9rem", md: "1rem" },
               }}
             >
               {loading ? <CircularProgress size={25} /> : "Entrar"}

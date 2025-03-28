@@ -26,7 +26,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 
-const Sidebar = ({ setAuthenticated, useRole }) => {
+const Sidebar = ({ setAuthenticated, userRole, userName }) => {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -57,16 +57,26 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
+  const drawerWidth = 240;
+
   const drawerContent = (
     <List>
-      <ListItem sx={{ justifyContent: "center" }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Sistema CTP
+      {!isMobile && (
+        <ListItem sx={{ justifyContent: "center", py: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Sistema CTP
+          </Typography>
+        </ListItem>
+      )}
+      <ListItem sx={{ justifyContent: "center", py: 1 }}>
+        <Person sx={{ mr: 1 }} />
+        <Typography variant="body1" sx={{ fontWeight: "medium" }}>
+          {userName || "Usuário"}
         </Typography>
       </ListItem>
       <Divider sx={{ backgroundColor: "white", marginBottom: 1 }} />
 
-      {useRole === "Admin" ? (
+      {userRole === "Admin" ? (
         <>
           <ListItem
             button
@@ -77,7 +87,7 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
             <ListItemText primary="Usuários" />
           </ListItem>
         </>
-      ) : useRole === "Funcionario CTP" ? (
+      ) : userRole === "Funcionario CTP" ? (
         <>
           <ListItem
             button
@@ -162,63 +172,72 @@ const Sidebar = ({ setAuthenticated, useRole }) => {
 
   return (
     <>
-      {isMobile ? (
-        <>
-          <AppBar
-            position="fixed"
-            sx={{
-              backgroundColor: "#2E7D32",
-              zIndex: (theme) => theme.zIndex.drawer + 1,
-            }}
+      <AppBar
+        position="fixed"
+        sx={{
+          backgroundColor: "#2E7D32",
+          width: isMobile ? "100%" : `calc(100% - ${drawerWidth}px)`,
+          ml: isMobile ? 0 : `${drawerWidth}px`,
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          display: isMobile ? "block" : "none",
+          height: "48px",
+          "& .MuiToolbar-root": { minHeight: "48px" },
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2 }}
           >
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ mr: 2 }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" noWrap>
-                Sistema CTP
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{ keepMounted: true }}
-            sx={{
-              "& .MuiDrawer-paper": {
-                width: 240,
-                backgroundColor: "#2E7D32",
-                color: "white",
-                zIndex: (theme) => theme.zIndex.drawer,
-              },
-            }}
-          >
-            {drawerContent}
-          </Drawer>
-        </>
-      ) : (
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap sx={{ fontSize: "1.1rem" }}>
+            Sistema CTP
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <Drawer
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isMobile ? mobileOpen : true}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          display: isMobile ? "none" : "block",
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            backgroundColor: "#2E7D32",
+            color: "white",
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+
+      {isMobile && (
         <Drawer
-          variant="permanent"
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
           sx={{
-            width: 240,
-            flexShrink: 0,
             "& .MuiDrawer-paper": {
-              width: 240,
+              width: drawerWidth,
               backgroundColor: "#2E7D32",
               color: "white",
+              marginTop: "48px",
             },
           }}
         >
           {drawerContent}
         </Drawer>
       )}
+
       <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog}>
         <DialogContent sx={{ textAlign: "center" }}>
           <Typography>Tem certeza que deseja sair?</Typography>
