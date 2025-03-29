@@ -15,8 +15,8 @@ import {
   Popover,
 } from "@mui/material";
 import { Send, Visibility, Group } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 import ForwardingPopup from "../encaminhamentos/ForwardingPopup";
-import DemandDetailsPopup from "./DemandDetailsPopup";
 
 const DemandsTable = ({
   demands,
@@ -26,12 +26,11 @@ const DemandsTable = ({
   onDemandUpdated,
 }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
+  const navigate = useNavigate();
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedDemandId, setSelectedDemandId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedDemand, setSelectedDemand] = useState(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [selectedDemandDetails, setSelectedDemandDetails] = useState(null);
 
   const handleOpenPopup = (demandId) => {
     setSelectedDemandId(demandId);
@@ -56,14 +55,8 @@ const DemandsTable = ({
     setSelectedDemand(null);
   };
 
-  const handleOpenDetails = (demand) => {
-    setSelectedDemandDetails(demand);
-    setDetailsOpen(true);
-  };
-
-  const handleCloseDetails = () => {
-    setDetailsOpen(false);
-    setSelectedDemandDetails(null);
+  const handleViewDetails = (demandId) => {
+    navigate(`/demands/${demandId}`);
   };
 
   const open = Boolean(anchorEl);
@@ -76,7 +69,7 @@ const DemandsTable = ({
             key={demand.id}
             sx={{
               p: 1,
-              background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)", // Apply the same gradient
+              background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
             }}
           >
             <Stack spacing={0.5}>
@@ -89,7 +82,7 @@ const DemandsTable = ({
                 <strong>Status:</strong> {demand.status ? "Ativo" : "Inativo"}
               </Typography>
               <Typography>
-                <strong>Disciplina:</strong> {demand.disciplina}
+                <strong>Disciplina:</strong> {demand.disciplina || "Não informada"}
               </Typography>
               <Typography>
                 <strong>Destinatários:</strong>
@@ -104,7 +97,7 @@ const DemandsTable = ({
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
                   color="primary"
-                  onClick={() => handleOpenDetails(demand)}
+                  onClick={() => handleViewDetails(demand.id)}
                 >
                   <Visibility />
                 </IconButton>
@@ -123,11 +116,6 @@ const DemandsTable = ({
           onClose={handleClosePopup}
           demandId={selectedDemandId}
           usuarioLogadoId={usuarioLogadoId}
-        />
-        <DemandDetailsPopup
-          open={detailsOpen}
-          onClose={handleCloseDetails}
-          demand={selectedDemandDetails}
         />
       </Stack>
     );
@@ -252,7 +240,7 @@ const DemandsTable = ({
                   lineHeight: "30px",
                 }}
               >
-                {demand.disciplina}
+                {demand.disciplina || "Não informada"}
               </TableCell>
               <TableCell
                 align="center"
@@ -283,7 +271,7 @@ const DemandsTable = ({
               >
                 <IconButton
                   color="primary"
-                  onClick={() => handleOpenDetails(demand)}
+                  onClick={() => handleViewDetails(demand.id)}
                 >
                   <Visibility />
                 </IconButton>
@@ -303,11 +291,6 @@ const DemandsTable = ({
         onClose={handleClosePopup}
         demandId={selectedDemandId}
         usuarioLogadoId={usuarioLogadoId}
-      />
-      <DemandDetailsPopup
-        open={detailsOpen}
-        onClose={handleCloseDetails}
-        demand={selectedDemandDetails}
       />
       <Popover
         open={open}
