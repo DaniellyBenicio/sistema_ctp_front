@@ -6,8 +6,8 @@ import UsersList from "../pages/admin/UsersList";
 import Demands from "../pages/demandas/Demands.js";
 import DemandaRegisterPage from "../pages/demandas/DemandaRegisterPage";
 import DemandaDetailsPage from "../pages/demandas/DemandaDetailsPage.js";
-import Students from "../pages/alunos/Students";
-import StudentRegisterPage from "../pages/alunos/StudentRegisterPage";
+import Students from "../pages/Alunos/Students";
+import StudentRegisterPage from "../pages/Alunos/StudentRegisterPage";
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
@@ -43,7 +43,10 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         <Route path="demands/:id" element={<DemandaDetailsPage />} />
         <Route path="alunos" element={<Students />} />
         <Route path="alunos/register" element={<StudentRegisterPage />} />
-        <Route path="editar-aluno/:matricula" element={<StudentRegisterPage />} />
+        <Route
+          path="editar-aluno/:matricula"
+          element={<StudentRegisterPage />}
+        />
         <Route path="*" element={<div>Página não encontrada</div>} />
       </Route>
 
