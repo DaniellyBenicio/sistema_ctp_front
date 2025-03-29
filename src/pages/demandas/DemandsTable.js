@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Send, Visibility, Group } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import ForwardingPopup from "../encaminhamentos/ForwardingPopup";
+import ForwardingPopup from "../Encaminhamentos/ForwardingPopup";
 
 const DemandsTable = ({
   demands,
@@ -82,7 +82,8 @@ const DemandsTable = ({
                 <strong>Status:</strong> {demand.status ? "Ativo" : "Inativo"}
               </Typography>
               <Typography>
-                <strong>Disciplina:</strong> {demand.disciplina || "Não informada"}
+                <strong>Disciplina:</strong>{" "}
+                {demand.disciplina || "Não informada"}
               </Typography>
               <Typography>
                 <strong>Destinatários:</strong>

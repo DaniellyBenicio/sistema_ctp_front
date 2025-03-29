@@ -458,7 +458,15 @@ const DemandaRegisterPage = () => {
           </StyledPaper>
         ))}
 
-        <Divider sx={{ my: 4, borderColor: "#e0e0e0", width: "70%", mx: "auto", borderBottomWidth: 3 }} />
+        <Divider
+          sx={{
+            my: 4,
+            borderColor: "#e0e0e0",
+            width: "70%",
+            mx: "auto",
+            borderBottomWidth: 3,
+          }}
+        />
 
         <StyledPaper elevation={3} sx={{ mb: 4 }}>
           <Typography
@@ -549,9 +557,7 @@ const DemandaRegisterPage = () => {
               loading ||
               !formData.descricao ||
               formData.alunos.length === 0 ||
-              formData.alunos.some(
-                (aluno) => !aluno.nome || aluno.condicoes.length === 0
-              ) ||
+              formData.alunos.some((aluno) => !aluno.nome) ||
               formData.amparoLegal.length === 0
             }
             startIcon={<SaveIcon />}

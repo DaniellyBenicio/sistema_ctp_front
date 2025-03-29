@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Typography, Stack, TextField, Button, Paper, Box, CircularProgress } from "@mui/material";
-import InfoIcon from '@mui/icons-material/Info';
-import PeopleIcon from '@mui/icons-material/People';
-import GavelIcon from '@mui/icons-material/Gavel';
-import ForwardIcon from '@mui/icons-material/Forward';
-import BuildIcon from '@mui/icons-material/Build';
-import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import LockIcon from '@mui/icons-material/Lock';
+import {
+  Typography,
+  Stack,
+  TextField,
+  Button,
+  Paper,
+  Box,
+  CircularProgress,
+} from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
+import PeopleIcon from "@mui/icons-material/People";
+import GavelIcon from "@mui/icons-material/Gavel";
+import ForwardIcon from "@mui/icons-material/Forward";
+import BuildIcon from "@mui/icons-material/Build";
+import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import LockIcon from "@mui/icons-material/Lock";
 import api from "../../service/api";
 import { jwtDecode } from "jwt-decode";
 
@@ -73,14 +81,18 @@ const DemandaDetailsPage = () => {
       const intervencaoResponse = await api.post(
         "/intervencao",
         { descricao: novaIntervencao },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
       const intervencaoId = intervencaoResponse.data.intervencao.id;
 
       // 2. Verificar se há encaminhamento
       const encaminhamentoId = demanda.Encaminhamentos?.[0]?.id || null;
       if (!encaminhamentoId) {
-        setError("Nenhum encaminhamento encontrado para associar a intervenção");
+        setError(
+          "Nenhum encaminhamento encontrado para associar a intervenção"
+        );
         setLoading(false);
         return;
       }
@@ -95,7 +107,9 @@ const DemandaDetailsPage = () => {
           descricao: novaIntervencao,
           encaminhamento_id: encaminhamentoId,
         },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
 
       // 4. Atualizar a demanda com a nova intervenção
@@ -124,7 +138,9 @@ const DemandaDetailsPage = () => {
       await api.put(
         `/demandas/${demanda.id}`,
         { status: false },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
       navigate("/demands");
     } catch (err) {
@@ -160,7 +176,12 @@ const DemandaDetailsPage = () => {
         <Button
           variant="outlined"
           onClick={() => navigate("/demands")}
-          sx={{ mt: 2, borderColor: "#2E7D32", color: "#2E7D32", borderRadius: "8px" }}
+          sx={{
+            mt: 2,
+            borderColor: "#2E7D32",
+            color: "#2E7D32",
+            borderRadius: "8px",
+          }}
         >
           Voltar
         </Button>
@@ -175,7 +196,12 @@ const DemandaDetailsPage = () => {
         <Button
           variant="outlined"
           onClick={() => navigate("/demands")}
-          sx={{ mt: 2, borderColor: "#2E7D32", color: "#2E7D32", borderRadius: "8px" }}
+          sx={{
+            mt: 2,
+            borderColor: "#2E7D32",
+            color: "#2E7D32",
+            borderRadius: "8px",
+          }}
         >
           Voltar
         </Button>
@@ -185,38 +211,79 @@ const DemandaDetailsPage = () => {
 
   return (
     <Box m={0} sx={{ bgcolor: "#F5F7FA" }}>
-      <Typography variant="h5" gutterBottom sx={{ color: "#2E7D32", fontWeight: "bold", textAlign: "center", paddingTop: "20px" }}>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{
+          color: "#2E7D32",
+          fontWeight: "bold",
+          textAlign: "center",
+          paddingTop: "20px",
+        }}
+      >
         Detalhes da Demanda #{demanda.id}
       </Typography>
 
       {/* Seção: Informações Gerais */}
-      <Paper sx={{ p: 3, mb: 3, borderRadius: "12px", maxWidth: "1100px", mx: "auto" }}>
+      <Paper
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "12px",
+          maxWidth: "1100px",
+          mx: "auto",
+        }}
+      >
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
           <InfoIcon sx={{ color: "#2E7D32" }} />
-          <Typography variant="h6" sx={{ color: "#2E7D32", fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#2E7D32", fontWeight: "bold" }}
+          >
             Informações Gerais
           </Typography>
         </Stack>
         <Stack spacing={1}>
-          <Typography><strong>Código da Demanda:</strong> {demanda.id || "Não informada"}</Typography>
-          <Typography><strong>Descrição:</strong> {demanda.descricao || "Não informada"}</Typography>
+          <Typography>
+            <strong>Código da Demanda:</strong> {demanda.id || "Não informada"}
+          </Typography>
+          <Typography>
+            <strong>Descrição:</strong> {demanda.descricao || "Não informada"}
+          </Typography>
           <Typography>
             <strong>Status:</strong>{" "}
             <span style={{ color: demanda.status ? "#2E7D32" : "#D32F2F" }}>
               {demanda.status ? "Ativo" : "Inativo"}
             </span>
           </Typography>
-          <Typography><strong>Disciplina:</strong> {demanda.disciplina || "Não informada"}</Typography>
-          <Typography><strong>Criador:</strong> {demanda.Usuario.nome}</Typography>
-          <Typography><strong>E-mail:</strong> {demanda.Usuario.email}</Typography>
+          <Typography>
+            <strong>Disciplina:</strong> {demanda.disciplina || "Não informada"}
+          </Typography>
+          <Typography>
+            <strong>Criador:</strong> {demanda.Usuario.nome}
+          </Typography>
+          <Typography>
+            <strong>E-mail:</strong> {demanda.Usuario.email}
+          </Typography>
         </Stack>
       </Paper>
 
       {/* Seção: Alunos Envolvidos */}
-      <Paper sx={{ p: 3, mb: 3, borderRadius: "12px", maxWidth: "1100px", mx: "auto" }}>
+      <Paper
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "12px",
+          maxWidth: "1100px",
+          mx: "auto",
+        }}
+      >
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
           <PeopleIcon sx={{ color: "#2E7D32" }} />
-          <Typography variant="h6" sx={{ color: "#2E7D32", fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#2E7D32", fontWeight: "bold" }}
+          >
             Alunos Envolvidos
           </Typography>
         </Stack>
@@ -232,7 +299,9 @@ const DemandaDetailsPage = () => {
                 </Typography>
                 <Typography sx={{ ml: 2 }}>
                   <strong>Curso:</strong>{" "}
-                  {da.Aluno.Cursos && da.Aluno.Cursos.nome ? da.Aluno.Cursos.nome : "Curso não informado"}
+                  {da.Aluno.Cursos && da.Aluno.Cursos.nome
+                    ? da.Aluno.Cursos.nome
+                    : "Curso não informado"}
                 </Typography>
                 <Typography sx={{ ml: 2 }}>
                   <strong>Condições:</strong>{" "}
@@ -249,10 +318,21 @@ const DemandaDetailsPage = () => {
       </Paper>
 
       {/* Seção: Amparos Legais */}
-      <Paper sx={{ p: 3, mb: 3, borderRadius: "12px", maxWidth: "1100px", mx: "auto" }}>
+      <Paper
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "12px",
+          maxWidth: "1100px",
+          mx: "auto",
+        }}
+      >
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
           <GavelIcon sx={{ color: "#2E7D32" }} />
-          <Typography variant="h6" sx={{ color: "#2E7D32", fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#2E7D32", fontWeight: "bold" }}
+          >
             Amparos Legais
           </Typography>
         </Stack>
@@ -268,10 +348,21 @@ const DemandaDetailsPage = () => {
       </Paper>
 
       {/* Seção: Encaminhamentos */}
-      <Paper sx={{ p: 3, mb: 3, borderRadius: "12px", maxWidth: "1100px", mx: "auto" }}>
+      <Paper
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "12px",
+          maxWidth: "1100px",
+          mx: "auto",
+        }}
+      >
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
           <ForwardIcon sx={{ color: "#2E7D32" }} />
-          <Typography variant="h6" sx={{ color: "#2E7D32", fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#2E7D32", fontWeight: "bold" }}
+          >
             Encaminhamentos
           </Typography>
         </Stack>
@@ -279,10 +370,21 @@ const DemandaDetailsPage = () => {
           <Stack spacing={3}>
             {demanda.Encaminhamentos.map((enc) => (
               <Stack spacing={1}>
-                <Typography sx={{ ml: 2 }}><strong>Assunto do Encaminhamento:</strong> {enc.descricao}</Typography>
-                <Typography sx={{ ml: 2 }}><strong>Remetente:</strong> {enc.Remetente.nome} ({enc.Remetente.email})</Typography>
-                <Typography sx={{ ml: 2 }}><strong>Destinatário:</strong> {enc.Destinatario.nome} ({enc.Destinatario.email})</Typography>
-                <Typography sx={{ ml: 2 }}><strong>Data/Hora:</strong> {new Date(enc.data).toLocaleString()}</Typography>
+                <Typography sx={{ ml: 2 }}>
+                  <strong>Assunto do Encaminhamento:</strong> {enc.descricao}
+                </Typography>
+                <Typography sx={{ ml: 2 }}>
+                  <strong>Remetente:</strong> {enc.Remetente.nome} (
+                  {enc.Remetente.email})
+                </Typography>
+                <Typography sx={{ ml: 2 }}>
+                  <strong>Destinatário:</strong> {enc.Destinatario.nome} (
+                  {enc.Destinatario.email})
+                </Typography>
+                <Typography sx={{ ml: 2 }}>
+                  <strong>Data/Hora:</strong>{" "}
+                  {new Date(enc.data).toLocaleString()}
+                </Typography>
               </Stack>
             ))}
           </Stack>
@@ -292,10 +394,21 @@ const DemandaDetailsPage = () => {
       </Paper>
 
       {/* Seção: Intervenções */}
-      <Paper sx={{ p: 3, mb: 3, borderRadius: "12px", maxWidth: "1100px", mx: "auto" }}>
+      <Paper
+        sx={{
+          p: 3,
+          mb: 3,
+          borderRadius: "12px",
+          maxWidth: "1100px",
+          mx: "auto",
+        }}
+      >
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
           <BuildIcon sx={{ color: "#2E7D32" }} />
-          <Typography variant="h6" sx={{ color: "#2E7D32", fontWeight: "bold" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#2E7D32", fontWeight: "bold" }}
+          >
             Intervenções
           </Typography>
         </Stack>
@@ -304,7 +417,8 @@ const DemandaDetailsPage = () => {
             {demanda.IntervencoesDemandas.map((int) => (
               <Stack key={int.id} spacing={1}>
                 <Typography sx={{ ml: 2 }}>
-                  <strong>Descrição da Intervenção:</strong> {int.Intervencao.descricao}
+                  <strong>Descrição da Intervenção:</strong>{" "}
+                  {int.Intervencao.descricao}
                 </Typography>
                 <Typography sx={{ ml: 2 }}>
                   <strong>Detalhes Adicionais:</strong> {int.descricao}
@@ -313,7 +427,10 @@ const DemandaDetailsPage = () => {
                   <strong>Data:</strong> {new Date(int.data).toLocaleString()}
                 </Typography>
                 <Typography sx={{ ml: 2 }}>
-                  <strong>Encaminhamento Relacionado:</strong> {int.Encaminhamentos.id} - Remetente: {int.Encaminhamentos.Remetente.nome} ({int.Encaminhamentos.Remetente.email})
+                  <strong>Encaminhamento Relacionado:</strong>{" "}
+                  {int.Encaminhamentos.id} - Remetente:{" "}
+                  {int.Encaminhamentos.Remetente.nome} (
+                  {int.Encaminhamentos.Remetente.email})
                 </Typography>
               </Stack>
             ))}
@@ -359,7 +476,11 @@ const DemandaDetailsPage = () => {
                   setNovaIntervencao("");
                   setMostrarCampoIntervencao(false);
                 }}
-                sx={{ borderColor: "#2E7D32", color: "#2E7D32", borderRadius: "8px" }}
+                sx={{
+                  borderColor: "#2E7D32",
+                  color: "#2E7D32",
+                  borderRadius: "8px",
+                }}
               >
                 Cancelar
               </Button>
@@ -367,7 +488,12 @@ const DemandaDetailsPage = () => {
                 variant="contained"
                 onClick={handleAdicionarIntervencao}
                 disabled={loading}
-                sx={{ bgcolor: "#2E7D32", color: "white", borderRadius: "8px", "&:hover": { bgcolor: "#1B5E20" } }}
+                sx={{
+                  bgcolor: "#2E7D32",
+                  color: "white",
+                  borderRadius: "8px",
+                  "&:hover": { bgcolor: "#1B5E20" },
+                }}
               >
                 Confirmar Intervenção
               </Button>
@@ -379,7 +505,14 @@ const DemandaDetailsPage = () => {
       {/* Seção: Erros e Botões */}
       <Stack spacing={2} sx={{ maxWidth: "1145px", mx: "auto", mb: 3 }}>
         {error && (
-          <Typography sx={{ color: "#D32F2F", bgcolor: "#FFEBEE", p: 1, borderRadius: "8px" }}>
+          <Typography
+            sx={{
+              color: "#D32F2F",
+              bgcolor: "#FFEBEE",
+              p: 1,
+              borderRadius: "8px",
+            }}
+          >
             {error}
           </Typography>
         )}
@@ -389,7 +522,11 @@ const DemandaDetailsPage = () => {
             startIcon={<ArrowBackIcon />}
             onClick={() => navigate("/demands")}
             disabled={loading}
-            sx={{ borderColor: "#2E7D32", color: "#2E7D32", borderRadius: "8px" }}
+            sx={{
+              borderColor: "#2E7D32",
+              color: "#2E7D32",
+              borderRadius: "8px",
+            }}
           >
             Voltar
           </Button>
@@ -399,7 +536,12 @@ const DemandaDetailsPage = () => {
               startIcon={<LockIcon />}
               onClick={handleFecharDemanda}
               disabled={loading || !podeFecharDemanda()}
-              sx={{ bgcolor: "#2E7D32", color: "white", borderRadius: "8px", "&:hover": { bgcolor: "#1B5E20" } }}
+              sx={{
+                bgcolor: "#2E7D32",
+                color: "white",
+                borderRadius: "8px",
+                "&:hover": { bgcolor: "#1B5E20" },
+              }}
             >
               Fechar Demanda
             </Button>
