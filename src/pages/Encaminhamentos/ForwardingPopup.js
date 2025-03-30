@@ -6,15 +6,10 @@ import {
   DialogActions,
   Button,
   TextField,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  ListItemText,
-  Checkbox,
-  Select,
   Typography,
   CircularProgress,
   Box,
+  Autocomplete,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SendIcon from "@mui/icons-material/Send";
@@ -55,14 +50,19 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const StyledSelect = styled(Select)(({ theme }) => ({
-  height: "40px",
-  fontSize: "0.875rem",
-  "& .MuiSelect-select": {
-    padding: "8px 14px",
+const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
+  "& .MuiInputBase-root": {
+    height: "40px", // Tamanho original, igual aos outros campos
+    fontSize: "0.875rem",
+    borderRadius: "8px",
+    backgroundColor: "#fff",
   },
-  backgroundColor: "#fff",
-  borderRadius: "8px",
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#ced4da",
+  },
+  "& .MuiAutocomplete-endAdornment": {
+    display: "none", // Remove a seta
+  },
 }));
 
 const formatDateToDisplay = (isoDate) => {
@@ -72,15 +72,14 @@ const formatDateToDisplay = (isoDate) => {
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
-  const [destinatarios, setDestinatarios] = useState([]);
+  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState([]);
   const [descricao, setDescricao] = useState("");
   const [data, setData] = useState(new Date().toISOString().split("T")[0]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
 
-  // Define os cargos obrigatórios com os nomes exatos do ENUM
-  const mandatoryRoles = ["Diretor Geral", "Diretor Ensino", "Funcionario CTP"];
-  const ctpKeyword = "CTP"; // Para capturar variações adicionais de CTP, se houver
+  // Define os cargos obrigatórios com base nos índices 2, 3 e 4 (ajuste conforme seu ENUM)
+  const mandatoryRoleIndices = [2, 3, 4]; // "Diretor Geral", "Diretor Ensino", "Funcionario CTP"
 
   const fetchUsuarios = async () => {
     setLoading(true);
@@ -92,20 +91,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       if (!response.data || !Array.isArray(response.data.usuarios)) {
         throw new Error("Formato de resposta inválido");
       }
-      const fetchedUsuarios = response.data.usuarios;
-      setUsuarios(fetchedUsuarios);
-
-      // Pré-seleciona usuários com cargos obrigatórios
-      const mandatoryUsers = fetchedUsuarios
-        .filter((usuario) => {
-          const cargoNome = usuario.Cargo?.nome || "";
-          return (
-            mandatoryRoles.includes(cargoNome) || // Diretor Geral, Diretor Ensino, Funcionario CTP
-            cargoNome.includes(ctpKeyword) // Qualquer cargo que contenha "CTP"
-          );
-        })
-        .map((usuario) => usuario.id);
-      setDestinatarios(mandatoryUsers);
+      setUsuarios(response.data.usuarios);
       setAlert(null);
     } catch (err) {
       setAlert({ message: "Erro ao carregar usuários", type: "error" });
@@ -118,6 +104,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   useEffect(() => {
     if (open) {
       fetchUsuarios();
+      setDestinatariosSelecionados([]);
       setDescricao("");
       setData(new Date().toISOString().split("T")[0]);
       setAlert(null);
@@ -137,14 +124,11 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     try {
       // Garante que todos os usuários obrigatórios sejam incluídos no envio
       const mandatoryIds = usuarios
-        .filter((u) => {
-          const cargoNome = u.Cargo?.nome || "";
-          return mandatoryRoles.includes(cargoNome) || cargoNome.includes(ctpKeyword);
-        })
+        .filter((u) => mandatoryRoleIndices.includes(u.Cargo?.id))
         .map((u) => u.id);
 
       // Combina os destinatários selecionados com os obrigatórios, evitando duplicatas
-      const finalDestinatarios = [...new Set([...destinatarios, ...mandatoryIds])];
+      const finalDestinatarios = [...new Set([...destinatariosSelecionados, ...mandatoryIds])];
 
       const requests = finalDestinatarios.map(async (destinatarioId) => {
         const payload = {
@@ -175,37 +159,22 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     }
   };
 
-  const isFormValid = () => descricao.trim() && destinatarios.length > 0;
+  const isFormValid = () => descricao.trim();
 
-  const handleDestinatarioChange = (event) => {
-    const selectedIds = event.target.value;
-    const mandatoryIds = usuarios
-      .filter((u) => {
-        const cargoNome = u.Cargo?.nome || "";
-        return mandatoryRoles.includes(cargoNome) || cargoNome.includes(ctpKeyword);
-      })
-      .map((u) => u.id);
-
-    // Garante que os IDs obrigatórios estejam sempre incluídos e adiciona apenas IDs de usuários com nomes diferentes
-    const newDestinatarios = [
-      ...mandatoryIds,
-      ...selectedIds.filter((id) => {
-        const usuario = usuarios.find((u) => u.id === id);
-        const isMandatory = mandatoryIds.includes(id);
-        const isDuplicateName = mandatoryIds.some((mandatoryId) => {
-          const mandatoryUser = usuarios.find((u) => u.id === mandatoryId);
-          return mandatoryUser?.nome === usuario?.nome;
-        });
-        return !isMandatory && !isDuplicateName; // Só adiciona se não for obrigatório e o nome não for duplicado
-      }),
-    ];
-
-    setDestinatarios(newDestinatarios);
+  const handleDestinatarioChange = (event, newValue) => {
+    const selectedIds = newValue.map((usuario) => usuario.id);
+    setDestinatariosSelecionados(selectedIds);
   };
 
-  const isMandatoryUser = (usuario) => {
-    const cargoNome = usuario.Cargo?.nome || "";
-    return mandatoryRoles.includes(cargoNome) || cargoNome.includes(ctpKeyword);
+  const isMandatoryUser = (usuario) => mandatoryRoleIndices.includes(usuario.Cargo?.id);
+
+  // Função de filtragem personalizada para buscar apenas nomes que começam com o texto digitado
+  const filterOptions = (options, { inputValue }) => {
+    if (!inputValue) return []; // Não mostra nada se o campo estiver vazio
+    const normalizedInput = inputValue.toLowerCase();
+    return options.filter((option) =>
+      option.nome.toLowerCase().startsWith(normalizedInput)
+    );
   };
 
   return (
@@ -228,54 +197,45 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
               <CircularProgress />
             </Box>
           )}
-          <FormControl fullWidth margin="normal">
-            <InputLabel
-              sx={{
-                fontSize: "0.875rem",
-                transform: "translate(14px, 10px) scale(1)",
-                "&.MuiInputLabel-shrink": {
-                  transform: "translate(14px, -6px) scale(0.75)",
-                },
-              }}
-            >
-              Destinatários
-            </InputLabel>
-            <StyledSelect
-              multiple
-              value={destinatarios}
-              onChange={handleDestinatarioChange}
-              renderValue={(selected) =>
-                [...new Set(selected.map((id) => {
-                  const usuario = usuarios.find((u) => u.id === id);
-                  return usuario?.nome || "Usuário não encontrado";
-                }))].join(", ") // Remove nomes duplicados na exibição
-              }
-            >
-              {usuarios.length > 0 ? (
-                usuarios.map((usuario) => {
-                  const isMandatory = isMandatoryUser(usuario);
-                  return (
-                    <MenuItem
-                      key={usuario.id}
-                      value={usuario.id}
-                      disabled={isMandatory} // Desabilita a opção de desmarcar os obrigatórios
-                    >
-                      <Checkbox
-                        checked={destinatarios.includes(usuario.id)}
-                        disabled={isMandatory} // Desabilita o checkbox para os obrigatórios
-                      />
-                      <ListItemText
-                        primary={`${usuario.nome} (${usuario.Cargo?.nome || "Cargo não informado"})`}
-                        secondary={isMandatory ? "Envio automático" : null}
-                      />
-                    </MenuItem>
-                  );
-                })
-              ) : (
-                <MenuItem disabled>Nenhum usuário disponível</MenuItem>
-              )}
-            </StyledSelect>
-          </FormControl>
+          <StyledAutocomplete
+            multiple
+            options={usuarios}
+            getOptionLabel={(option) => `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`}
+            value={usuarios.filter((u) => destinatariosSelecionados.includes(u.id))}
+            onChange={handleDestinatarioChange}
+            filterOptions={filterOptions}
+            renderInput={(params) => (
+              <StyledTextField
+                {...params}
+                label="Destinatários"
+                placeholder="Digite para buscar..."
+                margin="normal"
+                inputProps={{
+                  ...params.inputProps,
+                  readOnly: false, // Permite digitar
+                  style: { cursor: "text" }, // Cursor de texto
+                }}
+                InputProps={{
+                  ...params.InputProps,
+                  readOnly: false,
+                  disableUnderline: true, // Remove sublinhado ou interação extra
+                }}
+              />
+            )}
+            renderOption={(props, option) => (
+              <li {...props}>
+                {option.nome} ({option.Cargo?.nome || "Cargo não informado"})
+                {isMandatoryUser(option) && " (Envio automático)"}
+              </li>
+            )}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            fullWidth
+            freeSolo={false}
+            openOnFocus={false} // Não abre ao focar
+            disableOpenOnFocus // Impede abertura ao clicar
+            popupIcon={null} // Remove ícone de popup
+            noOptionsText="" // Remove mensagem "Nenhum usuário encontrado"
+          />
           <StyledTextField
             label="Descrição"
             value={descricao}
