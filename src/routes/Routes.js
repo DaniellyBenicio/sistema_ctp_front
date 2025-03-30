@@ -8,6 +8,8 @@ import DemandaRegisterPage from "../pages/demandas/DemandaRegisterPage";
 import DemandaDetailsPage from "../pages/demandas/DemandaDetailsPage.js";
 import Students from "../pages/Alunos/Students";
 import StudentRegisterPage from "../pages/Alunos/StudentRegisterPage";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.js";
+import ResetPassword from "../pages/ForgotPassword/ResetPassword.js";
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
@@ -26,7 +28,8 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           )
         }
       />
-
+      <Route path="/recuperar-senha" element={<ForgotPassword />} />
+      <Route path="/redefinir-senha/:token" element={<ResetPassword />} />
       <Route
         path="/"
         element={

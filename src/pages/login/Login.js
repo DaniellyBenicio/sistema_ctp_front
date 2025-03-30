@@ -220,7 +220,11 @@ const Login = ({ onLogin }) => {
               <Typography
                 color="error"
                 variant="body2"
-                sx={{ mt: 1, textAlign: "left", fontSize: { xs: "0.8rem", md: "0.875rem" } }}
+                sx={{
+                  mt: 1,
+                  textAlign: "left",
+                  fontSize: { xs: "0.8rem", md: "0.875rem" },
+                }}
               >
                 {error}
               </Typography>
@@ -240,7 +244,7 @@ const Login = ({ onLogin }) => {
                   color: "#27AE60",
                   "&:hover": { textDecoration: "underline", color: "#2ECC71" },
                 }}
-                onClick={() => navigate("/forgot-password")}
+                onClick={() => navigate("/recuperar-senha")}
               >
                 Esqueceu a senha?
               </Button>
