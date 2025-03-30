@@ -79,7 +79,14 @@ const DemandsTable = ({
                   "Nenhum aluno"}
               </Typography>
               <Typography>
-                <strong>Status:</strong> {demand.status ? "Ativo" : "Inativo"}
+                <strong>Status:</strong>{" "}
+                <span
+                  style={{
+                    color: demand.status ? "#2E7D32" : "#D32F2F",
+                  }}
+                >
+                  {demand.status ? "Aberta" : "Fechada"}
+                </span>
               </Typography>
               <Typography>
                 <strong>Disciplina:</strong>{" "}
@@ -230,7 +237,13 @@ const DemandsTable = ({
                   lineHeight: "30px",
                 }}
               >
-                {demand.status ? "Ativo" : "Inativo"}
+                <span
+                  style={{
+                    color: demand.status ? "#2E7D32" : "#D32F2F",
+                  }}
+                >
+                  {demand.status ? "Aberta" : "Fechada"}
+                </span>
               </TableCell>
               <TableCell
                 align="center"

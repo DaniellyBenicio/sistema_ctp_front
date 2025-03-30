@@ -16,7 +16,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import LockIcon from "@mui/icons-material/Lock";
 import api from "../../service/api";
 import { jwtDecode } from "jwt-decode";
-import Intervention from "../Intervention/Intervention.js"; 
+import Intervention from "../Intervention/Intervention.js";
 
 const DemandaDetailsPage = () => {
   const { id } = useParams();
@@ -70,30 +70,21 @@ const DemandaDetailsPage = () => {
 
     try {
       setLoading(true);
-      await api.put(
-        `/demandas/${demanda.id}`,
-        { status: false },
+      const response = await api.put(
+        `/${id}/fechar`,
+        {},
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
+      setDemanda((prev) => ({ ...prev, status: false }));
       navigate("/demands");
     } catch (err) {
-      setError("Erro ao fechar a demanda");
+      setError(err.response?.data?.mensagem || "Erro ao fechar a demanda");
       console.error("Erro ao fechar demanda:", err);
     } finally {
       setLoading(false);
     }
-  };
-
-  const podeFecharDemanda = () => {
-    if (!userId || !demanda || !userRole) return false;
-    const isCriador = demanda.usuario_id === userId;
-    const isDestinatario = demanda.Encaminhamentos?.some(
-      (enc) => enc.destinatario_id === userId
-    );
-    const isCtp = userRole === "ctp";
-    return (isCriador && isCtp) || (!isCriador && isDestinatario);
   };
 
   if (loading) {
@@ -375,7 +366,7 @@ const DemandaDetailsPage = () => {
               variant="contained"
               startIcon={<LockIcon />}
               onClick={handleFecharDemanda}
-              disabled={loading || !podeFecharDemanda()}
+              disabled={loading}
               sx={{
                 bgcolor: "#2E7D32",
                 color: "white",
