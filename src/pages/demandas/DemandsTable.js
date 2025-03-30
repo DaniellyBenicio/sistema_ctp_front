@@ -61,7 +61,6 @@ const DemandsTable = ({
 
   const open = Boolean(anchorEl);
 
-  // Função para obter nomes únicos dos destinatários
   const getUniqueRecipients = (destinatarios) => {
     if (!destinatarios || destinatarios.length === 0) return [];
     const uniqueNames = [...new Set(destinatarios.map((dest) => dest.nome))];
@@ -107,7 +106,9 @@ const DemandsTable = ({
                 >
                   <Group fontSize="small" />
                 </IconButton>
-                <span>{getUniqueRecipients(demand.destinatarios).length || 0}</span>
+                <span>
+                  {getUniqueRecipients(demand.destinatarios).length || 0}
+                </span>
               </Typography>
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
@@ -116,12 +117,23 @@ const DemandsTable = ({
                 >
                   <Visibility />
                 </IconButton>
-                <IconButton
-                  color="success"
-                  onClick={() => handleOpenPopup(demand.id)}
+                <Tooltip
+                  title={
+                    !demand.status
+                      ? "Você não pode enviar uma demanda que está fechada"
+                      : "Encaminhar demanda"
+                  }
                 >
-                  <Send />
-                </IconButton>
+                  <span>
+                    <IconButton
+                      color="success"
+                      onClick={() => handleOpenPopup(demand.id)}
+                      disabled={!demand.status} // Desabilita se fechada
+                    >
+                      <Send />
+                    </IconButton>
+                  </span>
+                </Tooltip>
               </Stack>
             </Stack>
           </Paper>
@@ -141,10 +153,11 @@ const DemandsTable = ({
         >
           <Stack sx={{ p: 2 }}>
             <Typography variant="h6">Destinatários</Typography>
-            {selectedDemand && getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
-              getUniqueRecipients(selectedDemand.destinatarios).map((nome, index) => (
-                <Typography key={index}>{nome}</Typography>
-              ))
+            {selectedDemand &&
+            getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
+              getUniqueRecipients(selectedDemand.destinatarios).map(
+                (nome, index) => <Typography key={index}>{nome}</Typography>
+              )
             ) : (
               <Typography>Nenhum destinatário</Typography>
             )}
@@ -298,7 +311,9 @@ const DemandsTable = ({
                     <Group fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                <span>{getUniqueRecipients(demand.destinatarios).length || 0}</span>
+                <span>
+                  {getUniqueRecipients(demand.destinatarios).length || 0}
+                </span>
               </TableCell>
               <TableCell
                 align="center"
@@ -314,12 +329,23 @@ const DemandsTable = ({
                 >
                   <Visibility />
                 </IconButton>
-                <IconButton
-                  color="success"
-                  onClick={() => handleOpenPopup(demand.id)}
+                <Tooltip
+                  title={
+                    !demand.status
+                      ? "Você não pode enviar uma demanda que está fechada"
+                      : "Encaminhar demanda"
+                  }
                 >
-                  <Send />
-                </IconButton>
+                  <span>
+                    <IconButton
+                      color="success"
+                      onClick={() => handleOpenPopup(demand.id)}
+                      disabled={!demand.status} // Desabilita se fechada
+                    >
+                      <Send />
+                    </IconButton>
+                  </span>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}
@@ -340,10 +366,11 @@ const DemandsTable = ({
       >
         <Stack sx={{ p: 2 }}>
           <Typography variant="h6">Destinatários</Typography>
-          {selectedDemand && getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
-            getUniqueRecipients(selectedDemand.destinatarios).map((nome, index) => (
-              <Typography key={index}>{nome}</Typography>
-            ))
+          {selectedDemand &&
+          getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
+            getUniqueRecipients(selectedDemand.destinatarios).map(
+              (nome, index) => <Typography key={index}>{nome}</Typography>
+            )
           ) : (
             <Typography>Nenhum destinatário</Typography>
           )}

@@ -8,6 +8,7 @@ import {
   Box,
   CircularProgress,
   Modal,
+  Tooltip,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import PeopleIcon from "@mui/icons-material/People";
@@ -18,6 +19,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import api from "../../service/api";
 import { jwtDecode } from "jwt-decode";
 import Intervention from "../Intervention/Intervention.js";
+import CustomAlert from "../../components/alert/CustomAlert";
 
 const DemandaDetailsPage = () => {
   const { id } = useParams();
@@ -26,7 +28,7 @@ const DemandaDetailsPage = () => {
   const [novaIntervencao, setNovaIntervencao] = useState("");
   const [mostrarCampoIntervencao, setMostrarCampoIntervencao] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
@@ -39,23 +41,36 @@ const DemandaDetailsPage = () => {
         setUserId(decoded.id);
         setUserRole(decoded.role);
       } catch (err) {
-        setError("Erro de autenticação");
+        setAlert({
+          show: true,
+          message: "Erro de autenticação",
+          type: "error",
+        });
         console.error("Erro ao decodificar token:", err);
       }
     } else {
-      setError("Nenhum token encontrado. Faça login novamente.");
+      setAlert({
+        show: true,
+        message: "Nenhum token encontrado. Faça login novamente.",
+        type: "error",
+      });
       navigate("/login");
     }
 
     const fetchDemanda = async () => {
       try {
+        setLoading(true);
         const response = await api.get(`/demandas/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDemanda(response.data.demanda);
         setLoading(false);
       } catch (err) {
-        setError("Erro ao carregar os detalhes da demanda");
+        setAlert({
+          show: true,
+          message: "Erro ao carregar os detalhes da demanda",
+          type: "error",
+        });
         console.error("Erro ao buscar demanda:", err);
         setLoading(false);
       }
@@ -65,7 +80,7 @@ const DemandaDetailsPage = () => {
   }, [id, navigate]);
 
   const handleFecharDemanda = () => {
-    setOpenConfirmModal(true); // Abre o modal de confirmação
+    setOpenConfirmModal(true);
   };
 
   const handleConfirmCloseDemanda = async () => {
@@ -83,7 +98,11 @@ const DemandaDetailsPage = () => {
       setOpenConfirmModal(false);
       navigate("/demands");
     } catch (err) {
-      setError(err.response?.data?.mensagem || "Erro ao fechar a demanda");
+      setAlert({
+        show: true,
+        message: err.response?.data?.mensagem || "Erro ao fechar a demanda",
+        type: "error",
+      });
       console.error("Erro ao fechar demanda:", err);
     } finally {
       setLoading(false);
@@ -92,8 +111,11 @@ const DemandaDetailsPage = () => {
 
   const handleCancelCloseDemanda = () => {
     setOpenConfirmModal(false);
-    setError(null);
+    setAlert({ show: false, message: "", type: "" });
   };
+
+  const temIntervencoes = () =>
+    demanda?.IntervencoesDemandas && demanda.IntervencoesDemandas.length > 0;
 
   if (loading) {
     return (
@@ -103,10 +125,14 @@ const DemandaDetailsPage = () => {
     );
   }
 
-  if (error) {
+  if (alert.show && !demanda) {
     return (
       <Box m={4}>
-        <Typography sx={{ color: "#D32F2F" }}>{error}</Typography>
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
+        />
         <Button
           variant="outlined"
           onClick={() => navigate("/demands")}
@@ -179,9 +205,6 @@ const DemandaDetailsPage = () => {
         </Stack>
         <Stack spacing={1}>
           <Typography>
-            <strong>Código da Demanda:</strong> {demanda.id || "Não informada"}
-          </Typography>
-          <Typography>
             <strong>Descrição:</strong> {demanda.descricao || "Não informada"}
           </Typography>
           <Typography>
@@ -202,7 +225,6 @@ const DemandaDetailsPage = () => {
         </Stack>
       </Paper>
 
-      {/* Seção: Alunos Envolvidos */}
       <Paper
         sx={{
           p: 3,
@@ -250,8 +272,6 @@ const DemandaDetailsPage = () => {
           <Typography>Nenhum aluno associado</Typography>
         )}
       </Paper>
-
-      {/* Seção: Amparos Legais */}
       <Paper
         sx={{
           p: 3,
@@ -280,8 +300,6 @@ const DemandaDetailsPage = () => {
           <Typography>Nenhum amparo legal associado</Typography>
         )}
       </Paper>
-
-      {/* Seção: Encaminhamentos */}
       <Paper
         sx={{
           p: 3,
@@ -326,8 +344,6 @@ const DemandaDetailsPage = () => {
           <Typography>Nenhum encaminhamento</Typography>
         )}
       </Paper>
-
-      {/* Seção: Intervenções */}
       <Intervention
         demanda={demanda}
         setDemanda={setDemanda}
@@ -337,11 +353,9 @@ const DemandaDetailsPage = () => {
         setMostrarCampoIntervencao={setMostrarCampoIntervencao}
         loading={loading}
         setLoading={setLoading}
-        error={error}
-        setError={setError}
+        error={alert.message}
+        setError={(message) => setAlert({ show: true, message, type: "error" })}
       />
-
-      {/* Modal de Confirmação */}
       <Modal
         open={openConfirmModal}
         onClose={handleCancelCloseDemanda}
@@ -368,7 +382,7 @@ const DemandaDetailsPage = () => {
               color: "#2E7D32",
               fontWeight: "bold",
               mb: 2,
-              textAlign: "center", // Centraliza o título
+              textAlign: "center",
             }}
           >
             Fechar Demanda
@@ -377,11 +391,7 @@ const DemandaDetailsPage = () => {
             Deseja realmente fechar a demanda? Ao confirmar, ela será fechada e
             ninguém poderá mais intervir.
           </Typography>
-          <Stack
-            direction="row"
-            spacing={2}
-            justifyContent="center" // Centraliza os botões
-          >
+          <Stack direction="row" spacing={2} justifyContent="center">
             <Button
               variant="outlined"
               onClick={handleCancelCloseDemanda}
@@ -411,21 +421,7 @@ const DemandaDetailsPage = () => {
           </Stack>
         </Box>
       </Modal>
-
-      {/* Seção: Erros e Botões */}
       <Stack spacing={2} sx={{ maxWidth: "1145px", mx: "auto", mb: 3 }}>
-        {error && !openConfirmModal && (
-          <Typography
-            sx={{
-              color: "#D32F2F",
-              bgcolor: "#FFEBEE",
-              p: 1,
-              borderRadius: "8px",
-            }}
-          >
-            {error}
-          </Typography>
-        )}
         <Stack direction="row" spacing={2}>
           <Button
             variant="outlined"
@@ -441,23 +437,44 @@ const DemandaDetailsPage = () => {
             Voltar
           </Button>
           {demanda.status && (
-            <Button
-              variant="contained"
-              startIcon={<LockIcon />}
-              onClick={handleFecharDemanda}
-              disabled={loading}
-              sx={{
-                bgcolor: "#2E7D32",
-                color: "white",
-                borderRadius: "8px",
-                "&:hover": { bgcolor: "#1B5E20" },
-              }}
+            <Tooltip
+              title={
+                !temIntervencoes()
+                  ? "É necessário pelo menos uma intervenção para fechar a demanda"
+                  : ""
+              }
             >
-              Fechar Demanda
-            </Button>
+              <span>
+                <Button
+                  variant="contained"
+                  startIcon={<LockIcon />}
+                  onClick={handleFecharDemanda}
+                  disabled={loading || !temIntervencoes()}
+                  sx={{
+                    bgcolor: "#2E7D32",
+                    color: "white",
+                    borderRadius: "8px",
+                    "&:hover": { bgcolor: "#1B5E20" },
+                    "&.Mui-disabled": {
+                      bgcolor: "#B0BEC5",
+                      color: "#FFFFFF",
+                    },
+                  }}
+                >
+                  Fechar Demanda
+                </Button>
+              </span>
+            </Tooltip>
           )}
         </Stack>
       </Stack>
+      {alert.show && (
+        <CustomAlert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert({ show: false, message: "", type: "" })}
+        />
+      )}
     </Box>
   );
 };
