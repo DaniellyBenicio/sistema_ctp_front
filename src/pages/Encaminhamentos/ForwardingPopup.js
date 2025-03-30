@@ -8,12 +8,13 @@ import {
   TextField,
   FormControl,
   InputLabel,
-  Select,
   MenuItem,
+  ListItemText,
+  Checkbox,
+  Select,
   Typography,
   CircularProgress,
   Box,
-  Chip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SendIcon from "@mui/icons-material/Send";
@@ -77,6 +78,10 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
 
+  // Define os cargos obrigatórios com os nomes exatos do ENUM
+  const mandatoryRoles = ["Diretor Geral", "Diretor Ensino", "Funcionario CTP"];
+  const ctpKeyword = "CTP"; // Para capturar variações adicionais de CTP, se houver
+
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
@@ -87,7 +92,20 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       if (!response.data || !Array.isArray(response.data.usuarios)) {
         throw new Error("Formato de resposta inválido");
       }
-      setUsuarios(response.data.usuarios);
+      const fetchedUsuarios = response.data.usuarios;
+      setUsuarios(fetchedUsuarios);
+
+      // Pré-seleciona usuários com cargos obrigatórios
+      const mandatoryUsers = fetchedUsuarios
+        .filter((usuario) => {
+          const cargoNome = usuario.Cargo?.nome || "";
+          return (
+            mandatoryRoles.includes(cargoNome) || // Diretor Geral, Diretor Ensino, Funcionario CTP
+            cargoNome.includes(ctpKeyword) // Qualquer cargo que contenha "CTP"
+          );
+        })
+        .map((usuario) => usuario.id);
+      setDestinatarios(mandatoryUsers);
       setAlert(null);
     } catch (err) {
       setAlert({ message: "Erro ao carregar usuários", type: "error" });
@@ -100,7 +118,6 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   useEffect(() => {
     if (open) {
       fetchUsuarios();
-      setDestinatarios([]);
       setDescricao("");
       setData(new Date().toISOString().split("T")[0]);
       setAlert(null);
@@ -109,13 +126,27 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
 
   const handleSubmit = async () => {
     if (!isFormValid()) {
-      setAlert({ message: "Preencha todos os campos obrigatórios", type: "warning" });
+      setAlert({
+        message: "Preencha todos os campos obrigatórios",
+        type: "warning",
+      });
       return;
     }
 
     setLoading(true);
     try {
-      const requests = destinatarios.map(async (destinatarioId) => {
+      // Garante que todos os usuários obrigatórios sejam incluídos no envio
+      const mandatoryIds = usuarios
+        .filter((u) => {
+          const cargoNome = u.Cargo?.nome || "";
+          return mandatoryRoles.includes(cargoNome) || cargoNome.includes(ctpKeyword);
+        })
+        .map((u) => u.id);
+
+      // Combina os destinatários selecionados com os obrigatórios, evitando duplicatas
+      const finalDestinatarios = [...new Set([...destinatarios, ...mandatoryIds])];
+
+      const requests = finalDestinatarios.map(async (destinatarioId) => {
         const payload = {
           destinatario_id: destinatarioId,
           demanda_id: demandId,
@@ -146,8 +177,27 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
 
   const isFormValid = () => descricao.trim() && destinatarios.length > 0;
 
-  const handleDeleteChip = (idToRemove) => {
-    setDestinatarios(destinatarios.filter((id) => id !== idToRemove));
+  const handleDestinatarioChange = (event) => {
+    const selectedIds = event.target.value;
+    const mandatoryIds = usuarios
+      .filter((u) => {
+        const cargoNome = u.Cargo?.nome || "";
+        return mandatoryRoles.includes(cargoNome) || cargoNome.includes(ctpKeyword);
+      })
+      .map((u) => u.id);
+
+    // Garante que os IDs obrigatórios estejam sempre incluídos
+    const newDestinatarios = [
+      ...mandatoryIds,
+      ...selectedIds.filter((id) => !mandatoryIds.includes(id)),
+    ];
+
+    setDestinatarios(newDestinatarios);
+  };
+
+  const isMandatoryUser = (usuario) => {
+    const cargoNome = usuario.Cargo?.nome || "";
+    return mandatoryRoles.includes(cargoNome) || cargoNome.includes(ctpKeyword);
   };
 
   return (
@@ -185,30 +235,36 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             <StyledSelect
               multiple
               value={destinatarios}
-              onChange={(e) => setDestinatarios(e.target.value)}
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((id) => {
+              onChange={handleDestinatarioChange}
+              renderValue={(selected) =>
+                selected
+                  .map((id) => {
                     const usuario = usuarios.find((u) => u.id === id);
-                    return (
-                      <Chip
-                        key={id}
-                        label={usuario?.nome || "Usuário não encontrado"}
-                        onDelete={() => handleDeleteChip(id)}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        sx={{ height: "24px", fontSize: "0.75rem" }}
-                      />
-                    );
-                  })}
-                </Box>
-              )}
+                    return usuario?.nome || "Usuário não encontrado";
+                  })
+                  .join(", ")
+              }
             >
               {usuarios.length > 0 ? (
-                usuarios.map((usuario) => (
-                  <MenuItem key={usuario.id} value={usuario.id}>
-                    {usuario.nome} ({usuario.Cargo?.nome || "Cargo não informado"})
-                  </MenuItem>
-                ))
+                usuarios.map((usuario) => {
+                  const isMandatory = isMandatoryUser(usuario);
+                  return (
+                    <MenuItem
+                      key={usuario.id}
+                      value={usuario.id}
+                      disabled={isMandatory} // Desabilita a opção de desmarcar os obrigatórios
+                    >
+                      <Checkbox
+                        checked={destinatarios.includes(usuario.id)}
+                        disabled={isMandatory} // Desabilita o checkbox para os obrigatórios
+                      />
+                      <ListItemText
+                        primary={`${usuario.nome} (${usuario.Cargo?.nome || "Cargo não informado"})`}
+                        secondary={isMandatory ? "Envio automático" : null}
+                      />
+                    </MenuItem>
+                  );
+                })
               ) : (
                 <MenuItem disabled>Nenhum usuário disponível</MenuItem>
               )}

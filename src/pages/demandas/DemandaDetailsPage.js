@@ -7,6 +7,7 @@ import {
   Paper,
   Box,
   CircularProgress,
+  Modal,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import PeopleIcon from "@mui/icons-material/People";
@@ -28,6 +29,7 @@ const DemandaDetailsPage = () => {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -62,22 +64,23 @@ const DemandaDetailsPage = () => {
     if (token) fetchDemanda();
   }, [id, navigate]);
 
-  const handleFecharDemanda = async () => {
-    const confirmacao = window.confirm(
-      "Deseja realmente fechar a demanda?\nAo confirmar, a demanda será fechada e ninguém poderá mais intervir. Sim ou Não"
-    );
-    if (!confirmacao) return;
+  const handleFecharDemanda = () => {
+    setOpenConfirmModal(true); // Abre o modal de confirmação
+  };
 
+  const handleConfirmCloseDemanda = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem("token");
       const response = await api.put(
         `/${id}/fechar`,
         {},
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setDemanda((prev) => ({ ...prev, status: false }));
+      setOpenConfirmModal(false);
       navigate("/demands");
     } catch (err) {
       setError(err.response?.data?.mensagem || "Erro ao fechar a demanda");
@@ -85,6 +88,11 @@ const DemandaDetailsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelCloseDemanda = () => {
+    setOpenConfirmModal(false);
+    setError(null);
   };
 
   if (loading) {
@@ -333,9 +341,80 @@ const DemandaDetailsPage = () => {
         setError={setError}
       />
 
+      {/* Modal de Confirmação */}
+      <Modal
+        open={openConfirmModal}
+        onClose={handleCancelCloseDemanda}
+        aria-labelledby="confirm-close-modal"
+        aria-describedby="confirm-close-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "white",
+            borderRadius: "12px",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography
+            id="confirm-close-modal"
+            variant="h6"
+            sx={{
+              color: "#2E7D32",
+              fontWeight: "bold",
+              mb: 2,
+              textAlign: "center", // Centraliza o título
+            }}
+          >
+            Fechar Demanda
+          </Typography>
+          <Typography id="confirm-close-description" sx={{ mb: 3 }}>
+            Deseja realmente fechar a demanda? Ao confirmar, ela será fechada e
+            ninguém poderá mais intervir.
+          </Typography>
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="center" // Centraliza os botões
+          >
+            <Button
+              variant="outlined"
+              onClick={handleCancelCloseDemanda}
+              disabled={loading}
+              sx={{
+                borderColor: "#D32F2F",
+                color: "#D32F2F",
+                borderRadius: "8px",
+                "&:hover": { borderColor: "#B71C1C", color: "#B71C1C" },
+              }}
+            >
+              Não
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleConfirmCloseDemanda}
+              disabled={loading}
+              sx={{
+                bgcolor: "#2E7D32",
+                "&:hover": { bgcolor: "#1B5E20" },
+                borderRadius: "8px",
+                color: "white",
+              }}
+            >
+              Sim
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
+
       {/* Seção: Erros e Botões */}
       <Stack spacing={2} sx={{ maxWidth: "1145px", mx: "auto", mb: 3 }}>
-        {error && (
+        {error && !openConfirmModal && (
           <Typography
             sx={{
               color: "#D32F2F",
