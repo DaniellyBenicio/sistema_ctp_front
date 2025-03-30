@@ -61,6 +61,13 @@ const DemandsTable = ({
 
   const open = Boolean(anchorEl);
 
+  // Função para obter nomes únicos dos destinatários
+  const getUniqueRecipients = (destinatarios) => {
+    if (!destinatarios || destinatarios.length === 0) return [];
+    const uniqueNames = [...new Set(destinatarios.map((dest) => dest.nome))];
+    return uniqueNames;
+  };
+
   if (isMobile) {
     return (
       <Stack spacing={1} sx={{ width: "100%" }}>
@@ -100,7 +107,7 @@ const DemandsTable = ({
                 >
                   <Group fontSize="small" />
                 </IconButton>
-                <span>{demand.destinatarios?.length || 0}</span>
+                <span>{getUniqueRecipients(demand.destinatarios).length || 0}</span>
               </Typography>
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton
@@ -125,6 +132,24 @@ const DemandsTable = ({
           demandId={selectedDemandId}
           usuarioLogadoId={usuarioLogadoId}
         />
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleCloseRecipients}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          transformOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Stack sx={{ p: 2 }}>
+            <Typography variant="h6">Destinatários</Typography>
+            {selectedDemand && getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
+              getUniqueRecipients(selectedDemand.destinatarios).map((nome, index) => (
+                <Typography key={index}>{nome}</Typography>
+              ))
+            ) : (
+              <Typography>Nenhum destinatário</Typography>
+            )}
+          </Stack>
+        </Popover>
       </Stack>
     );
   }
@@ -273,7 +298,7 @@ const DemandsTable = ({
                     <Group fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                <span>{demand.destinatarios?.length || 0}</span>
+                <span>{getUniqueRecipients(demand.destinatarios).length || 0}</span>
               </TableCell>
               <TableCell
                 align="center"
@@ -315,9 +340,9 @@ const DemandsTable = ({
       >
         <Stack sx={{ p: 2 }}>
           <Typography variant="h6">Destinatários</Typography>
-          {selectedDemand?.destinatarios?.length > 0 ? (
-            selectedDemand.destinatarios.map((dest) => (
-              <Typography key={dest.id}>{dest.nome}</Typography>
+          {selectedDemand && getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
+            getUniqueRecipients(selectedDemand.destinatarios).map((nome, index) => (
+              <Typography key={index}>{nome}</Typography>
             ))
           ) : (
             <Typography>Nenhum destinatário</Typography>

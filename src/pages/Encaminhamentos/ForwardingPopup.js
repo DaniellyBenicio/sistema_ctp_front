@@ -186,10 +186,18 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       })
       .map((u) => u.id);
 
-    // Garante que os IDs obrigatórios estejam sempre incluídos
+    // Garante que os IDs obrigatórios estejam sempre incluídos e adiciona apenas IDs de usuários com nomes diferentes
     const newDestinatarios = [
       ...mandatoryIds,
-      ...selectedIds.filter((id) => !mandatoryIds.includes(id)),
+      ...selectedIds.filter((id) => {
+        const usuario = usuarios.find((u) => u.id === id);
+        const isMandatory = mandatoryIds.includes(id);
+        const isDuplicateName = mandatoryIds.some((mandatoryId) => {
+          const mandatoryUser = usuarios.find((u) => u.id === mandatoryId);
+          return mandatoryUser?.nome === usuario?.nome;
+        });
+        return !isMandatory && !isDuplicateName; // Só adiciona se não for obrigatório e o nome não for duplicado
+      }),
     ];
 
     setDestinatarios(newDestinatarios);
@@ -237,12 +245,10 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
               value={destinatarios}
               onChange={handleDestinatarioChange}
               renderValue={(selected) =>
-                selected
-                  .map((id) => {
-                    const usuario = usuarios.find((u) => u.id === id);
-                    return usuario?.nome || "Usuário não encontrado";
-                  })
-                  .join(", ")
+                [...new Set(selected.map((id) => {
+                  const usuario = usuarios.find((u) => u.id === id);
+                  return usuario?.nome || "Usuário não encontrado";
+                }))].join(", ") // Remove nomes duplicados na exibição
               }
             >
               {usuarios.length > 0 ? (
