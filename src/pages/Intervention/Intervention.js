@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Typography,
   Stack,
   TextField,
   Button,
   Paper,
+  Card,
+  CardContent,
 } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
 import AddIcon from "@mui/icons-material/Add";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PersonIcon from "@mui/icons-material/Person";
 import api from "../../service/api";
+import CustomAlert from "../../components/alert/CustomAlert";
 
 const Intervention = ({
   demanda,
@@ -19,23 +24,30 @@ const Intervention = ({
   setMostrarCampoIntervencao,
   loading,
   setLoading,
-  error,
-  setError,
 }) => {
-  const handleAdicionarIntervencao = async () => {
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleAdicionarIntervencao = async (event) => {
+    event.preventDefault();
+
     if (!demanda.status) {
-      setError("Não é possível adicionar intervenções em uma demanda inativa");
+      setAlertMessage("Não é possível adicionar intervenções em uma demanda inativa");
+      setAlertType("error");
+      setShowAlert(true);
       return;
     }
 
     if (!novaIntervencao.trim()) {
-      setError("A descrição da intervenção é obrigatória");
+      setAlertMessage("A descrição da intervenção é obrigatória");
+      setAlertType("error");
+      setShowAlert(true);
       return;
     }
+
     try {
       setLoading(true);
-
-      // 1. Criar a intervenção
       const intervencaoResponse = await api.post(
         "/intervencao",
         { descricao: novaIntervencao },
@@ -43,19 +55,17 @@ const Intervention = ({
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
-      const intervencaoId = intervencaoResponse.data.intervencao.id;
 
-      // 2. Verificar se há encaminhamento
-      const encaminhamentoId = demanda.Encaminhamentos?.[0]?.id || null;
+      const intervencaoId = intervencaoResponse.data.intervencao.id;
+      const encaminhamentoId = demanda.Encaminhamentos?.[0]?.id;
+
       if (!encaminhamentoId) {
-        setError(
-          "Nenhum encaminhamento encontrado para associar a intervenção"
-        );
-        setLoading(false);
+        setAlertMessage("Nenhum encaminhamento encontrado para associar à intervenção");
+        setAlertType("error");
+        setShowAlert(true);
         return;
       }
 
-      // 3. Associar a intervenção à demanda
       await api.post(
         "/intervencoesdemandas",
         {
@@ -70,66 +80,79 @@ const Intervention = ({
         }
       );
 
-      // 4. Atualizar a demanda com a nova intervenção
+      setAlertMessage("Intervenção adicionada com sucesso!");
+      setAlertType("success");
+      setShowAlert(true);
+
       const updatedDemanda = await api.get(`/demandas/${demanda.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      });
       setDemanda(updatedDemanda.data.demanda);
       setNovaIntervencao("");
       setMostrarCampoIntervencao(false);
     } catch (err) {
-      setError(err.response?.data?.mensagem || "Erro ao adicionar intervenção");
+      setAlertMessage(err.response?.data?.mensagem || "Erro ao adicionar intervenção");
+      setAlertType("error");
+      setShowAlert(true);
       console.error("Erro ao adicionar intervenção:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
+
   return (
-    <Paper
-      sx={{
-        p: 3,
-        mb: 3,
-        borderRadius: "12px",
-        maxWidth: "1100px",
-        mx: "auto",
-      }}
-    >
+    <Paper sx={{ p: 3, mb: 3, borderRadius: "12px", maxWidth: "1100px", mx: "auto" }}>
+      {/* Alert Section */}
+      {showAlert && (
+        <CustomAlert message={alertMessage} type={alertType} onClose={handleCloseAlert} />
+      )}
+
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
         <BuildIcon sx={{ color: "#2E7D32" }} />
         <Typography variant="h6" sx={{ color: "#2E7D32", fontWeight: "bold" }}>
           Intervenções
         </Typography>
       </Stack>
+
       {demanda.IntervencoesDemandas?.length > 0 ? (
-        <Stack spacing={3}>
+        <Stack spacing={2}>
           {demanda.IntervencoesDemandas.map((int) => (
-            <Stack key={int.id} spacing={1}>
-              <Typography sx={{ ml: 2 }}>
-                <strong>Descrição da Intervenção:</strong>{" "}
-                {int.Intervencao.descricao}
-              </Typography>
-              <Typography sx={{ ml: 2 }}>
-                <strong>Data:</strong> {new Date(int.data).toLocaleString()}
-              </Typography>
-              <Typography sx={{ ml: 2 }}>
-                <strong>Responsável:</strong>{" "}
-                {int.Usuarios?.nome || "Usuário desconhecido"} (
-                {int.Usuarios?.email || "Email não disponível"})
-              </Typography>
-            </Stack>
+            <Card key={int.id} variant="outlined">
+              <CardContent>
+                <Typography fontSize={"0.9rem"} fontWeight="bold">
+                  Descrição:
+                </Typography>
+                <Typography fontSize={"0.9rem"} sx={{ wordBreak: "break-word", whiteSpace: "pre-wrap", mb: 1 }}>
+                  {int.Intervencao.descricao}
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                  <AccessTimeIcon sx={{ color: "#2E7D32" }} fontSize="small" />
+                  <Typography variant="caption" color="gray" fontSize={"0.9rem"}>
+                    {new Date(int.data).toLocaleString()}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <PersonIcon sx={{ color: "#2E7D32" }} fontSize="small" />
+                  <Typography variant="caption" display="block" color="gray" fontSize={"0.9rem"}>
+                    {int.Usuarios?.nome || "Usuário desconhecido"}
+                  </Typography>
+                </Stack>
+              </CardContent>
+            </Card>
           ))}
         </Stack>
       ) : (
         <Typography>Nenhuma intervenção registrada</Typography>
       )}
 
-      {/* Botão Adicionar e Campo de Nova Intervenção - Só mostra se status for ativo */}
       {demanda.status && !mostrarCampoIntervencao && (
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={<AddIcon sx={{ color: "white" }} />}
           onClick={() => setMostrarCampoIntervencao(true)}
           sx={{
             mt: 2,
@@ -153,7 +176,7 @@ const Intervention = ({
             onChange={(e) => setNovaIntervencao(e.target.value)}
             placeholder="Descreva a intervenção"
             variant="outlined"
-            sx={{ bgcolor: "white", borderRadius: "8px" }}
+            sx={{ bgcolor: "white", borderRadius: "8px", width: "100%" }}
           />
           <Stack direction="row" spacing={2}>
             <Button
@@ -162,11 +185,7 @@ const Intervention = ({
                 setNovaIntervencao("");
                 setMostrarCampoIntervencao(false);
               }}
-              sx={{
-                borderColor: "#2E7D32",
-                color: "#2E7D32",
-                borderRadius: "8px",
-              }}
+              sx={{ borderColor: "#2E7D32", color: "#2E7D32", borderRadius: "8px" }}
             >
               Cancelar
             </Button>

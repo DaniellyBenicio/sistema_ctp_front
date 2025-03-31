@@ -128,18 +128,22 @@ const DemandaRegisterPage = () => {
           curso: student.curso || "Curso não informado",
           condicoes: student.condicoes || [],
         };
+
+        const isStudentAlreadyAdded = formData.alunos.some(a => a.id === mappedStudent.id);
+
+        if (isStudentAlreadyAdded) {
+          setError("Este aluno já foi adicionado.");
+          setAlertOpen(true);
+          return;
+        }
+
         const newStudentsData = [...studentsData];
         newStudentsData[index] = mappedStudent;
         setStudentsData(newStudentsData);
 
         setFormData((prev) => {
           const newAlunos = [...prev.alunos];
-          const isAlreadyAdded = newAlunos.some(
-            (a) => a.id === mappedStudent.id
-          );
-          if (!isAlreadyAdded || !newAlunos[index]) {
-            newAlunos[index] = mappedStudent;
-          }
+          newAlunos[index] = mappedStudent;
           return { ...prev, alunos: newAlunos };
         });
       } else {

@@ -4,6 +4,7 @@ import {
   Typography,
   Stack,
   Button,
+  Card,
   Paper,
   Box,
   CircularProgress,
@@ -15,6 +16,9 @@ import PeopleIcon from "@mui/icons-material/People";
 import GavelIcon from "@mui/icons-material/Gavel";
 import ForwardIcon from "@mui/icons-material/Forward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import SubjectIcon from "@mui/icons-material/Subject";
+import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import api from "../../service/api";
 import { jwtDecode } from "jwt-decode";
@@ -32,6 +36,7 @@ const DemandaDetailsPage = () => {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
+  const [openEncaminhamentosModal, setOpenEncaminhamentosModal] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -117,6 +122,14 @@ const DemandaDetailsPage = () => {
   const temIntervencoes = () =>
     demanda?.IntervencoesDemandas && demanda.IntervencoesDemandas.length > 0;
 
+  const handleOpenEncaminhamentosModal = () => {
+    setOpenEncaminhamentosModal(true);
+  };
+
+  const handleCloseEncaminhamentosModal = () => {
+    setOpenEncaminhamentosModal(false);
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
@@ -181,7 +194,7 @@ const DemandaDetailsPage = () => {
           paddingTop: "20px",
         }}
       >
-        Detalhes da Demanda #{demanda.id}
+        Detalhes da Demanda
       </Typography>
 
       {/* Seção: Informações Gerais */}
@@ -204,22 +217,22 @@ const DemandaDetailsPage = () => {
           </Typography>
         </Stack>
         <Stack spacing={1}>
-          <Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>Descrição:</strong> {demanda.descricao || "Não informada"}
           </Typography>
-          <Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>Status:</strong>{" "}
             <span style={{ color: demanda.status ? "#2E7D32" : "#D32F2F" }}>
               {demanda.status ? "Ativo" : "Inativo"}
             </span>
           </Typography>
-          <Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>Disciplina:</strong> {demanda.disciplina || "Não informada"}
           </Typography>
-          <Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>Criador:</strong> {demanda.Usuarios.nome}
           </Typography>
-          <Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>E-mail:</strong> {demanda.Usuarios.email}
           </Typography>
         </Stack>
@@ -247,19 +260,19 @@ const DemandaDetailsPage = () => {
           <Stack spacing={4}>
             {demanda.DemandaAlunos.map((da) => (
               <Stack key={da.Aluno.matricula} spacing={1}>
-                <Typography sx={{ ml: 2 }}>
+                <Typography sx={{ fontSize: "0.9rem" }}>
                   <strong>Nome:</strong> {da.Aluno.nome}
                 </Typography>
-                <Typography sx={{ ml: 2 }}>
+                <Typography sx={{ fontSize: "0.9rem" }}>
                   <strong>Matrícula:</strong> {da.Aluno.matricula}
                 </Typography>
-                <Typography sx={{ ml: 2 }}>
+                <Typography sx={{ fontSize: "0.9rem" }}>
                   <strong>Curso:</strong>{" "}
                   {da.Aluno.Cursos && da.Aluno.Cursos.nome
                     ? da.Aluno.Cursos.nome
                     : "Curso não informado"}
                 </Typography>
-                <Typography sx={{ ml: 2 }}>
+                <Typography sx={{ fontSize: "0.9rem" }}>
                   <strong>Condições:</strong>{" "}
                   {da.Aluno.Condicaos?.length > 0
                     ? da.Aluno.Condicaos.map((c) => c.nome).join(", ")
@@ -272,6 +285,7 @@ const DemandaDetailsPage = () => {
           <Typography>Nenhum aluno associado</Typography>
         )}
       </Paper>
+
       <Paper
         sx={{
           p: 3,
@@ -292,7 +306,7 @@ const DemandaDetailsPage = () => {
         </Stack>
         {demanda.AmparoLegals?.length > 0 ? (
           demanda.AmparoLegals.map((amparo, index) => (
-            <Typography key={amparo.id}>
+            <Typography key={amparo.id} sx={{ fontSize: "0.9rem" }}>
               {index + 1}. {amparo.nome}
             </Typography>
           ))
@@ -300,6 +314,7 @@ const DemandaDetailsPage = () => {
           <Typography>Nenhum amparo legal associado</Typography>
         )}
       </Paper>
+
       <Paper
         sx={{
           p: 3,
@@ -309,7 +324,7 @@ const DemandaDetailsPage = () => {
           mx: "auto",
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0 }}>
           <ForwardIcon sx={{ color: "#2E7D32" }} />
           <Typography
             variant="h6"
@@ -318,32 +333,96 @@ const DemandaDetailsPage = () => {
             Encaminhamentos
           </Typography>
         </Stack>
-        {demanda.Encaminhamentos?.length > 0 ? (
-          <Stack spacing={3}>
-            {demanda.Encaminhamentos.map((enc) => (
-              <Stack spacing={1}>
-                <Typography sx={{ ml: 2 }}>
-                  <strong>Assunto do Encaminhamento:</strong> {enc.descricao}
-                </Typography>
-                <Typography sx={{ ml: 2 }}>
-                  <strong>Remetente:</strong> {enc.Remetente.nome} (
-                  {enc.Remetente.email})
-                </Typography>
-                <Typography sx={{ ml: 2 }}>
-                  <strong>Destinatário:</strong> {enc.Destinatario.nome} (
-                  {enc.Destinatario.email})
-                </Typography>
-                <Typography sx={{ ml: 2 }}>
-                  <strong>Data/Hora:</strong>{" "}
-                  {new Date(enc.data).toLocaleString()}
-                </Typography>
-              </Stack>
-            ))}
-          </Stack>
-        ) : (
-          <Typography>Nenhum encaminhamento</Typography>
-        )}
+        <Button
+          variant="contained"
+          onClick={handleOpenEncaminhamentosModal}
+          sx={{
+            bgcolor: "#2E7D32",
+            color: "white",
+            "&:hover": { bgcolor: "#1B5E20" },
+            fontSize: "0.9rem",
+            mt: 2,
+          }}
+        >
+          Ver Encaminhamentos
+        </Button>
       </Paper>
+
+      { }
+      <Modal
+        open={openEncaminhamentosModal}
+        onClose={handleCloseEncaminhamentosModal}
+        aria-labelledby="encaminhamentos-modal-title"
+        aria-describedby="encaminhamentos-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 800,
+            maxHeight: '80vh',
+            bgcolor: "white",
+            borderRadius: "12px",
+            boxShadow: 24,
+            p: 4,
+            overflowY: 'auto',
+          }}
+        >
+          <Typography
+            id="encaminhamentos-modal-title"
+            variant="h5"
+            sx={{ color: "#2E7D32", fontWeight: "bold", mb: 2, textAlign: 'center' }}
+          >
+            Detalhes dos Encaminhamentos
+          </Typography>
+          {demanda.Encaminhamentos?.length > 0 ? (
+            <Stack spacing={2}>
+              {demanda.Encaminhamentos.map((enc) => (
+                <Card key={enc.id} variant="outlined" sx={{ p: 2, borderColor: "#2E7D32" }}>
+                  <Stack spacing={1}>
+                    <Stack direction="row" alignItems="center">
+                      <SubjectIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
+                      <Typography sx={{ fontSize: "0.9rem", whiteSpace: "pre-line" }}>
+                        <strong>Assunto do Encaminhamento:</strong>  {enc.descricao}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center">
+                      <PersonIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
+                      <Typography sx={{ fontSize: "0.9rem" }}>
+                        <strong>Remetente:</strong> {enc.Remetente.nome}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center">
+                      <PersonIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
+                      <Typography sx={{ fontSize: "0.9rem" }}>
+                        <strong>Destinatário:</strong> {enc.Destinatario.nome}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center">
+                      <AccessTimeIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
+                      <Typography sx={{ fontSize: "0.9rem" }}>
+                        <strong>Data/Hora:</strong> {new Date(enc.data).toLocaleString()}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                </Card>
+              ))}
+            </Stack>
+          ) : (
+            <Typography>Nenhum encaminhamento</Typography>
+          )}
+          <Button
+            variant="contained"
+            onClick={handleCloseEncaminhamentosModal}
+            sx={{ mt: 2, fontSize: "0.9rem", bgcolor: "#2E7D32", "&:hover": { bgcolor: "#1B5E20" } }}
+          >
+            Fechar
+          </Button>
+        </Box>
+      </Modal>
+
       <Intervention
         demanda={demanda}
         setDemanda={setDemanda}
@@ -356,6 +435,7 @@ const DemandaDetailsPage = () => {
         error={alert.message}
         setError={(message) => setAlert({ show: true, message, type: "error" })}
       />
+
       <Modal
         open={openConfirmModal}
         onClose={handleCancelCloseDemanda}
@@ -421,6 +501,7 @@ const DemandaDetailsPage = () => {
           </Stack>
         </Box>
       </Modal>
+
       <Stack spacing={2} sx={{ maxWidth: "1145px", mx: "auto", mb: 3 }}>
         <Stack direction="row" spacing={2}>
           <Button
