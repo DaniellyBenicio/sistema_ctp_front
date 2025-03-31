@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { Send, Visibility, Group } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import ForwardingPopup from "../Encaminhamentos/ForwardingPopup";
+import ForwardingPopup from "../encaminhamentos/ForwardingPopup";
 
 const DemandsTable = ({
   demands,

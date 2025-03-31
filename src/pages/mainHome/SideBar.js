@@ -17,11 +17,10 @@ import {
 import {
   People,
   Assignment,
-  Assessment,
   Person,
-  Support,
   ExitToApp,
   Menu as MenuIcon,
+  Archive,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
@@ -107,27 +106,11 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => handleItemClick("/relatorios", "relatorios")}
-            sx={getListItemStyle(selectedItem, "relatorios")}
+            onClick={() => handleItemClick("/arquivadas", "arquivadas")}
+            sx={getListItemStyle(selectedItem, "arquivadas")}
           >
-            <Assessment sx={{ mr: 1 }} />
-            <ListItemText primary="Relatórios" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => handleItemClick("/perfil", "perfil")}
-            sx={getListItemStyle(selectedItem, "perfil")}
-          >
-            <Person sx={{ mr: 1 }} />
-            <ListItemText primary="Perfil" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => handleItemClick("/suporte", "suporte")}
-            sx={getListItemStyle(selectedItem, "suporte")}
-          >
-            <Support sx={{ mr: 1 }} />
-            <ListItemText primary="Suporte" />
+            <Archive sx={{ mr: 1 }} />
+            <ListItemText primary="Arquivadas" />
           </ListItem>
         </>
       ) : (
@@ -142,19 +125,11 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => handleItemClick("/perfil", "perfil")}
-            sx={getListItemStyle(selectedItem, "perfil")}
+            onClick={() => handleItemClick("/arquivadas", "arquivadas")}
+            sx={getListItemStyle(selectedItem, "arquivadas")}
           >
-            <Person sx={{ mr: 1 }} />
-            <ListItemText primary="Perfil" />
-          </ListItem>
-          <ListItem
-            button
-            onClick={() => handleItemClick("/suporte", "suporte")}
-            sx={getListItemStyle(selectedItem, "suporte")}
-          >
-            <Support sx={{ mr: 1 }} />
-            <ListItemText primary="Suporte" />
+            <Archive sx={{ mr: 1 }} />
+            <ListItemText primary="Arquivadas" />
           </ListItem>
         </>
       )}
