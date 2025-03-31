@@ -52,7 +52,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   "& .MuiInputBase-root": {
-    height: "40px", 
+    height: "40px",
     fontSize: "0.875rem",
     borderRadius: "8px",
     backgroundColor: "#fff",
@@ -61,25 +61,17 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     borderColor: "#ced4da",
   },
   "& .MuiAutocomplete-endAdornment": {
-    display: "none", 
+    display: "none",
   },
 }));
-
-const formatDateToDisplay = (isoDate) => {
-  const [year, month, day] = isoDate.split("-");
-  return `${day}/${month}/${year}`;
-};
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [destinatariosSelecionados, setDestinatariosSelecionados] = useState([]);
   const [descricao, setDescricao] = useState("");
-  const [data, setData] = useState(new Date().toISOString().split("T")[0]);
+  const [data, setData] = useState(""); 
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
-
-  
-  const mandatoryRoleIndices = [2, 3, 4]; 
 
   const fetchUsuarios = async () => {
     setLoading(true);
@@ -88,10 +80,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       const response = await api.get("/usuarios-encaminhamento", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!response.data || !Array.isArray(response.data.usuarios)) {
-        throw new Error("Formato de resposta inválido");
-      }
-      setUsuarios(response.data.usuarios);
+      setUsuarios(response.data.usuarios || []);
       setAlert(null);
     } catch (err) {
       setAlert({ message: "Erro ao carregar usuários", type: "error" });
@@ -106,40 +95,22 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       fetchUsuarios();
       setDestinatariosSelecionados([]);
       setDescricao("");
-      setData(new Date().toISOString().split("T")[0]);
+      setData(""); 
       setAlert(null);
     }
   }, [open]);
 
   const handleSubmit = async () => {
-    if (!isFormValid()) {
-      setAlert({
-        message: "Preencha todos os campos obrigatórios",
-        type: "warning",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
-
-
-      const finalDestinatarios = [...new Set([...destinatariosSelecionados])];
-
-      const requests = finalDestinatarios.map(async (destinatarioId) => {
-        const payload = {
-          destinatario_id: destinatarioId,
-          demanda_id: demandId,
-          descricao,
-          data,
-        };
-        console.log("Payload enviado:", payload);
-        return api.post("/encaminhamento", payload);
-      });
-
-      const responses = await Promise.all(requests);
-      console.log("Encaminhamentos criados:", responses.map((res) => res.data));
-      setAlert({ message: "Encaminhamento criado com sucesso!", type: "success" });
+      const payload = {
+        destinatario_id: destinatariosSelecionados,
+        demanda_id: demandId,
+        descricao,
+      };
+      const response = await api.post("/encaminhamento", payload);
+      setAlert({ message: response.data.mensagem, type: "success" });
+      setData(response.data.demanda.data); 
       setTimeout(() => {
         setAlert(null);
         onClose();
@@ -155,14 +126,10 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     }
   };
 
-  const isFormValid = () => descricao.trim();
-
   const handleDestinatarioChange = (event, newValue) => {
     const selectedIds = newValue.map((usuario) => usuario.id);
     setDestinatariosSelecionados(selectedIds);
   };
-
-  const isMandatoryUser = (usuario) => mandatoryRoleIndices.includes(usuario.Cargo?.id);
 
   const filterOptions = (options, { inputValue }) => {
     if (!inputValue) return []; 
@@ -195,41 +162,22 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           <StyledAutocomplete
             multiple
             options={usuarios}
-            getOptionLabel={(option) => `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`}
+            getOptionLabel={(option) =>
+              `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`}
             value={usuarios.filter((u) => destinatariosSelecionados.includes(u.id))}
             onChange={handleDestinatarioChange}
-            filterOptions={filterOptions}
+            filterOptions={filterOptions} 
+            openOnFocus={false} 
             renderInput={(params) => (
               <StyledTextField
                 {...params}
                 label="Destinatários"
                 placeholder="Digite para buscar..."
                 margin="normal"
-                inputProps={{
-                  ...params.inputProps,
-                  readOnly: false, 
-                  style: { cursor: "text" }, 
-                }}
-                InputProps={{
-                  ...params.InputProps,
-                  readOnly: false,
-                  disableUnderline: true, 
-                }}
               />
             )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                {option.nome} ({option.Cargo?.nome || "Cargo não informado"})
-                {isMandatoryUser(option) && " (Envio automático)"}
-              </li>
-            )}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
             fullWidth
-            freeSolo={false}
-            openOnFocus={false} 
-            disableOpenOnFocus 
-            popupIcon={null} 
-            noOptionsText=""
+            noOptionsText="Nenhum usuário encontrado"
           />
           <StyledTextField
             label="Descrição"
@@ -243,12 +191,11 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           />
           <StyledTextField
             label="Data"
-            value={formatDateToDisplay(data)}
+            value={data || "Gerada automaticamente"}
             fullWidth
             margin="normal"
             InputProps={{ readOnly: true }}
             disabled
-            sx={{ input: { cursor: "default" } }}
           />
         </DialogContent>
         <DialogActions
@@ -276,7 +223,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           <StyledButton
             variant="contained"
             onClick={handleSubmit}
-            disabled={loading || !isFormValid()}
+            disabled={loading || !descricao.trim()}
             sx={{
               bgcolor: INSTITUTIONAL_COLOR,
               "&:hover": { bgcolor: "#265b28" },
