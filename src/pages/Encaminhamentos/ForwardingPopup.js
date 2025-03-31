@@ -67,11 +67,23 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
-  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState([]);
+  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState(
+    []
+  );
   const [descricao, setDescricao] = useState("");
-  const [data, setData] = useState(""); 
+  const [data, setData] = useState(new Date().toISOString());
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
+
+  const formatDateToDisplay = (isoDate) => {
+    if (!isoDate) return "Gerada automaticamente";
+    const date = new Date(isoDate);
+    return `${date.getDate().toString().padStart(2, "0")}/${(
+      date.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${date.getFullYear()}`;
+  };
 
   const fetchUsuarios = async () => {
     setLoading(true);
@@ -95,7 +107,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       fetchUsuarios();
       setDestinatariosSelecionados([]);
       setDescricao("");
-      setData(""); 
+      setData(new Date().toISOString());
       setAlert(null);
     }
   }, [open]);
@@ -110,14 +122,16 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       };
       const response = await api.post("/encaminhamento", payload);
       setAlert({ message: response.data.mensagem, type: "success" });
-      setData(response.data.demanda.data); 
+      setData(response.data.demanda.data);
       setTimeout(() => {
         setAlert(null);
         onClose();
       }, 2000);
     } catch (err) {
       setAlert({
-        message: "Erro ao criar encaminhamento: " + (err.response?.data?.error || err.message),
+        message:
+          "Erro ao criar encaminhamento: " +
+          (err.response?.data?.error || err.message),
         type: "error",
       });
       console.error("Erro na requisição:", err.response?.data || err.message);
@@ -132,7 +146,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   };
 
   const filterOptions = (options, { inputValue }) => {
-    if (!inputValue) return []; 
+    if (!inputValue) return [];
     const normalizedInput = inputValue.toLowerCase();
     return options.filter((option) =>
       option.nome.toLowerCase().startsWith(normalizedInput)
@@ -163,11 +177,14 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             multiple
             options={usuarios}
             getOptionLabel={(option) =>
-              `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`}
-            value={usuarios.filter((u) => destinatariosSelecionados.includes(u.id))}
+              `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`
+            }
+            value={usuarios.filter((u) =>
+              destinatariosSelecionados.includes(u.id)
+            )}
             onChange={handleDestinatarioChange}
-            filterOptions={filterOptions} 
-            openOnFocus={false} 
+            filterOptions={filterOptions}
+            openOnFocus={false}
             renderInput={(params) => (
               <StyledTextField
                 {...params}
@@ -191,7 +208,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           />
           <StyledTextField
             label="Data"
-            value={data || "Gerada automaticamente"}
+            value={formatDateToDisplay(data)}
             fullWidth
             margin="normal"
             InputProps={{ readOnly: true }}
@@ -230,7 +247,11 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             }}
             endIcon={<SendIcon />}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Encaminhar"}
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Encaminhar"
+            )}
           </StyledButton>
         </DialogActions>
       </StyledPaper>
