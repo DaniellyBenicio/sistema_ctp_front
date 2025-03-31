@@ -123,12 +123,8 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     setLoading(true);
     try {
 
-      const mandatoryIds = usuarios
-        .filter((u) => mandatoryRoleIndices.includes(u.Cargo?.id))
-        .map((u) => u.id);
 
-
-      const finalDestinatarios = [...new Set([...destinatariosSelecionados, ...mandatoryIds])];
+      const finalDestinatarios = [...new Set([...destinatariosSelecionados])];
 
       const requests = finalDestinatarios.map(async (destinatarioId) => {
         const payload = {
