@@ -52,7 +52,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   "& .MuiInputBase-root": {
-    height: "40px", // Tamanho original, igual aos outros campos
+    height: "40px", 
     fontSize: "0.875rem",
     borderRadius: "8px",
     backgroundColor: "#fff",
@@ -61,7 +61,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     borderColor: "#ced4da",
   },
   "& .MuiAutocomplete-endAdornment": {
-    display: "none", // Remove a seta
+    display: "none", 
   },
 }));
 
@@ -78,8 +78,8 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
 
-  // Define os cargos obrigatórios com base nos índices 2, 3 e 4 (ajuste conforme seu ENUM)
-  const mandatoryRoleIndices = [2, 3, 4]; // "Diretor Geral", "Diretor Ensino", "Funcionario CTP"
+  
+  const mandatoryRoleIndices = [2, 3, 4]; 
 
   const fetchUsuarios = async () => {
     setLoading(true);
@@ -122,12 +122,12 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
 
     setLoading(true);
     try {
-      // Garante que todos os usuários obrigatórios sejam incluídos no envio
+
       const mandatoryIds = usuarios
         .filter((u) => mandatoryRoleIndices.includes(u.Cargo?.id))
         .map((u) => u.id);
 
-      // Combina os destinatários selecionados com os obrigatórios, evitando duplicatas
+
       const finalDestinatarios = [...new Set([...destinatariosSelecionados, ...mandatoryIds])];
 
       const requests = finalDestinatarios.map(async (destinatarioId) => {
@@ -168,9 +168,8 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
 
   const isMandatoryUser = (usuario) => mandatoryRoleIndices.includes(usuario.Cargo?.id);
 
-  // Função de filtragem personalizada para buscar apenas nomes que começam com o texto digitado
   const filterOptions = (options, { inputValue }) => {
-    if (!inputValue) return []; // Não mostra nada se o campo estiver vazio
+    if (!inputValue) return []; 
     const normalizedInput = inputValue.toLowerCase();
     return options.filter((option) =>
       option.nome.toLowerCase().startsWith(normalizedInput)
@@ -212,13 +211,13 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
                 margin="normal"
                 inputProps={{
                   ...params.inputProps,
-                  readOnly: false, // Permite digitar
-                  style: { cursor: "text" }, // Cursor de texto
+                  readOnly: false, 
+                  style: { cursor: "text" }, 
                 }}
                 InputProps={{
                   ...params.InputProps,
                   readOnly: false,
-                  disableUnderline: true, // Remove sublinhado ou interação extra
+                  disableUnderline: true, 
                 }}
               />
             )}
@@ -231,10 +230,10 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             isOptionEqualToValue={(option, value) => option.id === value.id}
             fullWidth
             freeSolo={false}
-            openOnFocus={false} // Não abre ao focar
-            disableOpenOnFocus // Impede abertura ao clicar
-            popupIcon={null} // Remove ícone de popup
-            noOptionsText="" // Remove mensagem "Nenhum usuário encontrado"
+            openOnFocus={false} 
+            disableOpenOnFocus 
+            popupIcon={null} 
+            noOptionsText=""
           />
           <StyledTextField
             label="Descrição"
