@@ -17,6 +17,7 @@ import CustomAlert from "../../components/alert/CustomAlert";
 
 const Intervention = ({
   demanda,
+  podeIntervir,
   setDemanda,
   novaIntervencao,
   setNovaIntervencao,
@@ -149,7 +150,7 @@ const Intervention = ({
         <Typography>Nenhuma intervenção registrada</Typography>
       )}
 
-      {demanda.status && !mostrarCampoIntervencao && (
+      {demanda.status && !mostrarCampoIntervencao && podeIntervir && (
         <Button
           variant="contained"
           startIcon={<AddIcon sx={{ color: "white" }} />}

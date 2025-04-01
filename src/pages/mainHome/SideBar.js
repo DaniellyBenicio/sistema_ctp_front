@@ -98,22 +98,23 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
           </ListItem>
           <ListItem
             button
+            onClick={() => handleItemClick("/demandas-fechadas", "demandas-fechadas")}
+            sx={getListItemStyle(selectedItem, "demandas-fechadas")}
+          >
+            <Archive sx={{ mr: 1 }} />
+            <ListItemText primary="Fechadas" />
+          </ListItem>
+          <ListItem
+            button
             onClick={() => handleItemClick("/alunos", "alunos")}
             sx={getListItemStyle(selectedItem, "alunos")}
           >
             <People sx={{ mr: 1 }} />
             <ListItemText primary="Alunos" />
           </ListItem>
-          <ListItem
-            button
-            onClick={() => handleItemClick("/arquivadas", "arquivadas")}
-            sx={getListItemStyle(selectedItem, "arquivadas")}
-          >
-            <Archive sx={{ mr: 1 }} />
-            <ListItemText primary="Arquivadas" />
-          </ListItem>
         </>
       ) : (
+
         <>
           <ListItem
             button
@@ -125,11 +126,11 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
           </ListItem>
           <ListItem
             button
-            onClick={() => handleItemClick("/arquivadas", "arquivadas")}
-            sx={getListItemStyle(selectedItem, "arquivadas")}
+            onClick={() => handleItemClick("/demandas-fechadas", "demandas-fechadas")}
+            sx={getListItemStyle(selectedItem, "demandas-fechadas")}
           >
             <Archive sx={{ mr: 1 }} />
-            <ListItemText primary="Arquivadas" />
+            <ListItemText primary="Fechadas" />
           </ListItem>
         </>
       )}

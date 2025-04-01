@@ -29,6 +29,7 @@ const DemandaDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [demanda, setDemanda] = useState(null);
+  const [podeIntervir, setPodeIntervir] = useState(null);
   const [novaIntervencao, setNovaIntervencao] = useState("");
   const [mostrarCampoIntervencao, setMostrarCampoIntervencao] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -69,6 +70,7 @@ const DemandaDetailsPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDemanda(response.data.demanda);
+        setPodeIntervir(response.data.podeIntervir)
         setLoading(false);
       } catch (err) {
         setAlert({
@@ -239,7 +241,7 @@ const DemandaDetailsPage = () => {
           <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>Status:</strong>{" "}
             <span style={{ color: demanda.status ? "#2E7D32" : "#D32F2F" }}>
-              {demanda.status ? "Ativo" : "Inativo"}
+              {demanda.status ? "Aberta" : "Fechada"}
             </span>
           </Typography>
           <Typography sx={{ fontSize: "0.9rem" }}>
@@ -267,43 +269,46 @@ const DemandaDetailsPage = () => {
         }}
       >
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-          <PeopleIcon sx={{ color: "#2E7D32" }} />
-          <Typography
-            variant="h6"
-            sx={{ color: "#2E7D32", fontWeight: "bold" }}
-          >
-            Alunos Envolvidos
+    <PeopleIcon sx={{ color: "#2E7D32" }} />
+    <Typography
+      variant="h6"
+      sx={{ color: "#2E7D32", fontWeight: "bold" }}
+    >
+      Alunos Envolvidos
+    </Typography>
+  </Stack>
+  {demanda.DemandaAlunos?.length > 0 ? (
+    <Stack spacing={2}>
+      <Typography>
+        <strong>Total de Alunos:</strong> {demanda.DemandaAlunos.length}
+      </Typography>
+      {demanda.DemandaAlunos.map((da) => (
+        <Stack key={da.Aluno.matricula} spacing={1}>
+          <Typography sx={{ fontSize: "0.9rem" }}>
+            <strong>Nome:</strong> {da.Aluno.nome}
+          </Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
+            <strong>Matrícula:</strong> {da.Aluno.matricula}
+          </Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
+            <strong>Curso:</strong>{" "}
+            {da.Aluno.Cursos && da.Aluno.Cursos.nome
+              ? da.Aluno.Cursos.nome
+              : "Curso não informado"}
+          </Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
+            <strong>Condições:</strong>{" "}
+            {da.Aluno.Condicaos?.length > 0
+              ? da.Aluno.Condicaos.map((c) => c.nome).join(", ")
+              : "Nenhuma condição associada"}
           </Typography>
         </Stack>
-        {demanda.DemandaAlunos?.length > 0 ? (
-          <Stack spacing={4}>
-            {demanda.DemandaAlunos.map((da) => (
-              <Stack key={da.Aluno.matricula} spacing={1}>
-                <Typography sx={{ fontSize: "0.9rem" }}>
-                  <strong>Nome:</strong> {da.Aluno.nome}
-                </Typography>
-                <Typography sx={{ fontSize: "0.9rem" }}>
-                  <strong>Matrícula:</strong> {da.Aluno.matricula}
-                </Typography>
-                <Typography sx={{ fontSize: "0.9rem" }}>
-                  <strong>Curso:</strong>{" "}
-                  {da.Aluno.Cursos && da.Aluno.Cursos.nome
-                    ? da.Aluno.Cursos.nome
-                    : "Curso não informado"}
-                </Typography>
-                <Typography sx={{ fontSize: "0.9rem" }}>
-                  <strong>Condições:</strong>{" "}
-                  {da.Aluno.Condicaos?.length > 0
-                    ? da.Aluno.Condicaos.map((c) => c.nome).join(", ")
-                    : "Nenhuma condição associada"}
-                </Typography>
-              </Stack>
-            ))}
-          </Stack>
-        ) : (
-          <Typography>Nenhum aluno associado</Typography>
-        )}
-      </Paper>
+      ))}
+    </Stack>
+  ) : (
+    <Typography>Nenhum aluno associado</Typography>
+  )}
+</Paper>
 
       <Paper
         sx={{
@@ -444,6 +449,7 @@ const DemandaDetailsPage = () => {
 
       <Intervention
         demanda={demanda}
+        podeIntervir={podeIntervir}
         setDemanda={setDemanda}
         novaIntervencao={novaIntervencao}
         setNovaIntervencao={setNovaIntervencao}

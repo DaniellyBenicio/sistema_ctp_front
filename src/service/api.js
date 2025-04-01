@@ -15,4 +15,15 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+api.interceptors.response.use(
+  async response => {
+    return response;
+  }, function (error){
+    const { response: {data, status}} = error;
+    if(status === 401) {
+      window.location.href = '/login';
+    }
+  }
+);
+
 export default api;
