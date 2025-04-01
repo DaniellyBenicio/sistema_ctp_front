@@ -67,20 +67,18 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
-  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState(
-    []
-  );
+  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState([]);
   const [descricao, setDescricao] = useState("");
   const [data, setData] = useState(new Date().toISOString());
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
+  const [encaminhamentos, setEncaminhamentos] = useState([]);
+  const [podeEncaminhar, setPodeEncaminhar] = useState(true);
 
   const formatDateToDisplay = (isoDate) => {
     if (!isoDate) return "Gerada automaticamente";
     const date = new Date(isoDate);
-    return `${date.getDate().toString().padStart(2, "0")}/${(
-      date.getMonth() + 1
-    )
+    return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
       .toString()
       .padStart(2, "0")}/${date.getFullYear()}`;
   };
@@ -93,7 +91,6 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsuarios(response.data.usuarios || []);
-      setAlert(null);
     } catch (err) {
       setAlert({ message: "Erro ao carregar usuários", type: "error" });
       console.error("Erro ao buscar usuários:", err);
@@ -102,17 +99,54 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     }
   };
 
+  const fetchEncaminhamentos = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api.get(`/encaminhamentos/demanda/${demandId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const encaminhamentosData = response.data.encaminhamentos || [];
+      setEncaminhamentos(encaminhamentosData);
+
+    
+      const usuarioId = JSON.parse(atob(token.split(".")[1])).id; 
+      const cargosAutomaticos = ["Funcionário CTP", "Diretor Geral", "Diretor Ensino"];
+      const encaminhamentosManuais = encaminhamentosData.filter(
+        (enc) =>
+          enc.usuario_id === usuarioId &&
+          !cargosAutomaticos.includes(enc.Destinatario?.Cargo?.nome)
+      );
+
+      setPodeEncaminhar(encaminhamentosManuais.length === 0);
+    } catch (err) {
+      setAlert({ message: "Erro ao carregar encaminhamentos", type: "error" });
+      console.error("Erro ao buscar encaminhamentos:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (open) {
       fetchUsuarios();
+      fetchEncaminhamentos();
       setDestinatariosSelecionados([]);
       setDescricao("");
       setData(new Date().toISOString());
       setAlert(null);
     }
-  }, [open]);
+  }, [open, demandId]);
 
   const handleSubmit = async () => {
+    if (!podeEncaminhar) {
+      setAlert({
+        message: "Você já encaminhou esta demanda manualmente e não pode encaminhar novamente.",
+        type: "error",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const payload = {
@@ -123,6 +157,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       const response = await api.post("/encaminhamento", payload);
       setAlert({ message: response.data.mensagem, type: "success" });
       setData(response.data.demanda.data);
+      setPodeEncaminhar(false); 
       setTimeout(() => {
         setAlert(null);
         onClose();
@@ -240,7 +275,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           <StyledButton
             variant="contained"
             onClick={handleSubmit}
-            disabled={loading || !descricao.trim()}
+            disabled={loading || !descricao.trim() || !podeEncaminhar}
             sx={{
               bgcolor: INSTITUTIONAL_COLOR,
               "&:hover": { bgcolor: "#265b28" },
