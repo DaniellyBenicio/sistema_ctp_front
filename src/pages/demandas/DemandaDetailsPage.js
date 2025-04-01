@@ -130,6 +130,21 @@ const DemandaDetailsPage = () => {
     setOpenEncaminhamentosModal(false);
   };
 
+  const formatDateTime = (dateString) => {
+    const date = new Date(dateString);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+  };
+
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
@@ -161,6 +176,7 @@ const DemandaDetailsPage = () => {
       </Box>
     );
   }
+
 
   if (!demanda) {
     return (
@@ -225,6 +241,9 @@ const DemandaDetailsPage = () => {
             <span style={{ color: demanda.status ? "#2E7D32" : "#D32F2F" }}>
               {demanda.status ? "Ativo" : "Inativo"}
             </span>
+          </Typography>
+          <Typography sx={{ fontSize: "0.9rem" }}>
+            <strong>Data/Hora:</strong> {formatDateTime(demanda.createdAt)}
           </Typography>
           <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>Disciplina:</strong> {demanda.disciplina || "Não informada"}

@@ -116,7 +116,6 @@ export const Demands = () => {
         flexDirection: "column",
         width: "100%",
         background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
-        marginTop: 0,
         padding: { xs: "2% 5%", sm: "2% 0%" },
       }}
     >
