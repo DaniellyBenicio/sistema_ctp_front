@@ -8,7 +8,6 @@ import DemandsTable from "./DemandsTable";
 
 export const Demands = () => {
   const [demands, setDemands] = useState([]);
-  const [filteredDemands, setFilteredDemands] = useState([]);
   const { userRole } = useOutletContext();
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
@@ -20,15 +19,12 @@ export const Demands = () => {
 
   const fetchDemands = async (filterParams = {}) => {
     try {
-      const response = await api.get("/minhas-demandas", { params: filterParams });
-      console.log("Dados da API:", response.data);
-
+      const response = await api.post("/minhas-demandas", filterParams);
       const demandsData = response.data.demandas;
       if (!demandsData || !Array.isArray(demandsData)) {
         throw new Error("Erro ao buscar demandas: formato inválido.");
       }
       setDemands(demandsData);
-      setFilteredDemands(demandsData);
       console.log("Demands atualizado:", demandsData);
     } catch (error) {
       console.error("Erro na requisição:", error);
@@ -38,25 +34,22 @@ export const Demands = () => {
         type: "error",
       });
       setDemands([]);
-      setFilteredDemands([]);
     }
   };
 
   const handleFilterChange = (filters) => {
-    const { date, user, createdBy } = filters;
-    const filtered = demands.filter(demand => {
-      const isDateMatch = date ? new Date(demand.date).toLocaleDateString() === new Date(date).toLocaleDateString() : true;
-      const isUserMatch = user ? demand.user === user : true;
-      const isCreatedByMatch = createdBy ? demand.createdBy === createdBy : true;
-      return isDateMatch && isUserMatch && isCreatedByMatch;
-    });
-    setFilteredDemands(filtered);
+    const filterParams = {
+      nomeAluno: filters.nomeAluno || "",
+      cursoId: filters.cursoId || "",
+      date: filters.date || "",
+      tipoDemanda: filters.tipoDemanda || "",
+    };
+    fetchDemands(filterParams);
   };
 
   const handleSendDemand = async (id) => {
     try {
       setDemands((prev) => prev.filter((d) => d.id !== id));
-      setFilteredDemands((prev) => prev.filter((d) => d.id !== id));
       setAlert({
         show: true,
         message: "Demanda enviada com sucesso",
@@ -164,7 +157,7 @@ export const Demands = () => {
           mx: "auto",
         }}
       >
-        {filteredDemands.length === 0 ? (
+        {demands.length === 0 ? (
           <Typography
             variant="body2"
             color="textSecondary"
@@ -175,13 +168,11 @@ export const Demands = () => {
               fontFamily: '"Open Sans", sans-serif',
             }}
           >
-            {filteredDemands.length === 0
-              ? "Nenhum resultado encontrado"
-              : "Nenhuma demanda disponível"}
+            Nenhuma demanda disponível
           </Typography>
         ) : (
           <DemandsTable
-            demands={filteredDemands}
+            demands={demands}
             onSend={handleSendDemand}
             onUpdate={handleUpdateDemand}
             usuarioLogadoId={userRole?.id}

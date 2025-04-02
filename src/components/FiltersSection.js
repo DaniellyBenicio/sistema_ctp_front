@@ -18,10 +18,10 @@ import api from "../service/api";
 
 const FiltersSection = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
+    nomeAluno: "",
+    cursoId: "",
     date: "",
-    studentName: "",
-    course: "",
-    createdBy: "",
+    tipoDemanda: "",
   });
 
   const [courses, setCourses] = useState([]);
@@ -29,6 +29,7 @@ const FiltersSection = ({ onFilterChange }) => {
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [showStudentList, setShowStudentList] = useState(false);
   const inputRef = useRef(null);
+  const wrapperRef = useRef(null);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -60,9 +61,9 @@ const FiltersSection = ({ onFilterChange }) => {
     const { name, value } = event.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "studentName") {
+    if (name === "nomeAluno") {
       const filtered = students.filter((student) =>
-        student.nome.toLowerCase().startsWith(value.toLowerCase())
+        student.nome.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredStudents(filtered);
       setShowStudentList(true);
@@ -70,7 +71,7 @@ const FiltersSection = ({ onFilterChange }) => {
   };
 
   const handleStudentSelect = (studentName) => {
-    setFilters((prev) => ({ ...prev, studentName: studentName }));
+    setFilters((prev) => ({ ...prev, nomeAluno: studentName }));
     setShowStudentList(false);
     if (inputRef.current) {
       inputRef.current.focus();
@@ -78,52 +79,76 @@ const FiltersSection = ({ onFilterChange }) => {
   };
 
   const handleFilter = () => {
+    console.log("Filtros enviados:", filters);
     onFilterChange && onFilterChange(filters);
   };
 
   const handleClearFilters = () => {
-    const newFilters = { date: "", studentName: "", course: "", createdBy: "" };
+    const newFilters = {
+      nomeAluno: "",
+      cursoId: "",
+      date: "",
+      tipoDemanda: "",
+    };
     setFilters(newFilters);
     setFilteredStudents([]);
     setShowStudentList(false);
     onFilterChange && onFilterChange(newFilters);
   };
 
+  const handleClickOutside = (event) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      setShowStudentList(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <Paper elevation={3} sx={{ p: 2, mb: 2, borderRadius: 2, transition: "all 0.3s ease" }}>
+    <Paper
+      ref={wrapperRef}
+      elevation={3}
+      sx={{ p: 2, mb: 2, borderRadius: 2, transition: "all 0.3s ease" }}
+    >
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12}>
           <FormControl fullWidth sx={{ position: "relative" }}>
             <TextField
               label="Nome do Aluno"
-              name="studentName"
-              value={filters.studentName}
+              name="nomeAluno"
+              value={filters.nomeAluno}
               onChange={handleChange}
-              onBlur={() => setTimeout(() => setShowStudentList(false), 200)}
               onFocus={() => setShowStudentList(true)}
               inputRef={inputRef}
             />
-            {showStudentList && filters.studentName && (
+            {showStudentList && filters.nomeAluno && (
               <List
                 sx={{
                   position: "absolute",
-                  zIndex: 10,
+                  zIndex: 1000,
                   bgcolor: "background.paper",
                   width: "100%",
                   maxHeight: 200,
                   overflowY: "auto",
-                  marginTop: "50px",
+                  marginTop: "56px",
                   border: "1px solid rgba(0, 0, 0, 0.2)",
                   borderRadius: "4px",
                   boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
                 }}
               >
-
                 {filteredStudents.map((student) => (
                   <ListItem
                     key={student.matricula}
                     button
-                    onClick={() => handleStudentSelect(student.nome)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleStudentSelect(student.nome);
+                    }}
                   >
                     {student.nome}
                   </ListItem>
@@ -155,8 +180,8 @@ const FiltersSection = ({ onFilterChange }) => {
           <FormControl fullWidth>
             <InputLabel>Cursos</InputLabel>
             <Select
-              name="course"
-              value={filters.course}
+              name="cursoId"
+              value={filters.cursoId}
               onChange={handleChange}
               sx={{
                 "& .MuiOutlinedInput-root": {
@@ -177,10 +202,10 @@ const FiltersSection = ({ onFilterChange }) => {
 
         <Grid item xs={12} sm={4}>
           <FormControl fullWidth>
-            <InputLabel>Criadas por</InputLabel>
+            <InputLabel>Tipo de Demanda</InputLabel>
             <Select
-              name="createdBy"
-              value={filters.createdBy}
+              name="tipoDemanda"
+              value={filters.tipoDemanda}
               onChange={handleChange}
               sx={{
                 "& .MuiOutlinedInput-root": {
@@ -189,8 +214,9 @@ const FiltersSection = ({ onFilterChange }) => {
                 },
               }}
             >
-              <MenuItem value="me">Por mim</MenuItem>
-              <MenuItem value="forwarded">Encaminhadas</MenuItem>
+              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value="criadaPorMim">Criada por Mim</MenuItem>
+              <MenuItem value="recebidas">Recebidas</MenuItem>
             </Select>
           </FormControl>
         </Grid>
