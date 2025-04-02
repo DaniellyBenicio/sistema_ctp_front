@@ -108,7 +108,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       });
       const encaminhamentosData = response.data.encaminhamentos || [];
       setEncaminhamentos(encaminhamentosData);
-      
+
       setPodeEncaminhar(encaminhamentosData.length === 0);
     } catch (err) {
       setAlert({ message: "Erro ao carregar encaminhamentos", type: "error" });
@@ -148,7 +148,9 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       const response = await api.post("/encaminhamento", payload);
       setAlert({ message: response.data.mensagem, type: "success" });
       setData(response.data.demanda.data);
-      setPodeEncaminhar(false); 
+      
+      setPodeEncaminhar(false);
+      setEncaminhamentos([...encaminhamentos, response.data.encaminhamento]); 
       setTimeout(() => {
         setAlert(null);
         onClose();
@@ -221,6 +223,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             )}
             fullWidth
             noOptionsText="Nenhum usuário encontrado"
+            disabled={!podeEncaminhar} 
           />
           <StyledTextField
             label="Descrição"
@@ -231,6 +234,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             multiline
             rows={3}
             required
+            disabled={!podeEncaminhar} 
           />
           <StyledTextField
             label="Data"
