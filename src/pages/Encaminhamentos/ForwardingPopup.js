@@ -108,17 +108,8 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       });
       const encaminhamentosData = response.data.encaminhamentos || [];
       setEncaminhamentos(encaminhamentosData);
-
-    
-      const usuarioId = JSON.parse(atob(token.split(".")[1])).id; 
-      const cargosAutomaticos = ["Funcionário CTP", "Diretor Geral", "Diretor Ensino"];
-      const encaminhamentosManuais = encaminhamentosData.filter(
-        (enc) =>
-          enc.usuario_id === usuarioId &&
-          !cargosAutomaticos.includes(enc.Destinatario?.Cargo?.nome)
-      );
-
-      setPodeEncaminhar(encaminhamentosManuais.length === 0);
+      
+      setPodeEncaminhar(encaminhamentosData.length === 0);
     } catch (err) {
       setAlert({ message: "Erro ao carregar encaminhamentos", type: "error" });
       console.error("Erro ao buscar encaminhamentos:", err);
@@ -141,7 +132,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   const handleSubmit = async () => {
     if (!podeEncaminhar) {
       setAlert({
-        message: "Você já encaminhou esta demanda manualmente e não pode encaminhar novamente.",
+        message: "Esta demanda já foi encaminhada e não pode ser encaminhada novamente.",
         type: "error",
       });
       return;
