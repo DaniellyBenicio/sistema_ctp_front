@@ -10,6 +10,7 @@ import Students from "../pages/Alunos/Students.js";
 import StudentRegisterPage from "../pages/Alunos/StudentRegisterPage.js";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.js";
 import ResetPassword from "../pages/ForgotPassword/ResetPassword.js";
+import ArchivedDemands from "../pages/demandas/ArchivedDemands.js";
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
   const handleLogin = () => {
@@ -44,6 +45,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         <Route path="demands" element={<Demands />} />
         <Route path="demands/register" element={<DemandaRegisterPage />} />
         <Route path="demands/:id" element={<DemandaDetailsPage />} />
+        <Route path="demandas-fechadas" element={<ArchivedDemands />} />
         <Route path="alunos" element={<Students />} />
         <Route path="alunos/register" element={<StudentRegisterPage />} />
         <Route

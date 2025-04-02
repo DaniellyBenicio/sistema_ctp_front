@@ -73,6 +73,8 @@ export const Demands = () => {
     console.log("Visualizar detalhes:", demand);
   };
 
+  const openDemands = demands.filter((demand) => demand.status);
+
   return (
     <Box
       sx={{
@@ -103,7 +105,7 @@ export const Demands = () => {
           marginBottom: { xs: "16px", sm: "30px" },
         }}
       >
-        Lista de Demandas
+        Lista de Demandas Abertas
       </Typography>
 
       <Box
@@ -139,9 +141,6 @@ export const Demands = () => {
             fontSize: { xs: "0.75rem", sm: "0.875rem" },
             padding: { xs: "4px 8px", sm: "6px 12px" },
             textTransform: "none",
-            marginBottom: "15px",
-            display: "flex",
-            alignItems: "center",
           }}
           onClick={() => navigate("/demands/register")}
         >
@@ -157,7 +156,7 @@ export const Demands = () => {
           mx: "auto",
         }}
       >
-        {demands.length === 0 ? (
+        {openDemands.length === 0 ? (
           <Typography
             variant="body2"
             color="textSecondary"
@@ -168,11 +167,11 @@ export const Demands = () => {
               fontFamily: '"Open Sans", sans-serif',
             }}
           >
-            Nenhuma demanda disponível
+            Nenhuma demanda aberta disponível
           </Typography>
         ) : (
           <DemandsTable
-            demands={demands}
+            demands={openDemands}
             onSend={handleSendDemand}
             onUpdate={handleUpdateDemand}
             usuarioLogadoId={userRole?.id}
