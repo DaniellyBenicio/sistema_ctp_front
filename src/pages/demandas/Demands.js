@@ -3,13 +3,12 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
 import { Box, Button, Typography } from "@mui/material";
-import SearchBar from "../../components/SearchBar";
+import FiltersSection from "../../components/FiltersSection";
 import DemandsTable from "./DemandsTable";
 
 export const Demands = () => {
   const [demands, setDemands] = useState([]);
   const [filteredDemands, setFilteredDemands] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
   const { userRole } = useOutletContext();
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
@@ -19,10 +18,11 @@ export const Demands = () => {
     fetchDemands();
   }, [navigate, userRole]);
 
-  const fetchDemands = async () => {
+  const fetchDemands = async (filterParams = {}) => {
     try {
-      const response = await api.get("/minhas-demandas");
+      const response = await api.get("/minhas-demandas", { params: filterParams });
       console.log("Dados da API:", response.data);
+
       const demandsData = response.data.demandas;
       if (!demandsData || !Array.isArray(demandsData)) {
         throw new Error("Erro ao buscar demandas: formato inválido.");
@@ -42,43 +42,15 @@ export const Demands = () => {
     }
   };
 
-  const fetchDemandsByTermo = async (termo) => {
-    try {
-      const response = await api.get(`/demanda/busca/${termo}`);
-      console.log("Dados da busca:", response.data);
-      const demandsData = response.data.demandas || response.data;
-      if (!demandsData || !Array.isArray(demandsData)) {
-        throw new Error("Erro ao buscar demandas por termo.");
-      }
-      return demandsData;
-    } catch (error) {
-      console.error("Erro ao buscar por termo:", error);
-      return [];
-    }
-  };
-
-  const handleSearchChange = async (e) => {
-    const value = e.target.value.trim();
-    setSearchValue(value);
-
-    if (!value) {
-      setFilteredDemands(demands);
-      console.log("FilteredDemands resetado para demands:", demands);
-      setAlert({ show: false, message: "", type: "" });
-      return;
-    }
-
-    const demandsByTermo = await fetchDemandsByTermo(value);
-    if (demandsByTermo && demandsByTermo.length > 0) {
-      setFilteredDemands(demandsByTermo);
-      console.log("FilteredDemands atualizado com busca:", demandsByTermo);
-      setAlert({ show: false, message: "", type: "" });
-      return;
-    }
-
-    setFilteredDemands([]);
-    console.log("FilteredDemands zerado por falta de resultados");
-    setAlert({ show: false, message: "", type: "" });
+  const handleFilterChange = (filters) => {
+    const { date, user, createdBy } = filters;
+    const filtered = demands.filter(demand => {
+      const isDateMatch = date ? new Date(demand.date).toLocaleDateString() === new Date(date).toLocaleDateString() : true;
+      const isUserMatch = user ? demand.user === user : true;
+      const isCreatedByMatch = createdBy ? demand.createdBy === createdBy : true;
+      return isDateMatch && isUserMatch && isCreatedByMatch;
+    });
+    setFilteredDemands(filtered);
   };
 
   const handleSendDemand = async (id) => {
@@ -154,19 +126,12 @@ export const Demands = () => {
           alignSelf: "center",
         }}
       >
-        <SearchBar
-          value={searchValue}
-          onChange={handleSearchChange}
+        <FiltersSection
+          onFilterChange={handleFilterChange}
           sx={{
             width: { xs: "100%", sm: "40%" },
             flexGrow: 0,
             height: { xs: "auto", sm: "35px" },
-            "& .MuiInputBase-root": {
-              height: "35px",
-              fontSize: "0.875rem",
-              display: "flex",
-              alignItems: "center",
-            },
           }}
         />
 
@@ -210,7 +175,7 @@ export const Demands = () => {
               fontFamily: '"Open Sans", sans-serif',
             }}
           >
-            {searchValue
+            {filteredDemands.length === 0
               ? "Nenhum resultado encontrado"
               : "Nenhuma demanda disponível"}
           </Typography>
