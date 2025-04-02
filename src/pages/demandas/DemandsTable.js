@@ -104,13 +104,6 @@ const DemandsTable = ({
                 <strong>Data/Hora:</strong>{" "}
                 {formatDateTime(demand.createdAt) || "Não informada"}
               </Typography>
-              <Typography>
-                <strong>Destinatários:</strong>
-                <IconButton size="small" onClick={(e) => handleOpenRecipients(e, demand)}>
-                  <Group fontSize="small" />
-                </IconButton>
-                <span>{getUniqueRecipients(demand.destinatarios).length || 0}</span>
-              </Typography>
               <Stack direction="row" spacing={1} justifyContent="center">
                 <IconButton color="primary" onClick={() => handleViewDetails(demand.id)}>
                   <Visibility />
@@ -150,7 +143,6 @@ const DemandsTable = ({
             <TableCell align="center" sx={{ fontWeight: "bold", backgroundColor: "#2f9e41", color: "#fff", borderRight: "1px solid #fff", padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>Status</TableCell>
             <TableCell align="center" sx={{ fontWeight: "bold", backgroundColor: "#2f9e41", color: "#fff", borderRight: "1px solid #fff", padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>Curso</TableCell>
             <TableCell align="center" sx={{ fontWeight: "bold", backgroundColor: "#2f9e41", color: "#fff", borderRight: "1px solid #fff", padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>Data/Hora</TableCell>
-            <TableCell align="center" sx={{ fontWeight: "bold", backgroundColor: "#2f9e41", color: "#fff", borderRight: "1px solid #fff", padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>Destinatários</TableCell>
             <TableCell align="center" sx={{ fontWeight: "bold", backgroundColor: "#2f9e41", color: "#fff", padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>Ações</TableCell>
           </TableRow>
         </TableHead>
@@ -170,14 +162,6 @@ const DemandsTable = ({
               </TableCell>
               <TableCell align="center" sx={{ borderRight: "1px solid #e0e0e0", padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>
                 {formatDateTime(demand.createdAt) || "Não informada"}
-              </TableCell>
-              <TableCell align="center" sx={{ borderRight: "1px solid #e0e0e0", padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>
-                <Tooltip title="Ver destinatários">
-                  <IconButton size="small" onClick={(e) => handleOpenRecipients(e, demand)}>
-                    <Group fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <span>{getUniqueRecipients(demand.destinatarios).length || 0}</span>
               </TableCell>
               <TableCell align="center" sx={{ padding: { xs: "4px", sm: "6px" }, height: "30px", lineHeight: "30px" }}>
                 <IconButton color="primary" onClick={() => handleViewDetails(demand.id)}>

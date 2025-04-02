@@ -251,7 +251,7 @@ const DemandaDetailsPage = () => {
             <strong>Disciplina:</strong> {demanda.disciplina || "Não informada"}
           </Typography>
           <Typography sx={{ fontSize: "0.9rem" }}>
-            <strong>Criador:</strong> {demanda.Usuarios.nome}
+            <strong>Criador:</strong> {demanda.Usuarios.nome} - ({demanda.Usuarios.Cargo.nome})
           </Typography>
           <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>E-mail:</strong> {demanda.Usuarios.email}
@@ -269,46 +269,46 @@ const DemandaDetailsPage = () => {
         }}
       >
         <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-    <PeopleIcon sx={{ color: "#2E7D32" }} />
-    <Typography
-      variant="h6"
-      sx={{ color: "#2E7D32", fontWeight: "bold" }}
-    >
-      Alunos Envolvidos
-    </Typography>
-  </Stack>
-  {demanda.DemandaAlunos?.length > 0 ? (
-    <Stack spacing={2}>
-      <Typography>
-        <strong>Total de Alunos:</strong> {demanda.DemandaAlunos.length}
-      </Typography>
-      {demanda.DemandaAlunos.map((da) => (
-        <Stack key={da.Aluno.matricula} spacing={1}>
-          <Typography sx={{ fontSize: "0.9rem" }}>
-            <strong>Nome:</strong> {da.Aluno.nome}
-          </Typography>
-          <Typography sx={{ fontSize: "0.9rem" }}>
-            <strong>Matrícula:</strong> {da.Aluno.matricula}
-          </Typography>
-          <Typography sx={{ fontSize: "0.9rem" }}>
-            <strong>Curso:</strong>{" "}
-            {da.Aluno.Cursos && da.Aluno.Cursos.nome
-              ? da.Aluno.Cursos.nome
-              : "Curso não informado"}
-          </Typography>
-          <Typography sx={{ fontSize: "0.9rem" }}>
-            <strong>Condições:</strong>{" "}
-            {da.Aluno.Condicaos?.length > 0
-              ? da.Aluno.Condicaos.map((c) => c.nome).join(", ")
-              : "Nenhuma condição associada"}
+          <PeopleIcon sx={{ color: "#2E7D32" }} />
+          <Typography
+            variant="h6"
+            sx={{ color: "#2E7D32", fontWeight: "bold" }}
+          >
+            Alunos Envolvidos
           </Typography>
         </Stack>
-      ))}
-    </Stack>
-  ) : (
-    <Typography>Nenhum aluno associado</Typography>
-  )}
-</Paper>
+        {demanda.DemandaAlunos?.length > 0 ? (
+          <Stack spacing={2}>
+            <Typography sx={{ fontSize: "0.9rem" }}>
+              <strong>Total de Alunos:</strong> {demanda.DemandaAlunos.length}
+            </Typography>
+            {demanda.DemandaAlunos.map((da) => (
+              <Stack key={da.Aluno.matricula} spacing={1}>
+                <Typography sx={{ fontSize: "0.9rem" }}>
+                  <strong>Nome:</strong> {da.Aluno.nome}
+                </Typography>
+                <Typography sx={{ fontSize: "0.9rem" }}>
+                  <strong>Matrícula:</strong> {da.Aluno.matricula}
+                </Typography>
+                <Typography sx={{ fontSize: "0.9rem" }}>
+                  <strong>Curso:</strong>{" "}
+                  {da.Aluno.Cursos && da.Aluno.Cursos.nome
+                    ? da.Aluno.Cursos.nome
+                    : "Curso não informado"}
+                </Typography>
+                <Typography sx={{ fontSize: "0.9rem" }}>
+                  <strong>Condições:</strong>{" "}
+                  {da.Aluno.Condicaos?.length > 0
+                    ? da.Aluno.Condicaos.map((c) => c.nome).join(", ")
+                    : "Nenhuma condição associada"}
+                </Typography>
+              </Stack>
+            ))}
+          </Stack>
+        ) : (
+          <Typography>Nenhum aluno associado</Typography>
+        )}
+      </Paper>
 
       <Paper
         sx={{
@@ -348,7 +348,7 @@ const DemandaDetailsPage = () => {
           mx: "auto",
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0 }}>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
           <ForwardIcon sx={{ color: "#2E7D32" }} />
           <Typography
             variant="h6"
@@ -357,6 +357,10 @@ const DemandaDetailsPage = () => {
             Encaminhamentos
           </Typography>
         </Stack>
+
+        <Typography sx={{ fontSize: "0.9rem", mb: 0 }}>
+          <strong>Total de Encaminhamentos:</strong> {demanda.Encaminhamentos?.length || 0}
+        </Typography>
         <Button
           variant="contained"
           onClick={handleOpenEncaminhamentosModal}
@@ -401,6 +405,7 @@ const DemandaDetailsPage = () => {
           >
             Detalhes dos Encaminhamentos
           </Typography>
+
           {demanda.Encaminhamentos?.length > 0 ? (
             <Stack spacing={2}>
               {demanda.Encaminhamentos.map((enc) => (
@@ -409,25 +414,30 @@ const DemandaDetailsPage = () => {
                     <Stack direction="row" alignItems="center">
                       <SubjectIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
                       <Typography sx={{ fontSize: "0.9rem", whiteSpace: "pre-line" }}>
-                        <strong>Assunto do Encaminhamento:</strong>  {enc.descricao}
+                        <strong>Assunto do Encaminhamento:</strong> {enc.descricao || "Descrição não disponível"}
                       </Typography>
                     </Stack>
+
                     <Stack direction="row" alignItems="center">
                       <PersonIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
                       <Typography sx={{ fontSize: "0.9rem" }}>
-                        <strong>Remetente:</strong> {enc.Remetente.nome}
+                        <strong>Remetente:</strong> {enc.Remetente?.nome || "Nome não disponível"}
+                        {enc.Remetente?.Cargo?.nome ? ` - ${enc.Remetente.Cargo.nome}` : " - Cargo não disponível"}
                       </Typography>
                     </Stack>
+
                     <Stack direction="row" alignItems="center">
                       <PersonIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
                       <Typography sx={{ fontSize: "0.9rem" }}>
-                        <strong>Destinatário:</strong> {enc.Destinatario.nome}
+                        <strong>Destinatário:</strong> {enc.Destinatario?.nome || "Nome não disponível"}
+                        {enc.Destinatario?.Cargo?.nome ? ` - ${enc.Destinatario.Cargo.nome}` : " - Cargo não disponível"}
                       </Typography>
                     </Stack>
+
                     <Stack direction="row" alignItems="center">
                       <AccessTimeIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
                       <Typography sx={{ fontSize: "0.9rem" }}>
-                        <strong>Data/Hora:</strong> {new Date(enc.data).toLocaleString()}
+                        <strong>Data/Hora:</strong> {new Date(enc.data).toLocaleString() || "Data não disponível"}
                       </Typography>
                     </Stack>
                   </Stack>
