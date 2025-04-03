@@ -72,7 +72,7 @@ export const ArchivedDemands = () => {
           marginBottom: { xs: "16px", sm: "30px" },
         }}
       >
-        Lista de Demandas Arquivadas
+        Lista de Demandas Fechadas
       </Typography>
 
       <Box
@@ -94,7 +94,7 @@ export const ArchivedDemands = () => {
               fontFamily: '"Open Sans", sans-serif',
             }}
           >
-            Nenhuma demanda arquivada disponível
+            Nenhuma demanda fechada disponível
           </Typography>
         ) : (
           <ArchivedDemandsTable

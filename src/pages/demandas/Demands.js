@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Stack } from "@mui/material";
 import FiltersSection from "../../components/FiltersSection";
 import DemandsTable from "./DemandsTable";
 
@@ -117,31 +117,45 @@ export const Demands = () => {
           alignSelf: "center",
         }}
       >
-        <FiltersSection
-          onFilterChange={handleFilterChange}
+        <Stack
           sx={{
-            width: { xs: "100%", sm: "40%" },
-            flexGrow: 0,
-            height: { xs: "auto", sm: "35px" },
+            position: "relative",
+            width: "100%",
+            height: "auto",
           }}
-        />
-
-        <Button
-          variant="contained"
-          sx={{
-            bgcolor: "#2f9e41",
-            "&:hover": { bgcolor: "#257a33" },
-            minWidth: { xs: "100%", sm: "150px", md: "150px" },
-            px: 2,
-            height: { xs: "35px", sm: "38px" },
-            fontSize: { xs: "0.75rem", sm: "0.875rem" },
-            padding: { xs: "4px 8px", sm: "6px 12px" },
-            textTransform: "none",
-          }}
-          onClick={() => navigate("/demands/register")}
         >
-          Abrir Demanda
-        </Button>
+          <FiltersSection
+            onFilterChange={handleFilterChange}
+            sx={{
+              flexGrow: 1,
+              width: "100%",
+              height: "auto",
+            }}
+          />
+
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "#2f9e41",
+              "&:hover": { bgcolor: "#257a33" },
+              minWidth: "150px",
+              px: 2,
+              height: "40px",
+              fontSize: "0.875rem",
+              padding: "6px 12px",
+              textTransform: "none",
+              position: "absolute",
+              right: "16px",
+              top: "16px",
+              zIndex: 10,
+              boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
+            }}
+            onClick={() => navigate("/demands/register")}
+          >
+            Abrir Demanda
+          </Button>
+        </Stack>
+
       </Box>
 
       <Box
