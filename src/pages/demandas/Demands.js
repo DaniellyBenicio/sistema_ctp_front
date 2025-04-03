@@ -22,22 +22,14 @@ export const Demands = () => {
       const response = await api.post("/minhas-demandas", filterParams);
       const demandsData = response.data.demandas;
 
-      // Verifica se demandsData é um array válido
       if (!Array.isArray(demandsData)) {
         throw new Error("Erro ao buscar demandas: formato inválido.");
       }
 
-      // Mesmo que o array esteja vazio, é um resultado válido, então apenas atualizamos o estado
       setDemands(demandsData);
-      console.log("Demands atualizado:", demandsData);
     } catch (error) {
       console.error("Erro na requisição:", error);
-      setAlert({
-        show: true,
-        message: "Erro ao buscar demandas",
-        type: "error",
-      });
-      setDemands([]); // Define como vazio em caso de erro real
+      setDemands([]);
     }
   };
 
