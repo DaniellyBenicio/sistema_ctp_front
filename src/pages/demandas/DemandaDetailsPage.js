@@ -37,7 +37,8 @@ const DemandaDetailsPage = () => {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
-  const [openEncaminhamentosModal, setOpenEncaminhamentosModal] = useState(false);
+  const [openEncaminhamentosModal, setOpenEncaminhamentosModal] =
+    useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -70,7 +71,7 @@ const DemandaDetailsPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDemanda(response.data.demanda);
-        setPodeIntervir(response.data.podeIntervir)
+        setPodeIntervir(response.data.podeIntervir);
         setLoading(false);
       } catch (err) {
         setAlert({
@@ -102,8 +103,16 @@ const DemandaDetailsPage = () => {
         }
       );
       setDemanda((prev) => ({ ...prev, status: false }));
+      setPodeIntervir(false);
+      setAlert({
+        show: true,
+        message: response.data.mensagem,
+        type: "success",
+      });
       setOpenConfirmModal(false);
-      navigate("/demands");
+      setTimeout(() => {
+        navigate("/demands");
+      }, 2000);
     } catch (err) {
       setAlert({
         show: true,
@@ -111,6 +120,7 @@ const DemandaDetailsPage = () => {
         type: "error",
       });
       console.error("Erro ao fechar demanda:", err);
+      setOpenConfirmModal(false);
     } finally {
       setLoading(false);
     }
@@ -134,18 +144,14 @@ const DemandaDetailsPage = () => {
 
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
   };
-
 
   if (loading) {
     return (
@@ -178,7 +184,6 @@ const DemandaDetailsPage = () => {
       </Box>
     );
   }
-
 
   if (!demanda) {
     return (
@@ -251,7 +256,8 @@ const DemandaDetailsPage = () => {
             <strong>Disciplina:</strong> {demanda.disciplina || "Não informada"}
           </Typography>
           <Typography sx={{ fontSize: "0.9rem" }}>
-            <strong>Criador:</strong> {demanda.Usuarios.nome} - ({demanda.Usuarios.Cargo.nome})
+            <strong>Criador:</strong> {demanda.Usuarios.nome} - (
+            {demanda.Usuarios.Cargo.nome})
           </Typography>
           <Typography sx={{ fontSize: "0.9rem" }}>
             <strong>E-mail:</strong> {demanda.Usuarios.email}
@@ -359,7 +365,8 @@ const DemandaDetailsPage = () => {
         </Stack>
 
         <Typography sx={{ fontSize: "0.9rem", mb: 0 }}>
-          <strong>Total de Encaminhamentos:</strong> {demanda.Encaminhamentos?.length || 0}
+          <strong>Total de Encaminhamentos:</strong>{" "}
+          {demanda.Encaminhamentos?.length || 0}
         </Typography>
         <Button
           variant="contained"
@@ -376,7 +383,6 @@ const DemandaDetailsPage = () => {
         </Button>
       </Paper>
 
-      { }
       <Modal
         open={openEncaminhamentosModal}
         onClose={handleCloseEncaminhamentosModal}
@@ -390,18 +396,23 @@ const DemandaDetailsPage = () => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: 800,
-            maxHeight: '80vh',
+            maxHeight: "80vh",
             bgcolor: "white",
             borderRadius: "12px",
             boxShadow: 24,
             p: 4,
-            overflowY: 'auto',
+            overflowY: "auto",
           }}
         >
           <Typography
             id="encaminhamentos-modal-title"
             variant="h5"
-            sx={{ color: "#2E7D32", fontWeight: "bold", mb: 2, textAlign: 'center' }}
+            sx={{
+              color: "#2E7D32",
+              fontWeight: "bold",
+              mb: 2,
+              textAlign: "center",
+            }}
           >
             Detalhes dos Encaminhamentos
           </Typography>
@@ -409,35 +420,58 @@ const DemandaDetailsPage = () => {
           {demanda.Encaminhamentos?.length > 0 ? (
             <Stack spacing={2}>
               {demanda.Encaminhamentos.map((enc) => (
-                <Card key={enc.id} variant="outlined" sx={{ p: 2, borderColor: "#2E7D32" }}>
+                <Card
+                  key={enc.id}
+                  variant="outlined"
+                  sx={{ p: 2, borderColor: "#2E7D32" }}
+                >
                   <Stack spacing={1}>
                     <Stack direction="row" alignItems="center">
-                      <SubjectIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
-                      <Typography sx={{ fontSize: "0.9rem", whiteSpace: "pre-line" }}>
-                        <strong>Assunto do Encaminhamento:</strong> {enc.descricao || "Descrição não disponível"}
+                      <SubjectIcon
+                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                      />
+                      <Typography
+                        sx={{ fontSize: "0.9rem", whiteSpace: "pre-line" }}
+                      >
+                        <strong>Assunto do Encaminhamento:</strong>{" "}
+                        {enc.descricao || "Descrição não disponível"}
                       </Typography>
                     </Stack>
 
                     <Stack direction="row" alignItems="center">
-                      <PersonIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
+                      <PersonIcon
+                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                      />
                       <Typography sx={{ fontSize: "0.9rem" }}>
-                        <strong>Remetente:</strong> {enc.Remetente?.nome || "Nome não disponível"}
-                        {enc.Remetente?.Cargo?.nome ? ` - ${enc.Remetente.Cargo.nome}` : " - Cargo não disponível"}
+                        <strong>Remetente:</strong>{" "}
+                        {enc.Remetente?.nome || "Nome não disponível"}
+                        {enc.Remetente?.Cargo?.nome
+                          ? ` - ${enc.Remetente.Cargo.nome}`
+                          : " - Cargo não disponível"}
                       </Typography>
                     </Stack>
 
                     <Stack direction="row" alignItems="center">
-                      <PersonIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
+                      <PersonIcon
+                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                      />
                       <Typography sx={{ fontSize: "0.9rem" }}>
-                        <strong>Destinatário:</strong> {enc.Destinatario?.nome || "Nome não disponível"}
-                        {enc.Destinatario?.Cargo?.nome ? ` - ${enc.Destinatario.Cargo.nome}` : " - Cargo não disponível"}
+                        <strong>Destinatário:</strong>{" "}
+                        {enc.Destinatario?.nome || "Nome não disponível"}
+                        {enc.Destinatario?.Cargo?.nome
+                          ? ` - ${enc.Destinatario.Cargo.nome}`
+                          : " - Cargo não disponível"}
                       </Typography>
                     </Stack>
 
                     <Stack direction="row" alignItems="center">
-                      <AccessTimeIcon sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }} />
+                      <AccessTimeIcon
+                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                      />
                       <Typography sx={{ fontSize: "0.9rem" }}>
-                        <strong>Data/Hora:</strong> {new Date(enc.data).toLocaleString() || "Data não disponível"}
+                        <strong>Data/Hora:</strong>{" "}
+                        {new Date(enc.data).toLocaleString() ||
+                          "Data não disponível"}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -450,7 +484,12 @@ const DemandaDetailsPage = () => {
           <Button
             variant="contained"
             onClick={handleCloseEncaminhamentosModal}
-            sx={{ mt: 2, fontSize: "0.9rem", bgcolor: "#2E7D32", "&:hover": { bgcolor: "#1B5E20" } }}
+            sx={{
+              mt: 2,
+              fontSize: "0.9rem",
+              bgcolor: "#2E7D32",
+              "&:hover": { bgcolor: "#1B5E20" },
+            }}
           >
             Fechar
           </Button>
@@ -555,7 +594,9 @@ const DemandaDetailsPage = () => {
           {demanda.status && (
             <Tooltip
               title={
-                !temIntervencoes()
+                !podeIntervir
+                  ? "Você não tem permissão para fechar esta demanda no momento"
+                  : !temIntervencoes()
                   ? "É necessário pelo menos uma intervenção para fechar a demanda"
                   : ""
               }
@@ -565,7 +606,7 @@ const DemandaDetailsPage = () => {
                   variant="contained"
                   startIcon={<LockIcon />}
                   onClick={handleFecharDemanda}
-                  disabled={loading || !temIntervencoes()}
+                  disabled={loading || !podeIntervir || !temIntervencoes()}
                   sx={{
                     bgcolor: "#2E7D32",
                     color: "white",

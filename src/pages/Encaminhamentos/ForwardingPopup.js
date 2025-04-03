@@ -67,7 +67,9 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
-  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState([]);
+  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState(
+    []
+  );
   const [descricao, setDescricao] = useState("");
   const [data, setData] = useState(new Date().toISOString());
   const [loading, setLoading] = useState(false);
@@ -78,7 +80,9 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   const formatDateToDisplay = (isoDate) => {
     if (!isoDate) return "Gerada automaticamente";
     const date = new Date(isoDate);
-    return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
+    return `${date.getDate().toString().padStart(2, "0")}/${(
+      date.getMonth() + 1
+    )
       .toString()
       .padStart(2, "0")}/${date.getFullYear()}`;
   };
@@ -93,7 +97,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       setUsuarios(response.data.usuarios || []);
     } catch (err) {
       setAlert({ message: "Erro ao carregar usuários", type: "error" });
-      console.error("Erro ao buscar usuários:", err);
+      console.error("Erro ao buscar usuários:", err.response?.data || err);
     } finally {
       setLoading(false);
     }
@@ -103,16 +107,21 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await api.get(`/encaminhamentos/demanda/${demandId}`, {
+      console.log("Buscando dados da demanda:", demandId);
+      const response = await api.get(`/demandas/${demandId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const encaminhamentosData = response.data.encaminhamentos || [];
-      setEncaminhamentos(encaminhamentosData);
-
-      setPodeEncaminhar(encaminhamentosData.length === 0);
+      console.log("Resposta do backend:", response.data);
+      const { demanda, podeIntervir } = response.data;
+      setEncaminhamentos(demanda.Encaminhamentos || []);
+      setPodeEncaminhar(podeIntervir);
+      console.log("Pode encaminhar inicial:", podeIntervir);
     } catch (err) {
-      setAlert({ message: "Erro ao carregar encaminhamentos", type: "error" });
-      console.error("Erro ao buscar encaminhamentos:", err);
+      console.error(
+        "Erro ao buscar dados da demanda:",
+        err.response?.data || err
+      );
+      setAlert({ message: "Erro ao carregar dados da demanda", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -132,7 +141,15 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   const handleSubmit = async () => {
     if (!podeEncaminhar) {
       setAlert({
-        message: "Esta demanda já foi encaminhada e não pode ser encaminhada novamente.",
+        message: "Você não pode encaminhar essa demanda no momento",
+        type: "warning",
+      });
+      return;
+    }
+
+    if (!destinatariosSelecionados.length || !descricao.trim()) {
+      setAlert({
+        message: "Preencha todos os campos obrigatórios.",
         type: "error",
       });
       return;
@@ -145,12 +162,30 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
         demanda_id: demandId,
         descricao,
       };
-      const response = await api.post("/encaminhamento", payload);
+      const token = localStorage.getItem("token");
+      const response = await api.post("/encaminhamento", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setAlert({ message: response.data.mensagem, type: "success" });
-      setData(response.data.demanda.data);
-      
+      setData(response.data.demanda?.data || new Date().toISOString());
+      setEncaminhamentos([
+        ...encaminhamentos,
+        ...(response.data.encaminhamentos || []),
+      ]);
+
       setPodeEncaminhar(false);
-      setEncaminhamentos([...encaminhamentos, response.data.encaminhamento]); 
+      console.log("Pode encaminhar desabilitado imediatamente após envio");
+
+      const updatedResponse = await api.get(`/demandas/${demandId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const novoPodeIntervir = updatedResponse.data.podeIntervir;
+      setPodeEncaminhar(novoPodeIntervir);
+      console.log(
+        "Pode encaminhar após verificação no backend:",
+        novoPodeIntervir
+      );
+
       setTimeout(() => {
         setAlert(null);
         onClose();
@@ -162,7 +197,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           (err.response?.data?.error || err.message),
         type: "error",
       });
-      console.error("Erro na requisição:", err.response?.data || err.message);
+      console.error("Erro na requisição:", err.response?.data || err);
     } finally {
       setLoading(false);
     }
@@ -223,7 +258,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             )}
             fullWidth
             noOptionsText="Nenhum usuário encontrado"
-            disabled={!podeEncaminhar} 
+            disabled={!podeEncaminhar || loading}
           />
           <StyledTextField
             label="Descrição"
@@ -234,7 +269,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             multiline
             rows={3}
             required
-            disabled={!podeEncaminhar} 
+            disabled={!podeEncaminhar || loading}
           />
           <StyledTextField
             label="Data"
@@ -270,7 +305,12 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           <StyledButton
             variant="contained"
             onClick={handleSubmit}
-            disabled={loading || !descricao.trim() || !podeEncaminhar}
+            disabled={
+              loading ||
+              !podeEncaminhar ||
+              !descricao.trim() ||
+              !destinatariosSelecionados.length
+            }
             sx={{
               bgcolor: INSTITUTIONAL_COLOR,
               "&:hover": { bgcolor: "#265b28" },

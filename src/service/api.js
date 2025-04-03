@@ -19,7 +19,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // Resposta do servidor (ex.: 401)
       if (error.response.status === 401) {
         const event = new CustomEvent("sessionExpired", {
           detail: {
@@ -37,7 +36,6 @@ api.interceptors.response.use(
         }, 3000);
       }
     } else if (!error.response && error.request) {
-      // Erro de rede (servidor offline)
       const event = new CustomEvent("sessionExpired", {
         detail: {
           message:
