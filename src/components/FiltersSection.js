@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Search, Clear } from "@mui/icons-material";
 import api from "../service/api";
+import { useNavigate } from "react-router-dom";
 
 const FiltersSection = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
@@ -30,6 +31,7 @@ const FiltersSection = ({ onFilterChange }) => {
   const [showStudentList, setShowStudentList] = useState(false);
   const inputRef = useRef(null);
   const wrapperRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -112,7 +114,7 @@ const FiltersSection = ({ onFilterChange }) => {
   return (
     <Paper
       ref={wrapperRef}
-      elevation={3}
+      elevation={2}
       sx={{
         p: 2,
         mb: 2,
@@ -121,65 +123,70 @@ const FiltersSection = ({ onFilterChange }) => {
         width: "100%",
         maxWidth: "1130px",
         margin: "0 auto",
+        borderBottom: "1px solid #e0e0e0",
       }}
     >
       <Grid container spacing={3} alignItems="center">
-        <Grid item xs={12} sm={3} md={9}>
-          <FormControl fullWidth sx={{ position: "relative" }}>
-            <TextField
-              label="Nome do Aluno"
-              name="nomeAluno"
-              value={filters.nomeAluno}
-              onChange={handleChange}
-              onFocus={() => setShowStudentList(true)}
-              inputRef={inputRef}
-              sx={{
-                "& .MuiInputBase-root": {
-                  padding: "2px 14px",
-                  height: "40px",
-                },
-              }}
-            />
-            {showStudentList && filters.nomeAluno && (
-              <List
-                sx={{
-                  position: "absolute",
-                  zIndex: 1000,
-                  bgcolor: "background.paper",
-                  width: "100%",
-                  maxHeight: 200,
-                  overflowY: "auto",
-                  marginTop: "56px",
-                  border: "1px solid rgba(0, 0, 0, 0.2)",
-                  borderRadius: "4px",
-                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                {filteredStudents.map((student) => (
-                  <ListItem
-                    key={student.matricula}
-                    button
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      handleStudentSelect(student.nome);
-                    }}
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: "#e0f7fa",
-                      },
-                    }}
-                  >
-                    {student.nome}
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </FormControl>
-        </Grid>
-
+        {/* Filtros */}
         <Grid item xs={12}>
           <Grid container spacing={2} alignItems="flex-start">
-            <Grid item xs={12} sm={3} md={3}>
+            <Grid item xs={12} sm={4} md={4}>
+              <FormControl fullWidth sx={{ position: "relative" }}>
+                <TextField
+                  label="Nome do Aluno"
+                  name="nomeAluno"
+                  value={filters.nomeAluno}
+                  onChange={handleChange}
+                  onFocus={() => setShowStudentList(true)}
+                  inputRef={inputRef}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      padding: "0px",
+                      height: "53px",
+                    },
+                    "& .MuiInputLabel-root": {
+                      fontSize: "0.9rem",
+                    }
+                  }}
+                />
+                {showStudentList && filters.nomeAluno && (
+                  <List
+                    sx={{
+                      position: "absolute",
+                      zIndex: 1000,
+                      bgcolor: "background.paper",
+                      width: "100%",
+                      maxHeight: 200,
+                      overflowY: "auto",
+                      marginTop: "56px",
+                      fontSize: "14px",
+                      border: "1px solid rgba(0, 0, 0, 0.2)",
+                      borderRadius: "4px",
+                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+                    }}
+                  >
+                    {filteredStudents.map((student) => (
+                      <ListItem
+                        key={student.matricula}
+                        button
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          handleStudentSelect(student.nome);
+                        }}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "#e0f7fa",
+                          },
+                        }}
+                      >
+                        {student.nome}
+                      </ListItem>
+                    ))}
+                  </List>
+                )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={2} md={1.8}>
               <TextField
                 label="Data"
                 type="date"
@@ -190,25 +197,25 @@ const FiltersSection = ({ onFilterChange }) => {
                 InputLabelProps={{ shrink: true }}
                 sx={{
                   "& .MuiInputBase-root": {
-                    padding: "2px 14px",
-                    height: "40px",
+                    padding: "0px",
+                    height: "53px",
                   },
                 }}
               />
             </Grid>
-
-            <Grid item xs={12} sm={3} md={3}>
-              <FormControl fullWidth>
-                <InputLabel>Cursos</InputLabel>
+            <Grid item xs={10} sm={3} md={3.5}>
+              <FormControl fullWidth sx={{ height: "0px" }}>
+                <InputLabel sx={{ fontSize: '1rem' }}>Curso</InputLabel>
                 <Select
                   name="cursoId"
                   value={filters.cursoId}
                   onChange={handleChange}
                   sx={{
                     "& .MuiInputBase-root": {
-                      padding: "2px 14px",
-                      height: "40px",
+                      padding: "0px",
+                      height: "10px",
                     },
+                    fontSize: "0.9rem",
                   }}
                 >
                   <MenuItem value="">Todos</MenuItem>
@@ -220,19 +227,19 @@ const FiltersSection = ({ onFilterChange }) => {
                 </Select>
               </FormControl>
             </Grid>
-
-            <Grid item xs={12} sm={3} md={3}>
-              <FormControl fullWidth>
-                <InputLabel>Tipo de Demanda</InputLabel>
+            <Grid item xs={12} sm={3} md={2}>
+              <FormControl fullWidth sx={{ height: "56px" }}>
+                <InputLabel sx={{ fontSize: '1rem' }}>Tipo de Demanda</InputLabel>
                 <Select
                   name="tipoDemanda"
                   value={filters.tipoDemanda}
                   onChange={handleChange}
                   sx={{
                     "& .MuiInputBase-root": {
-                      padding: "2px 14px",
-                      height: "40px",
+                      padding: "0px",
+                      height: "10px",
                     },
+                    fontSize: "0.9rem",
                   }}
                 >
                   <MenuItem value="">Todos</MenuItem>
@@ -244,7 +251,9 @@ const FiltersSection = ({ onFilterChange }) => {
           </Grid>
         </Grid>
 
-        <Grid item xs={12} display="flex" gap={3} justifyContent={'flex-end'}>
+        {/* Botões */}
+        <Grid item xs={12} display="flex" gap={2} justifyContent="flex-start">
+
           <Tooltip title="Filtrar">
             <Button
               variant="contained"
@@ -259,12 +268,29 @@ const FiltersSection = ({ onFilterChange }) => {
             <Button
               variant="contained"
               onClick={handleClearFilters}
-              sx={{ backgroundColor: "#F5F5F5", color: "#000", "&:hover": { backgroundColor: "#E0E0E0" }, display: "flex", gap: 1 }}
+              sx={{ backgroundColor: "#F5F5F5", color: "#000", "&:hover": { backgroundColor: "#E0E0E0" }, display: "flex", gap: 1, fontSize: '0.875rem' }}
             >
               <Clear />
               Limpar
             </Button>
           </Tooltip>
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "#2f9e41",
+              "&:hover": { bgcolor: "#257a33" },
+              minWidth: "150px",
+              px: 2,
+              height: "40px",
+              fontSize: "0.875rem",
+              padding: "6px 12px",
+              textTransform: "none",
+              boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
+            }}
+            onClick={() => navigate("/demands/register")}
+          >
+            Abrir Demanda
+          </Button>
         </Grid>
       </Grid>
     </Paper>

@@ -133,27 +133,7 @@ export const Demands = () => {
             }}
           />
 
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: "#2f9e41",
-              "&:hover": { bgcolor: "#257a33" },
-              minWidth: "150px",
-              px: 2,
-              height: "40px",
-              fontSize: "0.875rem",
-              padding: "6px 12px",
-              textTransform: "none",
-              position: "absolute",
-              right: "16px",
-              top: "16px",
-              zIndex: 10,
-              boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
-            }}
-            onClick={() => navigate("/demands/register")}
-          >
-            Abrir Demanda
-          </Button>
+
         </Stack>
 
       </Box>
