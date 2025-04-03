@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import AppRoutes from "./routes/Routes";
-import { BrowserRouter as Router, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { CustomAlert } from "../src/components/alert/CustomAlert";
 import api from "../src/service/api";
@@ -11,12 +15,18 @@ const App = () => {
   );
   const [alert, setAlert] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const verificarToken = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setIsAuthenticated(false);
-      navigate("/login");
+      if (
+        location.pathname !== "/login" &&
+        location.pathname !== "/recuperar-senha"
+      ) {
+        navigate("/login");
+      }
       return false;
     }
 
@@ -34,7 +44,12 @@ const App = () => {
           localStorage.removeItem("token");
           setIsAuthenticated(false);
           setAlert(null);
-          navigate("/login");
+          if (
+            location.pathname !== "/login" &&
+            location.pathname !== "/recuperar-senha"
+          ) {
+            navigate("/login");
+          }
         }, 3000);
         return false;
       }
@@ -59,7 +74,12 @@ const App = () => {
         localStorage.removeItem("token");
         setIsAuthenticated(false);
         setAlert(null);
-        navigate("/login");
+        if (
+          location.pathname !== "/login" &&
+          location.pathname !== "/recuperar-senha"
+        ) {
+          navigate("/login");
+        }
       }, 3000);
       return false;
     }
@@ -74,7 +94,7 @@ const App = () => {
     checkSession();
     const intervalo = setInterval(checkSession, 10000);
     return () => clearInterval(intervalo);
-  }, [navigate]);
+  }, [navigate, location]);
 
   useEffect(() => {
     const handleSessionExpired = (e) => {
