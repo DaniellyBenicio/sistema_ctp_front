@@ -15,7 +15,7 @@ import { login } from "../../service/auth";
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [senha, setSenha] = useState("");
   const [focusedField, setFocusedField] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,10 +29,10 @@ const Login = ({ onLogin }) => {
     setError("");
 
     try {
-      await login(email, password);
+      await login(email, senha);
       onLogin();
     } catch (err) {
-      setError("Credenciais inválidas");
+      setError(err.message || "Credenciais inválidas");
     } finally {
       setLoading(false);
     }
@@ -172,16 +172,16 @@ const Login = ({ onLogin }) => {
               margin="normal"
               label="Senha"
               type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onFocus={() => setFocusedField("password")}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              onFocus={() => setFocusedField("senha")}
               onBlur={() => setFocusedField(null)}
               variant="outlined"
               InputLabelProps={{
-                shrink: focusedField === "password" || password !== "",
+                shrink: focusedField === "senha" || senha !== "",
                 sx: {
                   color:
-                    focusedField === "password" || password !== ""
+                    focusedField === "senha" || senha !== ""
                       ? "#27AE60"
                       : "text.secondary",
                   fontSize: { xs: "0.9rem", md: "1rem" },
@@ -238,13 +238,17 @@ const Login = ({ onLogin }) => {
               }}
             >
               <Button
+                type="button"
                 sx={{
                   textTransform: "none",
                   fontSize: { xs: "0.75rem", md: "0.875rem" },
                   color: "#27AE60",
                   "&:hover": { textDecoration: "underline", color: "#2ECC71" },
                 }}
-                onClick={() => navigate("/recuperar-senha")}
+                onClick={() => {
+                  console.log("Navegando para /recuperar-senha");
+                  navigate("/recuperar-senha");
+                }}
               >
                 Esqueceu a senha?
               </Button>
@@ -254,23 +258,18 @@ const Login = ({ onLogin }) => {
               type="submit"
               fullWidth
               variant="contained"
-              disabled={loading || !isEmailValid() || !password}
-              onClick={() => navigate("/MainScreen")}
+              disabled={loading || !isEmailValid() || !senha}
               sx={{
                 mt: 3,
                 mb: 2,
                 py: 1.5,
                 bgcolor:
-                  loading || !isEmailValid() || !password
-                    ? "#E0E0E0"
-                    : "#27AE60",
+                  loading || !isEmailValid() || !senha ? "#E0E0E0" : "#27AE60",
                 color:
-                  loading || !isEmailValid() || !password
-                    ? "#333333"
-                    : "#FFFFFF",
+                  loading || !isEmailValid() || !senha ? "#333333" : "#FFFFFF",
                 "&:hover": {
                   bgcolor:
-                    loading || !isEmailValid() || !password
+                    loading || !isEmailValid() || !senha
                       ? "#D0D0D0"
                       : "#2ECC71",
                 },
