@@ -67,9 +67,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
-  const [destinatariosSelecionados, setDestinatariosSelecionados] = useState(
-    []
-  );
+  const [destinatarioSelecionado, setDestinatarioSelecionado] = useState(null); // Objeto completo ou null
   const [descricao, setDescricao] = useState("");
   const [data, setData] = useState(new Date().toISOString());
   const [loading, setLoading] = useState(false);
@@ -131,7 +129,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     if (open) {
       fetchUsuarios();
       fetchEncaminhamentos();
-      setDestinatariosSelecionados([]);
+      setDestinatarioSelecionado(null);
       setDescricao("");
       setData(new Date().toISOString());
       setAlert(null);
@@ -147,7 +145,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       return;
     }
 
-    if (!destinatariosSelecionados.length || !descricao.trim()) {
+    if (!destinatarioSelecionado || !descricao.trim()) {
       setAlert({
         message: "Preencha todos os campos obrigatórios.",
         type: "error",
@@ -158,7 +156,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
     setLoading(true);
     try {
       const payload = {
-        destinatario_id: destinatariosSelecionados,
+        destinatario_id: destinatarioSelecionado.id,
         demanda_id: demandId,
         descricao,
       };
@@ -204,8 +202,8 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   };
 
   const handleDestinatarioChange = (event, newValue) => {
-    const selectedIds = newValue.map((usuario) => usuario.id);
-    setDestinatariosSelecionados(selectedIds);
+    // Define o destinatário selecionado como o objeto completo ou null
+    setDestinatarioSelecionado(newValue);
   };
 
   const filterOptions = (options, { inputValue }) => {
@@ -237,27 +235,24 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             </Box>
           )}
           <StyledAutocomplete
-            multiple
             options={usuarios}
             getOptionLabel={(option) =>
               `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`
             }
-            value={usuarios.filter((u) =>
-              destinatariosSelecionados.includes(u.id)
-            )}
+            value={destinatarioSelecionado} // Usa diretamente o objeto selecionado
             onChange={handleDestinatarioChange}
             filterOptions={filterOptions}
             openOnFocus={false}
             renderInput={(params) => (
               <StyledTextField
                 {...params}
-                label="Destinatários"
+                label="Destinatário"
                 placeholder="Digite para buscar..."
                 margin="normal"
               />
             )}
             fullWidth
-            noOptionsText="Nenhum usuário encontrado"
+            noOptionsText="A demanda só pode ser enviada pra uma pessoa"
             disabled={!podeEncaminhar || loading}
           />
           <StyledTextField
@@ -309,7 +304,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
               loading ||
               !podeEncaminhar ||
               !descricao.trim() ||
-              !destinatariosSelecionados.length
+              !destinatarioSelecionado
             }
             sx={{
               bgcolor: INSTITUTIONAL_COLOR,
