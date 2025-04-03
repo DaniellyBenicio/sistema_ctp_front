@@ -1,29 +1,49 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./SideBar";
 import { jwtDecode } from "jwt-decode";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 
 const MainScreen = ({ setAuthenticated }) => {
   const [userRole, setUserRole] = useState(null);
   const [userName, setUserName] = useState("");
   const isMobile = useMediaQuery("(max-width:600px)");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const validarToken = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setAuthenticated(false);
+        navigate("/login");
+        return;
+      }
+
       try {
-        const decode = jwtDecode(token);
-        const fullName = decode.nome || "Usuário Desconhecido";
+        const decoded = jwtDecode(token);
+        const agora = Date.now() / 1000;
+        if (decoded.exp < agora) {
+          throw new Error("Token expirado");
+        }
+
+        const fullName = decoded.nome || "Usuário Desconhecido";
         const firstTwoNames = fullName.split(" ").slice(0, 2).join(" ");
         setUserName(firstTwoNames);
-        setUserRole(decode.cargo || null);
+        setUserRole(decoded.cargo || null);
       } catch (erro) {
-        console.error("Erro ao decodificar token:", erro);
+        console.error("Erro ao validar token:", erro);
         localStorage.removeItem("token");
+        setAuthenticated(false);
+        navigate("/login");
       }
-    }
-  }, []);
+    };
+
+    validarToken();
+  }, [navigate, setAuthenticated]);
+
+  if (!userRole) {
+    return null;
+  }
 
   return (
     <div
