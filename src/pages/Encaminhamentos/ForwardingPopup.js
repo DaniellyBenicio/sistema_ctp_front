@@ -67,7 +67,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
-  const [destinatarioSelecionado, setDestinatarioSelecionado] = useState(null); // Objeto completo ou null
+  const [destinatarioSelecionado, setDestinatarioSelecionado] = useState(null); 
   const [descricao, setDescricao] = useState("");
   const [data, setData] = useState(new Date().toISOString());
   const [loading, setLoading] = useState(false);
@@ -202,7 +202,6 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
   };
 
   const handleDestinatarioChange = (event, newValue) => {
-    // Define o destinatário selecionado como o objeto completo ou null
     setDestinatarioSelecionado(newValue);
   };
 
@@ -239,7 +238,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             getOptionLabel={(option) =>
               `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`
             }
-            value={destinatarioSelecionado} // Usa diretamente o objeto selecionado
+            value={destinatarioSelecionado} 
             onChange={handleDestinatarioChange}
             filterOptions={filterOptions}
             openOnFocus={false}
