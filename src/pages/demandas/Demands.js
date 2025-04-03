@@ -21,9 +21,13 @@ export const Demands = () => {
     try {
       const response = await api.post("/minhas-demandas", filterParams);
       const demandsData = response.data.demandas;
-      if (!demandsData || !Array.isArray(demandsData)) {
+
+      // Verifica se demandsData é um array válido
+      if (!Array.isArray(demandsData)) {
         throw new Error("Erro ao buscar demandas: formato inválido.");
       }
+
+      // Mesmo que o array esteja vazio, é um resultado válido, então apenas atualizamos o estado
       setDemands(demandsData);
       console.log("Demands atualizado:", demandsData);
     } catch (error) {
@@ -33,7 +37,7 @@ export const Demands = () => {
         message: "Erro ao buscar demandas",
         type: "error",
       });
-      setDemands([]);
+      setDemands([]); // Define como vazio em caso de erro real
     }
   };
 
@@ -167,7 +171,7 @@ export const Demands = () => {
               fontFamily: '"Open Sans", sans-serif',
             }}
           >
-            Nenhuma demanda aberta disponível
+            Nenhuma demanda para o filtro informado
           </Typography>
         ) : (
           <DemandsTable
