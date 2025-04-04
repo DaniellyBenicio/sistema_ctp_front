@@ -7,7 +7,13 @@ export const login = async (email, senha) => {
     localStorage.setItem("token", token);
     return token;
   } catch (error) {
-    throw new Error("Falha na autenticação");
+    if (error.response) {
+      throw new Error(error.response.data.message || "Falha na autenticação.");
+    } else if (error.request) {
+      throw new Error("Não foi possível conectar ao servidor.");
+    } else {
+      throw new Error("Erro ao configurar a requisição de login.");
+    }
   }
 };
 
