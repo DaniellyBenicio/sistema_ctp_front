@@ -209,9 +209,7 @@ const StudentRegisterPage = () => {
             const response = await api.put(
               `/editar-aluno/${aluno.id}`,
               {
-                nome: aluno.nome,
-                email: aluno.email,
-                curso: aluno.curso,
+                matricula: aluno.id,
                 condicoes: condicoesIds,
               },
               { headers: { Authorization: `Bearer ${token}` } }
@@ -368,7 +366,7 @@ const StudentRegisterPage = () => {
                   };
                   setFormData((prev) => ({ ...prev, alunos: newAlunos }));
                 }}
-                disabled={isStudentRegistered[index]}
+                disabled={isEditing || isStudentRegistered[index]}
               />
               <StyledTextField
                 placeholder="Email"
@@ -387,7 +385,7 @@ const StudentRegisterPage = () => {
                   };
                   setFormData((prev) => ({ ...prev, alunos: newAlunos }));
                 }}
-                disabled={isStudentRegistered[index]}
+                disabled={isEditing || isStudentRegistered[index]}
               />
               <StyledTextField
                 placeholder="Curso"
@@ -406,7 +404,7 @@ const StudentRegisterPage = () => {
                   };
                   setFormData((prev) => ({ ...prev, alunos: newAlunos }));
                 }}
-                disabled={isStudentRegistered[index]}
+                disabled={isEditing || isStudentRegistered[index]}
               />
               <Box
                 sx={{
@@ -455,7 +453,6 @@ const StudentRegisterPage = () => {
                         },
                       },
                     }}
-                    disabled={isStudentRegistered[index]}
                   >
                     <CondicaoList
                       selectedCondicoes={
