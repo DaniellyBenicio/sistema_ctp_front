@@ -3,12 +3,16 @@ import { TextField, InputAdornment } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
 const SearchBar = ({ value, onChange }) => {
+  const handleInputChange = (e) => {
+    onChange(e);
+  };
+
   return (
     <TextField
       variant="outlined"
       placeholder="Buscar..."
       value={value}
-      onChange={onChange}
+      onChange={handleInputChange}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">

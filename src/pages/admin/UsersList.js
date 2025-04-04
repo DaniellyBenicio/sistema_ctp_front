@@ -49,19 +49,19 @@ export const UsersList = () => {
 
   const fetchUsersByTermo = async (termo) => {
     try {
-      const response = await api.get(`/usuarios/busca/${termo}`);
+      const encodedTermo = encodeURIComponent(termo);
+      const response = await api.get(`/usuarios/busca/${encodedTermo}`);
       if (!response.data || !Array.isArray(response.data.usuarios)) {
         throw new Error("Erro ao buscar usuários por termo.");
       }
       return response.data.usuarios;
     } catch (error) {
-      console.error("Erro ao buscar por termo:", error);
       return null;
     }
   };
 
   const handleSearchChange = async (e) => {
-    const value = e.target.value.trim();
+    const value = e.target.value;
     setSearchValue(value);
 
     if (!value) {
@@ -76,7 +76,6 @@ export const UsersList = () => {
       setAlert({ show: false, message: "", type: "" });
       return;
     }
-
     setFilteredUsers([]);
     setAlert({ show: false, message: "", type: "" });
   };
