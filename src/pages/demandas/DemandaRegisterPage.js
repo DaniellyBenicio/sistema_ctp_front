@@ -83,6 +83,7 @@ const DemandaRegisterPage = () => {
   const token = localStorage.getItem("token");
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
+  const [allStudentsValidated, setAllStudentsValidated] = useState(false);
 
   const getUserId = () => {
     const decoded = jwtDecode(token);
@@ -91,7 +92,6 @@ const DemandaRegisterPage = () => {
 
   useEffect(() => {
     getUserId();
-    console.log("DemandaRegisterPage montado!");
   }, []);
 
   const handleChange = (e) => {
@@ -112,25 +112,32 @@ const DemandaRegisterPage = () => {
 
   const handleSearchByMatricula = async (index) => {
     const matriculaInput = matriculaInputs[index];
+    if (!matriculaInput) {
+      setError("Por favor, insira uma matrícula válida.");
+      setAlertOpen(true);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get(`/alunos/${matriculaInput}`, {
+      const response = await api.get(`/local/alunos/${matriculaInput}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       const student = response.data;
-      if (student?.nome) {
+      if (student && student.matricula && student.nome) {
         const mappedStudent = {
-          id: student.matricula || `temp-${Date.now()}-${index}`,
+          id: student.matricula,
           nome: student.nome,
           email: student.email || "",
           curso: student.curso || "Curso não informado",
           condicoes: student.condicoes || [],
         };
 
-        const isStudentAlreadyAdded = formData.alunos.some(a => a.id === mappedStudent.id);
+        const isStudentAlreadyAdded = formData.alunos.some(
+          (a) => a.id === mappedStudent.id
+        );
 
         if (isStudentAlreadyAdded) {
           setError("Este aluno já foi adicionado.");
@@ -147,22 +154,27 @@ const DemandaRegisterPage = () => {
           newAlunos[index] = mappedStudent;
           return { ...prev, alunos: newAlunos };
         });
+
+        const allValid = newStudentsData.every(
+          (student) => student && student.id && student.nome
+        );
+        setAllStudentsValidated(allValid);
       } else {
-        setError("Aluno não encontrado.");
-        setAlertOpen(true);
-        const newStudentsData = [...studentsData];
-        newStudentsData[index] = null;
-        setStudentsData(newStudentsData);
+        throw new Error("Dados inválidos retornados pela base local");
       }
     } catch (err) {
-      setError(
-        "Erro ao buscar aluno. Verifique a matrícula e tente novamente."
-      );
-      setAlertOpen(true);
       console.error("Erro ao buscar aluno:", err.response?.data || err.message);
+      const errorMessage =
+        err.response?.data?.mensagem ===
+        "Aluno não encontrado na base de dados local"
+          ? "Aluno não encontrado na base de dados, procure um funcionário da CTP para cadastrá-lo."
+          : "Erro ao buscar aluno. Verifique a matrícula e tente novamente.";
+      setError(errorMessage);
+      setAlertOpen(true);
       const newStudentsData = [...studentsData];
       newStudentsData[index] = null;
       setStudentsData(newStudentsData);
+      setAllStudentsValidated(false);
     } finally {
       setLoading(false);
     }
@@ -178,6 +190,7 @@ const DemandaRegisterPage = () => {
         { id: "", nome: "", email: "", curso: "", condicoes: [] },
       ],
     }));
+    setAllStudentsValidated(false);
   };
 
   const handleRemoveStudent = (index) => {
@@ -187,6 +200,10 @@ const DemandaRegisterPage = () => {
       ...prev,
       alunos: prev.alunos.filter((_, i) => i !== index),
     }));
+    const allValid = studentsData
+      .filter((_, i) => i !== index)
+      .every((student) => student && student.id && student.nome);
+    setAllStudentsValidated(allValid);
   };
 
   const handleCondicaoChange = (index, newSelectedCondicoes) => {
@@ -196,6 +213,12 @@ const DemandaRegisterPage = () => {
   };
 
   const handleSubmit = async () => {
+    if (!allStudentsValidated) {
+      setError("Valide todos os alunos antes de prosseguir.");
+      setAlertOpen(true);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -207,22 +230,26 @@ const DemandaRegisterPage = () => {
         disciplina: formData.disciplina || null,
         alunos: formData.alunos
           .map((aluno) => ({
-            id: aluno.id || null,
+            id: aluno.id,
             condicoes: aluno.condicoes.map((c) => c.id),
           }))
-          .filter((aluno) => aluno.id || aluno.nome),
+          .filter((aluno) => aluno.id),
         amparoLegal: formData.amparoLegal.map((amparo) => amparo.id),
       });
       setSuccess("Demanda cadastrada com sucesso!");
       setAlertOpen(true);
       setTimeout(() => navigate("/demands"), 2000);
     } catch (err) {
-      setError(err.response?.data?.mensagem || "Erro ao cadastrar a demanda");
-      setAlertOpen(true);
       console.error(
         "Erro ao criar demanda:",
         err.response?.data || err.message
       );
+      setError(
+        err.response?.data?.mensagem ||
+          err.response?.data?.erro ||
+          "Erro ao cadastrar a demanda"
+      );
+      setAlertOpen(true);
     } finally {
       setLoading(false);
     }
@@ -249,7 +276,7 @@ const DemandaRegisterPage = () => {
     >
       <Box sx={{ width: "100%", maxWidth: "1200px" }}>
         <Typography
-          variant="h5"
+          variable="h5"
           align="center"
           gutterBottom
           sx={{
@@ -311,24 +338,6 @@ const DemandaRegisterPage = () => {
                 value={studentsData[index]?.nome || ""}
                 variant="outlined"
                 disabled
-                onChange={(e) => {
-                  const newStudentsData = [...studentsData];
-                  newStudentsData[index] = {
-                    ...newStudentsData[index],
-                    nome: e.target.value,
-                    id: `temp-${Date.now()}-${index}`,
-                  };
-                  setStudentsData(newStudentsData);
-                  setFormData((prev) => {
-                    const newAlunos = [...prev.alunos];
-                    newAlunos[index] = {
-                      ...newAlunos[index],
-                      nome: e.target.value,
-                      id: `temp-${Date.now()}-${index}`,
-                    };
-                    return { ...prev, alunos: newAlunos };
-                  });
-                }}
                 sx={{ bgcolor: "#fff", borderRadius: "8px" }}
               />
               <StyledTextField
@@ -336,22 +345,6 @@ const DemandaRegisterPage = () => {
                 value={studentsData[index]?.email || ""}
                 variant="outlined"
                 disabled
-                onChange={(e) => {
-                  const newStudentsData = [...studentsData];
-                  newStudentsData[index] = {
-                    ...newStudentsData[index],
-                    email: e.target.value,
-                  };
-                  setStudentsData(newStudentsData);
-                  setFormData((prev) => {
-                    const newAlunos = [...prev.alunos];
-                    newAlunos[index] = {
-                      ...newAlunos[index],
-                      email: e.target.value,
-                    };
-                    return { ...prev, alunos: newAlunos };
-                  });
-                }}
                 sx={{ bgcolor: "#fff", borderRadius: "8px" }}
               />
               <StyledTextField
@@ -359,22 +352,6 @@ const DemandaRegisterPage = () => {
                 value={studentsData[index]?.curso || ""}
                 variant="outlined"
                 disabled
-                onChange={(e) => {
-                  const newStudentsData = [...studentsData];
-                  newStudentsData[index] = {
-                    ...newStudentsData[index],
-                    curso: e.target.value,
-                  };
-                  setStudentsData(newStudentsData);
-                  setFormData((prev) => {
-                    const newAlunos = [...prev.alunos];
-                    newAlunos[index] = {
-                      ...newAlunos[index],
-                      curso: e.target.value,
-                    };
-                    return { ...prev, alunos: newAlunos };
-                  });
-                }}
                 sx={{ bgcolor: "#fff", borderRadius: "8px" }}
               />
               <Box sx={{ gridColumn: { xs: "1 / 2", sm: "2 / 3" } }}>
@@ -490,6 +467,7 @@ const DemandaRegisterPage = () => {
             rows={4}
             variant="outlined"
             required
+            disabled={!allStudentsValidated}
             sx={{ mb: 3, bgcolor: "#fff", borderRadius: "8px" }}
           />
           <Box
@@ -502,6 +480,7 @@ const DemandaRegisterPage = () => {
               onChange={handleChange}
               variant="outlined"
               inputProps={{ maxLength: 100 }}
+              disabled={!allStudentsValidated}
               sx={{
                 bgcolor: "#fff",
                 borderRadius: "8px",
@@ -536,6 +515,7 @@ const DemandaRegisterPage = () => {
           <AmparoLegalList
             selectedAmparos={formData.amparoLegal}
             onAmparoChange={handleAmparoChange}
+            disabled={!allStudentsValidated}
           />
         </StyledPaper>
 
@@ -575,7 +555,7 @@ const DemandaRegisterPage = () => {
               loading ||
               !formData.descricao ||
               formData.alunos.length === 0 ||
-              formData.alunos.some((aluno) => !aluno.nome) ||
+              !allStudentsValidated ||
               formData.amparoLegal.length === 0
             }
             startIcon={<SaveIcon />}
