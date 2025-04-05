@@ -27,14 +27,16 @@ const ForgotPassword = () => {
 
     try {
       const response = await api.post("/recuperar-senha", { email });
-      setMessage("Email de recuperação de senha enviado com sucesso! Por favor, verifique sua caixa de entrada.");
+      setMessage(
+        "Email de recuperação enviado com sucesso! Por favor, verifique sua caixa de entrada."
+      );
       setTimeout(() => {
         navigate("/login");
       }, 3000);
     } catch (err) {
       setError(
         err.response?.data?.message ||
-        "Erro ao enviar a solicitação de redefinição de senha. Por favor, verifique o email inserido."
+          "Erro ao enviar a solicitação de redefinição de senha. Por favor, verifique o email inserido."
       );
     } finally {
       setLoading(false);
@@ -200,7 +202,11 @@ const ForgotPassword = () => {
                 fontSize: { xs: "0.9rem", md: "1rem" },
               }}
             >
-              {loading ? <CircularProgress size={25} /> : "Enviar Email de Recuperação"}
+              {loading ? (
+                <CircularProgress size={25} />
+              ) : (
+                "Enviar Email de Recuperação"
+              )}
             </Button>
 
             <Box

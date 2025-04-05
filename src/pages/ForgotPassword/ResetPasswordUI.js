@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
   Typography,
   TextField,
   CircularProgress,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CustomAlert from "../../components/alert/CustomAlert";
 
 const ResetPasswordUI = ({
@@ -18,7 +21,16 @@ const ResetPasswordUI = ({
   isSubmitting,
   handleSubmit,
   onCloseAlert,
+  navigate,
 }) => {
+  const [focusedField, setFocusedField] = useState(null);
+  const [showNovaSenha, setShowNovaSenha] = useState(false);
+  const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
+
+  const handleToggleNovaSenha = () => setShowNovaSenha((prev) => !prev);
+  const handleToggleConfirmarSenha = () =>
+    setShowConfirmarSenha((prev) => !prev);
+
   return (
     <Box
       sx={{
@@ -26,137 +38,232 @@ const ResetPasswordUI = ({
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
+        width: "100vw",
         background: "#FFFFFF",
-        padding: { xs: "2% 5%", sm: "2% 10%" },
+        padding: 0,
+        margin: 0,
+        overflowX: "hidden",
       }}
     >
       <Box
         sx={{
-          width: { xs: "100%", sm: "90%", md: "500px" },
-          maxWidth: "500px",
-          backgroundColor: "#fff",
-          borderRadius: "8px",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          padding: { xs: "20px", sm: "30px" },
-          textAlign: "center",
-          minHeight: { xs: "auto", md: "400px" },
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
+          flexDirection: { xs: "column", md: "row" },
+          width: { xs: "85%", sm: "75%", md: "100%" },
+          maxWidth: { xs: "100%", sm: 600, md: 800 },
+          minHeight: { xs: "auto", md: 400 },
+          borderRadius: 4,
+          overflow: "hidden",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+          boxSizing: "border-box",
+          margin: { xs: "0 auto", sm: "0 auto" },
         }}
       >
-        <Typography
-          variant="h5"
+        <Box
           sx={{
-            fontWeight: "bold",
-            color: "#333",
-            mt: 1,
-            mb: 3,
-            fontFamily: '"Open Sans", sans-serif',
+            flex: { xs: "none", md: 1 },
+            background: "linear-gradient(135deg, #27AE60 0%, #2ECC71 100%)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            p: { xs: 3, md: 6 },
+            color: "#FFFFFF",
+            width: { xs: "100%", md: "auto" },
+            boxSizing: "border-box",
           }}
         >
-          Redefinir Senha
-        </Typography>
-
-        {(message || error) && (
-          <CustomAlert
-            message={message || error}
-            type={message ? "success" : "error"}
-            onClose={onCloseAlert}
-            sx={{ mb: 2 }}
-          />
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <TextField
-            label="Nova Senha"
-            type="password"
-            value={novaSenha}
-            onChange={(e) => setNovaSenha(e.target.value)}
-            placeholder="Digite a nova senha"
-            fullWidth
-            required
-            variant="outlined"
+          <Typography
+            variant="h5"
             sx={{
-              mb: 2,
-              "& .MuiInputBase-root": {
-                height: "40px",
-                fontSize: "0.875rem",
-              },
-              "& .MuiInputLabel-root": {
-                fontSize: "0.875rem",
-                color: "#333",
-              },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#ccc",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#2f9e41",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#2f9e41",
-                },
-              },
-            }}
-          />
-
-          <TextField
-            label="Confirmar Senha"
-            type="password"
-            value={confirmarSenha}
-            onChange={(e) => setConfirmarSenha(e.target.value)}
-            placeholder="Confirme a nova senha"
-            fullWidth
-            required
-            variant="outlined"
-            sx={{
-              mb: 2,
-              "& .MuiInputBase-root": {
-                height: "40px",
-                fontSize: "0.875rem",
-              },
-              "& .MuiInputLabel-root": {
-                fontSize: "0.875rem",
-                color: "#333",
-              },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#ccc",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#2f9e41",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#2f9e41",
-                },
-              },
-            }}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isSubmitting}
-            fullWidth
-            sx={{
-              bgcolor: "#2f9e41",
-              "&:hover": { bgcolor: "#257a33" },
-              height: "34px",
-              fontSize: "0.875rem",
-              textTransform: "none",
-              fontFamily: '"Open Sans", sans-serif',
-              padding: "4px 12px",
-              mb: 2,
+              textAlign: "center",
+              maxWidth: "90%",
+              lineHeight: 1.4,
+              fontWeight: "bold",
+              fontSize: { xs: "1.25rem", md: "1.3rem" },
             }}
           >
-            {isSubmitting ? (
-              <CircularProgress size={16} sx={{ color: "#fff" }} />
-            ) : (
-              "Redefinir"
-            )}
-          </Button>
-        </form>
+            Insira sua nova senha e confirme-a para concluir o processo de
+            redefinição.
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            flex: { xs: "none", md: 1.5 },
+            backgroundColor: "#FFFFFF",
+            p: { xs: 3, md: 4 },
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            width: { xs: "100%", md: "auto" },
+            boxSizing: "border-box",
+          }}
+        >
+          <Typography
+            component="h1"
+            variant="h5"
+            sx={{
+              mb: 3,
+              fontWeight: "bold",
+              textAlign: "center",
+              color: "#000000",
+              fontSize: { xs: "1.5rem", md: "1.75rem" },
+            }}
+          >
+            Redefinir Senha
+          </Typography>
+
+          {(message || error) && (
+            <CustomAlert
+              message={message || error}
+              type={message ? "success" : "error"}
+              onClose={onCloseAlert}
+              sx={{ mb: 2 }}
+            />
+          )}
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
+            <TextField
+              label="Nova Senha"
+              type={showNovaSenha ? "text" : "password"}
+              value={novaSenha}
+              onChange={(e) => setNovaSenha(e.target.value)}
+              fullWidth
+              required
+              variant="outlined"
+              onFocus={() => setFocusedField("novaSenha")}
+              onBlur={() => setFocusedField(null)}
+              InputLabelProps={{
+                shrink: focusedField === "novaSenha" || novaSenha !== "",
+                sx: {
+                  color:
+                    focusedField === "novaSenha" || novaSenha !== ""
+                      ? "#27AE60"
+                      : "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleToggleNovaSenha}
+                      edge="end"
+                      sx={{ color: "#27AE60" }}
+                    >
+                      {showNovaSenha ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
+              }}
+            />
+
+            <TextField
+              label="Confirmar Senha"
+              type={showConfirmarSenha ? "text" : "password"}
+              value={confirmarSenha}
+              onChange={(e) => setConfirmarSenha(e.target.value)}
+              fullWidth
+              required
+              variant="outlined"
+              onFocus={() => setFocusedField("confirmarSenha")}
+              onBlur={() => setFocusedField(null)}
+              InputLabelProps={{
+                shrink:
+                  focusedField === "confirmarSenha" || confirmarSenha !== "",
+                sx: {
+                  color:
+                    focusedField === "confirmarSenha" || confirmarSenha !== ""
+                      ? "#27AE60"
+                      : "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleToggleConfirmarSenha}
+                      edge="end"
+                      sx={{ color: "#27AE60" }}
+                    >
+                      {showConfirmarSenha ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                mb: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
+              }}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={isSubmitting || !novaSenha || !confirmarSenha}
+              sx={{
+                mt: 3,
+                mb: 2,
+                py: 1.5,
+                bgcolor:
+                  isSubmitting || !novaSenha || !confirmarSenha
+                    ? "#E0E0E0"
+                    : "#27AE60",
+                color:
+                  isSubmitting || !novaSenha || !confirmarSenha
+                    ? "#333333"
+                    : "#FFFFFF",
+                "&:hover": {
+                  bgcolor:
+                    isSubmitting || !novaSenha || !confirmarSenha
+                      ? "#D0D0D0"
+                      : "#2ECC71",
+                },
+                borderRadius: "8px",
+                textTransform: "uppercase",
+                fontWeight: "bold",
+                fontSize: { xs: "0.9rem", md: "1rem" },
+              }}
+            >
+              {isSubmitting ? (
+                <CircularProgress size={25} sx={{ color: "#FFFFFF" }} />
+              ) : (
+                "Redefinir Senha"
+              )}
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

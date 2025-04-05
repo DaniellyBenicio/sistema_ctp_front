@@ -23,7 +23,8 @@ const App = () => {
       setIsAuthenticated(false);
       if (
         location.pathname !== "/login" &&
-        location.pathname !== "/recuperar-senha"
+        location.pathname !== "/recuperar-senha" &&
+        !location.pathname.startsWith("/redefinir-senha/")
       ) {
         navigate("/login");
       }
@@ -36,7 +37,8 @@ const App = () => {
       if (decoded.exp < agora) {
         if (
           location.pathname !== "/login" &&
-          location.pathname !== "/recuperar-senha"
+          location.pathname !== "/recuperar-senha" &&
+          !location.pathname.startsWith("/redefinir-senha/")
         ) {
           setAlert({
             message:
@@ -79,7 +81,8 @@ const App = () => {
         setAlert(null);
         if (
           location.pathname !== "/login" &&
-          location.pathname !== "/recuperar-senha"
+          location.pathname !== "/recuperar-senha" &&
+          !location.pathname.startsWith("/redefinir-senha/")
         ) {
           navigate("/login");
         }

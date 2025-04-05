@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import api from "../../service/api";
 import ResetPasswordUI from "./ResetPasswordUI";
@@ -16,6 +16,13 @@ function ResetPassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!token || !expires || !email) {
+      setError("Link de redefinição inválido ou incompleto.");
+      setTimeout(() => navigate("/login"), 2000);
+    }
+  }, [token, expires, email, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -26,22 +33,24 @@ function ResetPassword() {
       return;
     }
 
-    if (!email) {
-      setError("Email não encontrado no link.");
-      return;
-    }
     setIsSubmitting(true);
     try {
+      console.log("Token:", token);
+      console.log("Expires:", expires);
+      console.log("Email (bruto):", email);
+      console.log("Body:", { novaSenha, confirmarSenha });
       const response = await api.post(
         `/redefinir-senha/${token}`,
         { novaSenha, confirmarSenha },
         { params: { expires, email } }
       );
+      console.log("Resposta do backend:", response.data);
       setMessage(response.data.message);
       setTimeout(() => {
         navigate("/login");
-      }, 1000);
+      }, 2000);
     } catch (err) {
+      console.error("Erro na requisição:", err.response?.data || err);
       setError(err.response?.data?.message || "Erro ao redefinir senha.");
     } finally {
       setIsSubmitting(false);
@@ -64,7 +73,9 @@ function ResetPassword() {
       isSubmitting={isSubmitting}
       handleSubmit={handleSubmit}
       onCloseAlert={onCloseAlert}
+      navigate={navigate}
     />
   );
 }
+
 export default ResetPassword;
