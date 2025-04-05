@@ -26,6 +26,11 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
     }
   };
 
+  const getDefaultRoute = () => {
+    const userRole = localStorage.getItem("userRole");
+    return userRole === "Admin" ? "/users" : "/demands";
+  };
+
   return (
     <Routes>
       <Route
@@ -34,13 +39,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           !isAuthenticated ? (
             <Login onLogin={handleLogin} />
           ) : (
-            <Navigate
-              to={
-                localStorage.getItem("userRole") === "Admin"
-                  ? "/users"
-                  : "/demands"
-              }
-            />
+            <Navigate to={getDefaultRoute()} />
           )
         }
       />
@@ -56,6 +55,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           )
         }
       >
+        <Route index element={<Navigate to={getDefaultRoute()} />} />{" "}
         <Route path="users" element={<UsersList />} />
         <Route path="demands" element={<Demands />} />
         <Route path="demands/register" element={<DemandaRegisterPage />} />
@@ -69,7 +69,6 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
         />
         <Route path="*" element={<div>Página não encontrada</div>} />
       </Route>
-
       <Route
         path="*"
         element={<Navigate to={isAuthenticated ? "/" : "/login"} />}

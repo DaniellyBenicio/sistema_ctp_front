@@ -21,8 +21,6 @@ import { Close } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import api from "../../service/api";
 
-const INSTITUTIONAL_COLOR = "#307c34";
-
 const StyledButton = styled(Button)(({ theme }) => ({
   borderRadius: "8px",
   padding: theme.spacing(1, 3),
@@ -71,7 +69,6 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
   const [success, setSuccess] = useState(null);
   const [cargos, setCargos] = useState([]);
   const [focusedField, setFocusedField] = useState(null);
-  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const fetchCargos = async () => {
     try {
