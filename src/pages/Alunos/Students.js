@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import SearchBar from "../../components/SearchBar";
+import SearchBar from "../../components/filtersSection/FiltersSection";
 import StudentsTable from './StudentsTable';
 
 const Students = () => {

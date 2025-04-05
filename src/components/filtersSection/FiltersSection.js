@@ -14,7 +14,7 @@ import {
   Box,
 } from "@mui/material";
 import { Search, Clear } from "@mui/icons-material";
-import api from "../service/api";
+import api from "../../service/api";
 import { useNavigate } from "react-router-dom";
 
 const FiltersSection = ({ onFilterChange }) => {

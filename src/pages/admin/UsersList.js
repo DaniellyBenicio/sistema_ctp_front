@@ -3,11 +3,11 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
 import { Box, Button, Typography } from "@mui/material";
-import SearchBar from "../../components/SearchBar";
-import UsersTable from "../../components/UsersTable";
+import SearchBar from "../../components/searchBar/SearchBar";
+import UsersTable from "./UsersTable";
 import UserRegisterPopup from "./UserRegisterPopup";
-import DeleteUser from "../../components/DeleteUser";
-import UpdateUser from "../../components/UpdateUser";
+import DeleteUser from "./DeleteUser";
+import UpdateUser from "./UpdateUser";
 
 export const UsersList = () => {
   const [users, setUsers] = useState([]);

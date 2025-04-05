@@ -7,7 +7,7 @@ import {
   DialogTitle,
   Button,
 } from "@mui/material";
-import api from "../service/api";
+import api from "../../service/api";
 
 const DeleteUser = ({ open, onClose, userId, onDeleteSuccess, setAlert }) => {
   const confirmDeleteUser = async () => {

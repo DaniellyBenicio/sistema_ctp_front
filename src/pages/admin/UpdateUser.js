@@ -15,7 +15,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { Email, Close } from "@mui/icons-material";
-import api from "../service/api";
+import api from "../../service/api";
 
 const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
   const [formData, setFormData] = useState({

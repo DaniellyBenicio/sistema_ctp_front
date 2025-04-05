@@ -64,8 +64,7 @@ const StyledSelect = styled(Select)(({ theme }) => ({
   },
 }));
 
-
-const UserRegisterPopup = ({ open, onClose, onSave }) => {
+const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
   const [formData, setFormData] = useState({
     nome: "",
     matricula: "",
@@ -97,11 +96,27 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
   useEffect(() => {
     if (open) {
       fetchCargos();
-      setFormData({ nome: "", matricula: "", email: "", senha: "", cargo: "" });
+      if (user) {
+        setFormData({
+          nome: user.nome,
+          matricula: user.matricula,
+          email: user.email,
+          senha: "",
+          cargo: user.cargo,
+        });
+      } else {
+        setFormData({
+          nome: "",
+          matricula: "",
+          email: "",
+          senha: "",
+          cargo: "",
+        });
+      }
       setErrors({});
       setSuccess(null);
     }
-  }, [open]);
+  }, [open, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,10 +139,22 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
 
     console.log("Submitting:", formData);
     try {
-      const response = await api.post("/auth/cadastro", formData);
-      setSuccess("Usuário cadastrado com sucesso!");
-      onSave(response.data);
-      setFormData({ nome: "", matricula: "", email: "", senha: "", cargo: "" });
+      if (user) {
+        const response = await api.put(`/auth/usuario/${user.id}`, formData);
+        setSuccess("Usuário atualizado com sucesso!");
+        onUpdate(response.data);
+      } else {
+        const response = await api.post("/auth/cadastro", formData);
+        setSuccess("Usuário cadastrado com sucesso!");
+        onSave(response.data);
+      }
+      setFormData({
+        nome: "",
+        matricula: "",
+        email: "",
+        senha: "",
+        cargo: "",
+      });
       setTimeout(() => {
         onClose();
       }, 2000);
@@ -167,7 +194,7 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth TransitionComponent={Fade}>
       <DialogTitle sx={{ backgroundColor: "#27AE60", color: "#FFFFFF", padding: "16px 24px", borderBottom: "1px solid #2ECC71" }}>
         <Typography component="h1" variant="h5" sx={{ textAlign: "center", mb: 0, fontWeight: "bold" }}>
-          Cadastro de Usuário
+          {user ? "Editar Usuário" : "Cadastrar Usuário"}
         </Typography>
         <IconButton
           aria-label="close"
@@ -429,7 +456,7 @@ const UserRegisterPopup = ({ open, onClose, onSave }) => {
           }}
           onClick={handleSubmit}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : "Cadastrar"}
+          {loading ? <CircularProgress size={24} color="inherit" /> : user ? "Atualizar" : "Cadastrar"}
         </StyledButton>
       </DialogActions>
     </Dialog>

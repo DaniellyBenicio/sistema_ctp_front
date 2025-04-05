@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
 import { Box, Button, Typography, Stack } from "@mui/material";
-import FiltersSection from "../../components/FiltersSection";
+import FiltersSection from "../../components/filtersSection/FiltersSection";
 import DemandsTable from "./DemandsTable";
 
 export const Demands = () => {
