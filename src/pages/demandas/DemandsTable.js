@@ -167,7 +167,7 @@ const DemandsTable = ({
           <Stack sx={{ p: 2 }}>
             <Typography variant="h6">Destinatários</Typography>
             {selectedDemand &&
-            getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
+              getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
               getUniqueRecipients(selectedDemand.destinatarios).map(
                 (nome, index) => <Typography key={index}>{nome}</Typography>
               )
@@ -187,6 +187,7 @@ const DemandsTable = ({
         width: "100%",
         maxWidth: "1200px",
         margin: "0 auto",
+        marginTop: "25px",
         background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
       }}
     >
@@ -378,7 +379,7 @@ const DemandsTable = ({
         <Stack sx={{ p: 2 }}>
           <Typography variant="h6">Destinatários</Typography>
           {selectedDemand &&
-          getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
+            getUniqueRecipients(selectedDemand.destinatarios).length > 0 ? (
             getUniqueRecipients(selectedDemand.destinatarios).map(
               (nome, index) => <Typography key={index}>{nome}</Typography>
             )

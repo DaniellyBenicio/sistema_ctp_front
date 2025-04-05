@@ -403,6 +403,7 @@ const UserFormDialog = ({
           justifyContent: "center",
           padding: "16px 24px",
           backgroundColor: "#f9f9f9",
+          gap: 3,
         }}
       >
         <StyledButton onClick={onClose} color="error" variant="contained">

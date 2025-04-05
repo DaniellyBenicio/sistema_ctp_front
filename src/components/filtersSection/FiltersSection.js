@@ -12,10 +12,54 @@ import {
   InputLabel,
   Button,
   Box,
+  styled,
+  Divider,
+  Typography,
 } from "@mui/material";
-import { Search, Clear } from "@mui/icons-material";
+import { Search, Clear, ArrowDropDown } from "@mui/icons-material";
 import api from "../../service/api";
 import { useNavigate } from "react-router-dom";
+
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+  '& .MuiInputBase-root': {
+    padding: '0px',
+    height: '40px',
+  },
+  '& .MuiInputLabel-root': {
+    fontSize: '1rem',
+    marginBottom: theme.spacing(0),
+    transform: 'translate(0, 0) scale(1)',
+    position: 'relative',
+    transformOrigin: 'top left',
+    pointerEvents: 'auto',
+    color: theme.palette.text.secondary,
+    textAlign: 'left',
+    fontWeight: 500,
+    '&.Mui-focused': {
+      color: theme.palette.primary.main,
+    },
+    '&.MuiFormLabel-filled': {
+      color: theme.palette.text.secondary,
+    },
+  },
+  '& .MuiSelect-select': {
+    paddingTop: '10px !important',
+    paddingBottom: '10px !important',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#ccc',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.primary.main,
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.primary.main,
+    borderWidth: '1px !important',
+  },
+}));
 
 const FiltersSection = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
@@ -114,215 +158,180 @@ const FiltersSection = ({ onFilterChange }) => {
   return (
     <Paper
       ref={wrapperRef}
-      elevation={2}
+      elevation={1}
       sx={{
         p: 2,
         mb: 2,
         borderRadius: 2,
+        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
+        border: '1px solid #e0e0e0',
         transition: "all 0.3s ease",
         width: "100%",
         maxWidth: "1130px",
         margin: "0 auto",
-        background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
-        borderBottom: "1px solid #e0e0e0",
+        background: "#fff",
+        marginBottom: "20px"
       }}
     >
-      <Grid container spacing={3} alignItems="center">
-        <Grid item xs={12}>
-          <Grid container spacing={2} alignItems="flex-start">
-            <Grid item xs={12} sm={5} md={5}>
-              <FormControl fullWidth sx={{ position: "relative" }}>
-                <TextField
-                  label="Nome do Aluno"
-                  name="nomeAluno"
-                  value={filters.nomeAluno}
-                  onChange={handleChange}
-                  onFocus={() => setShowStudentList(true)}
-                  inputRef={inputRef}
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      padding: "0px",
-                      height: "53px",
-                    },
-                    "& .MuiInputLabel-root": {
-                      fontSize: "0.9rem",
-                    },
-                  }}
-                />
-                {showStudentList && filters.nomeAluno && (
-                  <List
-                    sx={{
-                      position: "absolute",
-                      zIndex: 1000,
-                      bgcolor: "background.paper",
-                      width: "100%",
-                      maxHeight: 200,
-                      overflowY: "auto",
-                      marginTop: "56px",
-                      fontSize: "14px",
-                      border: "1px solid rgba(0, 0, 0, 0.2)",
-                      borderRadius: "4px",
-                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                    }}
-                  >
-                    {filteredStudents.map((student) => (
-                      <ListItem
-                        key={student.matricula}
-                        button
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          handleStudentSelect(student.nome);
-                        }}
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: "#e0f7fa",
-                          },
-                        }}
-                      >
-                        {student.nome}
-                      </ListItem>
-                    ))}
-                  </List>
-                )}
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={2} md={1.5}>
-              <TextField
-                label="Data"
-                type="date"
-                name="date"
-                value={filters.date}
-                onChange={handleChange}
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    padding: "0px",
-                    height: "53px",
-                  },
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={3} md={3}>
-              <FormControl fullWidth sx={{ height: "0px" }}>
-                <InputLabel sx={{ fontSize: "1rem" }}>Curso</InputLabel>
-                <Select
-                  name="cursoId"
-                  value={filters.cursoId}
-                  onChange={handleChange}
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      padding: "0px",
-                      height: "10px",
-                    },
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  <MenuItem value="">Todos</MenuItem>
-                  {courses.map((curso) => (
-                    <MenuItem key={curso.id} value={curso.id}>
-                      {curso.nome}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={2} md={2.5}>
-              <FormControl fullWidth sx={{ height: "56px" }}>
-                <InputLabel sx={{ fontSize: "1rem" }}>
-                  Tipo de Demanda
-                </InputLabel>
-                <Select
-                  name="tipoDemanda"
-                  value={filters.tipoDemanda}
-                  onChange={handleChange}
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      padding: "0px",
-                      height: "10px",
-                    },
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  <MenuItem value="">Todos</MenuItem>
-                  <MenuItem value="criadaPorMim">Criada por Mim</MenuItem>
-                  <MenuItem value="recebidas">Recebidas</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 2,
-            }}
-          >
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Tooltip title="Filtrar">
-                <Button
-                  variant="contained"
-                  onClick={handleFilter}
-                  sx={{
-                    bgcolor: "#3E7145",
-                    "&:hover": { bgcolor: "#2E5232" },
-                    display: "flex",
-                    gap: 1,
-                    minWidth: "10px",
-                    height: "40px",
-                    textTransform: 'none',
-                  }}
-                >
-                  <Search />
-                  Filtrar
-                </Button>
-              </Tooltip>
-              <Tooltip title="Limpar Filtros">
-                <Button
-                  variant="contained"
-                  onClick={handleClearFilters}
-                  sx={{
-                    backgroundColor: "#CECECE",
-                    color: "#000",
-                    "&:hover": { backgroundColor: "#E0E0E0" },
-                    display: "flex",
-                    gap: 1,
-                    minWidth: "10px",
-                    height: "40px",
-                    textTransform: 'none',
-                  }}
-                >
-                  <Clear />
-                  Limpar
-                </Button>
-              </Tooltip>
-            </Box>
-            <Button
-              variant="contained"
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0 }}>
+        <Typography variant="h6">
+          Gerenciamento de Demandas
+        </Typography>
+        <Button
+          variant="contained"
+          className="btn btn-primary"
+          sx={{
+            bgcolor: "#349042",
+            "&:hover": { bgcolor: "#257a33" },
+            minWidth: "150px",
+            px: 2,
+            height: "40px",
+            fontSize: "0.875rem",
+            padding: "6px 12px",
+            boxShadow: "0px 1px 3px rgba(0,0,0,0.08)",
+            textTransform: 'none',
+          }}
+          onClick={() => {
+            navigate("/demands/register");
+          }}
+        >
+          Abrir Demanda
+        </Button>
+      </Box>
+      <Divider sx={{ mb: 3, mt: 1 }} />
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6} md={5} sx={{ position: 'relative' }}>
+          <StyledFormControl fullWidth>
+            <InputLabel htmlFor="nomeAluno">Nome do Aluno</InputLabel>
+            <TextField
+              id="nomeAluno"
+              name="nomeAluno"
+              value={filters.nomeAluno}
+              onChange={handleChange}
+              onFocus={() => setShowStudentList(true)}
+              inputRef={inputRef}
+            />
+          </StyledFormControl>
+          {showStudentList && filters.nomeAluno && (
+            <List
               sx={{
-                bgcolor: "#349042",
-                "&:hover": { bgcolor: "#257a33" },
-                minWidth: "150px",
-                px: 2,
-                height: "40px",
-                fontSize: "0.875rem",
-                padding: "6px 12px",
-                boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
-                textTransform: 'none',
-                minWidth: "10px",
-              }}
-              onClick={() => {
-                navigate("/demands/register");
+                position: "absolute",
+                zIndex: 1000,
+                bgcolor: "background.paper",
+                width: "100%",
+                maxHeight: filteredStudents.length > 5 ? 80 : 'fit-content',
+                overflowY: filteredStudents.length > 5 ? "auto" : "hidden",
+                marginTop: '-1px',
+                border: "1px solid rgba(0, 0, 0, 0.12)",
+                borderRadius: "2px",
+                boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.08)",
               }}
             >
-              Abrir Demanda
+              {filteredStudents.map((student) => (
+                <ListItem
+                  key={student.matricula}
+                  button
+                  onClick={() => handleStudentSelect(student.nome)}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#f5f5f5",
+                    },
+                  }}
+                >
+                  {student.nome}
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </Grid>
+        <Grid item xs={6} sm={3} md={2}>
+          <StyledFormControl fullWidth>
+            <InputLabel htmlFor="date">Data</InputLabel>
+            <TextField
+              id="date"
+              type="date"
+              name="date"
+              value={filters.date}
+              onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
+            />
+          </StyledFormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <StyledFormControl fullWidth>
+            <InputLabel htmlFor="cursoId">Curso</InputLabel>
+            <Select
+              id="cursoId"
+              name="cursoId"
+              value={filters.cursoId}
+              onChange={handleChange}
+              IconComponent={ArrowDropDown}
+            >
+              <MenuItem value="">Todas</MenuItem>
+              {courses.map((curso) => (
+                <MenuItem key={curso.id} value={curso.id}>
+                  {curso.nome}
+                </MenuItem>
+              ))}
+            </Select>
+          </StyledFormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} md={2}>
+          <StyledFormControl fullWidth>
+            <InputLabel htmlFor="tipoDemanda">Tipo de Demanda</InputLabel>
+            <Select
+              id="tipoDemanda"
+              name="tipoDemanda"
+              value={filters.tipoDemanda}
+              onChange={handleChange}
+              IconComponent={ArrowDropDown}
+            >
+              <MenuItem value="">Todas</MenuItem>
+              <MenuItem value="criadaPorMim">Criada por Mim</MenuItem>
+              <MenuItem value="recebidas">Recebidas</MenuItem>
+            </Select>
+          </StyledFormControl>
+        </Grid>
+        <Grid item xs={12} sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
+          <Tooltip>
+            <Button
+              variant="contained"
+              className="btn btn-primary"
+              onClick={handleFilter}
+              sx={{
+                bgcolor: "#3E7145",
+                color: "#fff",
+                "&:hover": { bgcolor: "#2E52323" },
+                boxShadow: "0px 1px 3px rgba(0,0,0,0.08)",
+                textTransform: 'none',
+                height: '40px',
+              }}
+            >
+              <Search />
+              <span className="ms-1">Filtrar</span>
             </Button>
-          </Box>
+          </Tooltip>
+          <Tooltip>
+            <Button
+              variant="outlined"
+              className="btn btn-outline-secondary"
+              onClick={handleClearFilters}
+              sx={{
+                color: "#6c757d",
+                borderColor: "#6c757d",
+                "&:hover": {
+                  backgroundColor: "#f8f9fa",
+                  borderColor: "#6c757d",
+                },
+                boxShadow: "0px 1px 3px rgba(0,0,0,0.08)",
+                textTransform: 'none',
+                height: '40px',
+              }}
+            >
+              <Clear />
+              <span className="ms-1">Limpar</span>
+            </Button>
+          </Tooltip>
         </Grid>
       </Grid>
     </Paper>
