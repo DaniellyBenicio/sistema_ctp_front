@@ -18,14 +18,18 @@ import { Edit, Visibility } from "@mui/icons-material";
 import api from "../../service/api";
 import { useNavigate } from "react-router-dom";
 import StudentDetailsModal from "./StudentDetails";
+import Paginate from "../../components/paginate//Paginate";
 
 const StudentsTable = ({ searchValue }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage] = useState(8);
   const navigate = useNavigate();
 
   const fetchStudents = async () => {
@@ -44,7 +48,7 @@ const StudentsTable = ({ searchValue }) => {
         condicoes: Array.isArray(aluno.condicoes) ? aluno.condicoes : ["Ativo"],
       }));
 
-      const filteredStudents = formattedStudents.filter(
+      const filtered = formattedStudents.filter(
         (student) =>
           student.nome.toLowerCase().includes(searchValue.toLowerCase()) ||
           student.matricula.toString().includes(searchValue) ||
@@ -52,11 +56,14 @@ const StudentsTable = ({ searchValue }) => {
           student.curso.toLowerCase().includes(searchValue.toLowerCase())
       );
 
-      setStudents(filteredStudents);
+      setStudents(formattedStudents);
+      setFilteredStudents(filtered);
+      setPage(1);
     } catch (err) {
       setError("Erro ao carregar alunos");
       console.error("Erro ao buscar alunos:", err);
       setStudents([]);
+      setFilteredStudents([]);
     } finally {
       setLoading(false);
     }
@@ -76,9 +83,19 @@ const StudentsTable = ({ searchValue }) => {
     setSelectedStudent(null);
   };
 
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
   useEffect(() => {
     fetchStudents();
   }, [searchValue]);
+
+  const startIndex = (page - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
+  const paginatedStudents = filteredStudents.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
 
   if (isMobile) {
     return (
@@ -91,8 +108,8 @@ const StudentsTable = ({ searchValue }) => {
           <Typography align="center" color="error" sx={{ fontSize: "0.7rem" }}>
             {error}
           </Typography>
-        ) : students.length > 0 ? (
-          students.map((student) => (
+        ) : paginatedStudents.length > 0 ? (
+          paginatedStudents.map((student) => (
             <Paper
               key={student.matricula}
               sx={{
@@ -136,6 +153,13 @@ const StudentsTable = ({ searchValue }) => {
             Nenhum estudante encontrado.
           </Typography>
         )}
+        {totalPages > 1 && (
+          <Paginate
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+          />
+        )}
       </Stack>
     );
   }
@@ -148,7 +172,7 @@ const StudentsTable = ({ searchValue }) => {
           width: "100%",
           maxWidth: "1200px",
           margin: "0 auto",
-          padding: "8px",
+          padding: 0,
         }}
       >
         {loading ? (
@@ -165,8 +189,6 @@ const StudentsTable = ({ searchValue }) => {
             component={Paper}
             sx={{
               width: "100%",
-              maxWidth: "1200px",
-              margin: "0 auto",
               background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
               overflowX: "auto",
             }}
@@ -237,8 +259,8 @@ const StudentsTable = ({ searchValue }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {students.length > 0 ? (
-                  students.map((student) => (
+                {paginatedStudents.length > 0 ? (
+                  paginatedStudents.map((student) => (
                     <TableRow key={student.matricula}>
                       <TableCell
                         align="center"
@@ -320,6 +342,13 @@ const StudentsTable = ({ searchValue }) => {
               </TableBody>
             </Table>
           </TableContainer>
+        )}
+        {totalPages > 1 && (
+          <Paginate
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+          />
         )}
       </Stack>
 
