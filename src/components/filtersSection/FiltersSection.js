@@ -6,7 +6,6 @@ import {
   Select,
   Grid,
   Paper,
-  Tooltip,
   List,
   ListItem,
   InputLabel,
@@ -21,43 +20,39 @@ import api from "../../service/api";
 import { useNavigate } from "react-router-dom";
 
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  marginBottom: theme.spacing(3),
-  '& .MuiInputBase-root': {
-    padding: '0px',
-    height: '40px',
+  marginBottom: theme.spacing(1),
+  "& .MuiInputBase-root": {
+    padding: "0px",
+    height: "36px",
   },
-  '& .MuiInputLabel-root': {
-    fontSize: '1rem',
-    marginBottom: theme.spacing(0),
-    transform: 'translate(0, 0) scale(1)',
-    position: 'relative',
-    transformOrigin: 'top left',
-    pointerEvents: 'auto',
+  "& .MuiInputLabel-root": {
+    fontSize: "0.9rem",
+    transform: "translate(0, 0) scale(1)",
+    position: "relative",
+    transformOrigin: "top left",
+    pointerEvents: "auto",
     color: theme.palette.text.secondary,
-    textAlign: 'left',
+    textAlign: "left",
     fontWeight: 500,
-    '&.Mui-focused': {
+    "&.Mui-focused": {
       color: theme.palette.primary.main,
     },
-    '&.MuiFormLabel-filled': {
-      color: theme.palette.text.secondary,
-    },
   },
-  '& .MuiSelect-select': {
-    paddingTop: '10px !important',
-    paddingBottom: '10px !important',
-    display: 'flex',
-    alignItems: 'center',
+  "& .MuiSelect-select": {
+    paddingTop: "8px !important",
+    paddingBottom: "8px !important",
+    display: "flex",
+    alignItems: "center",
   },
-  '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: '#ccc',
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#ccc",
   },
-  '&:hover .MuiOutlinedInput-notchedOutline': {
+  "&:hover .MuiOutlinedInput-notchedOutline": {
     borderColor: theme.palette.primary.main,
   },
-  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
     borderColor: theme.palette.primary.main,
-    borderWidth: '1px !important',
+    borderWidth: "1px !important",
   },
 }));
 
@@ -86,7 +81,6 @@ const FiltersSection = ({ onFilterChange }) => {
         console.error("Erro ao buscar cursos:", error);
       }
     };
-
     fetchCourses();
   }, []);
 
@@ -99,7 +93,6 @@ const FiltersSection = ({ onFilterChange }) => {
         console.error("Erro ao buscar alunos:", error);
       }
     };
-
     fetchStudents();
   }, []);
 
@@ -119,9 +112,6 @@ const FiltersSection = ({ onFilterChange }) => {
   const handleStudentSelect = (studentName) => {
     setFilters((prev) => ({ ...prev, nomeAluno: studentName }));
     setShowStudentList(false);
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
   };
 
   const handleFilter = () => {
@@ -160,47 +150,50 @@ const FiltersSection = ({ onFilterChange }) => {
       ref={wrapperRef}
       elevation={1}
       sx={{
-        p: 2,
-        mb: 2,
+        p: 1,
+        mb: 1,
         borderRadius: 2,
-        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.06)',
-        border: '1px solid #e0e0e0',
-        transition: "all 0.3s ease",
+        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.06)",
+        border: "1px solid #e0e0e0",
         width: "100%",
         maxWidth: "1130px",
         margin: "0 auto",
         background: "#fff",
-        marginBottom: "20px"
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0 }}>
-        <Typography variant="h6">
-          Gerenciamento de Demandas
-        </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 1,
+        }}
+      >
+        <Typography variant="subtitle1">Gerenciamento de Demandas</Typography>
         <Button
           variant="contained"
-          className="btn btn-primary"
           sx={{
-            bgcolor: "#349042",
-            "&:hover": { bgcolor: "#257a33" },
-            minWidth: "150px",
-            px: 2,
+            bgcolor: "#2e7d32",
+            "&:hover": {
+              bgcolor: "#1b5e20",
+              transform: "scale(1.05)",
+            },
+            minWidth: "140px",
             height: "40px",
-            fontSize: "0.875rem",
-            padding: "6px 12px",
-            boxShadow: "0px 1px 3px rgba(0,0,0,0.08)",
-            textTransform: 'none',
+            fontSize: "0.9rem",
+            fontWeight: 600,
+            textTransform: "none",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+            transition: "all 0.2s ease",
           }}
-          onClick={() => {
-            navigate("/demands/register");
-          }}
+          onClick={() => navigate("/demands/register")}
         >
           Abrir Demanda
         </Button>
       </Box>
-      <Divider sx={{ mb: 3, mt: 1 }} />
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={5} sx={{ position: 'relative' }}>
+      <Divider sx={{ mb: 1, mt: 0.5 }} />
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={5} md={4} sx={{ position: "relative" }}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="nomeAluno">Nome do Aluno</InputLabel>
             <TextField
@@ -212,19 +205,18 @@ const FiltersSection = ({ onFilterChange }) => {
               inputRef={inputRef}
             />
           </StyledFormControl>
-          {showStudentList && filters.nomeAluno && (
+          {showStudentList && filteredStudents.length > 0 && (
             <List
               sx={{
                 position: "absolute",
                 zIndex: 1000,
                 bgcolor: "background.paper",
                 width: "100%",
-                maxHeight: filteredStudents.length > 5 ? 80 : 'fit-content',
+                maxHeight: filteredStudents.length > 5 ? 80 : "fit-content",
                 overflowY: filteredStudents.length > 5 ? "auto" : "hidden",
-                marginTop: '-1px',
+                marginTop: "-1px",
                 border: "1px solid rgba(0, 0, 0, 0.12)",
                 borderRadius: "2px",
-                boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.08)",
               }}
             >
               {filteredStudents.map((student) => (
@@ -232,11 +224,7 @@ const FiltersSection = ({ onFilterChange }) => {
                   key={student.matricula}
                   button
                   onClick={() => handleStudentSelect(student.nome)}
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  }}
+                  sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}
                 >
                   {student.nome}
                 </ListItem>
@@ -244,7 +232,7 @@ const FiltersSection = ({ onFilterChange }) => {
             </List>
           )}
         </Grid>
-        <Grid item xs={6} sm={3} md={2}>
+        <Grid item xs={6} sm={2} md={2}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="date">Data</InputLabel>
             <TextField
@@ -257,7 +245,7 @@ const FiltersSection = ({ onFilterChange }) => {
             />
           </StyledFormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={3} md={3}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="cursoId">Curso</InputLabel>
             <Select
@@ -276,7 +264,7 @@ const FiltersSection = ({ onFilterChange }) => {
             </Select>
           </StyledFormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={2}>
+        <Grid item xs={6} sm={2} md={2}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="tipoDemanda">Tipo de Demanda</InputLabel>
             <Select
@@ -292,46 +280,42 @@ const FiltersSection = ({ onFilterChange }) => {
             </Select>
           </StyledFormControl>
         </Grid>
-        <Grid item xs={12} sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
-          <Tooltip>
-            <Button
-              variant="contained"
-              className="btn btn-primary"
-              onClick={handleFilter}
-              sx={{
-                bgcolor: "#3E7145",
-                color: "#fff",
-                "&:hover": { bgcolor: "#2E52323" },
-                boxShadow: "0px 1px 3px rgba(0,0,0,0.08)",
-                textTransform: 'none',
-                height: '40px',
-              }}
-            >
-              <Search />
-              <span className="ms-1">Filtrar</span>
-            </Button>
-          </Tooltip>
-          <Tooltip>
-            <Button
-              variant="outlined"
-              className="btn btn-outline-secondary"
-              onClick={handleClearFilters}
-              sx={{
-                color: "#6c757d",
-                borderColor: "#6c757d",
-                "&:hover": {
-                  backgroundColor: "#f8f9fa",
-                  borderColor: "#6c757d",
-                },
-                boxShadow: "0px 1px 3px rgba(0,0,0,0.08)",
-                textTransform: 'none',
-                height: '40px',
-              }}
-            >
-              <Clear />
-              <span className="ms-1">Limpar</span>
-            </Button>
-          </Tooltip>
+        <Grid
+          item
+          xs={12}
+          sx={{ display: "flex", gap: 1, justifyContent: "flex-start", mt: 1 }}
+        >
+          <Button
+            variant="contained"
+            onClick={handleFilter}
+            sx={{
+              bgcolor: "#3E7145",
+              "&:hover": { bgcolor: "#2E5233" },
+              height: "36px",
+              minWidth: "80px",
+              fontSize: "0.8rem",
+              textTransform: "none",
+            }}
+          >
+            <Search fontSize="small" />
+            <span>Filtrar</span>
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleClearFilters}
+            sx={{
+              color: "#6c757d",
+              borderColor: "#6c757d",
+              "&:hover": { backgroundColor: "#f8f9fa" },
+              height: "36px",
+              minWidth: "80px",
+              fontSize: "0.8rem",
+              textTransform: "none",
+            }}
+          >
+            <Clear fontSize="small" />
+            <span>Limpar</span>
+          </Button>
         </Grid>
       </Grid>
     </Paper>

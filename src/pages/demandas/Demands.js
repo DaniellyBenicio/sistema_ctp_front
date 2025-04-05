@@ -21,14 +21,26 @@ export const Demands = () => {
   console.log("Demands - pageSize:", pageSize);
 
   useEffect(() => {
-    console.log("Demands - useEffect disparado (navegação, userRole, page, pageSize)");
+    console.log(
+      "Demands - useEffect disparado (navegação, userRole, page, pageSize)"
+    );
     fetchDemands();
   }, [navigate, userRole, page, pageSize]);
 
   const fetchDemands = async (filterParams = {}) => {
-    console.log("Demands - fetchDemands chamado com filtros:", filterParams, "page:", page, "pageSize:", pageSize);
+    console.log(
+      "Demands - fetchDemands chamado com filtros:",
+      filterParams,
+      "page:",
+      page,
+      "pageSize:",
+      pageSize
+    );
     try {
-      const response = await api.post(`/minhas-demandas?page=${page}&pageSize=${pageSize}`, filterParams);
+      const response = await api.post(
+        `/minhas-demandas?page=${page}&pageSize=${pageSize}`,
+        filterParams
+      );
       const demandsData = response.data.demandas;
       const totalItems = response.data.totalItems;
 
@@ -137,7 +149,7 @@ export const Demands = () => {
           justifyContent: "space-between",
           alignItems: { xs: "stretch", sm: "center" },
           gap: { xs: 1, sm: 2 },
-          mb: 2,
+          mb: -1,
           width: { xs: "100%", sm: "90%" },
           maxWidth: "1200px",
           alignSelf: "center",
@@ -180,7 +192,7 @@ export const Demands = () => {
               fontFamily: '"Open Sans", sans-serif',
             }}
           >
-            Nenhuma demanda para o filtro informado
+            Nenhuma demanda encontrada
           </Typography>
         ) : (
           <DemandsTable
@@ -189,6 +201,9 @@ export const Demands = () => {
             onUpdate={handleUpdateDemand}
             usuarioLogadoId={userRole?.id}
             onDemandUpdated={fetchDemands}
+            count={count}
+            page={page}
+            onPageChange={handlePageChange}
           />
         )}
       </Box>
