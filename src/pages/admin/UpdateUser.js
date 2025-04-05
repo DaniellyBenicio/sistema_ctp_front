@@ -1,21 +1,63 @@
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
+  DialogContent,
+  DialogActions,
   Button,
   TextField,
-  Typography,
-  IconButton,
   CircularProgress,
   FormControl,
+  FormHelperText,
   Select,
   MenuItem,
-  FormHelperText,
+  Typography,
+  IconButton,
+  Grid,
+  Fade,
+  InputLabel,
 } from "@mui/material";
-import { Email, Close } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
 import api from "../../service/api";
+
+const INSTITUTIONAL_COLOR = "#307c34";
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  borderRadius: "8px",
+  padding: theme.spacing(1, 3),
+  textTransform: "none",
+  fontWeight: "bold",
+  fontSize: "0.875rem",
+}));
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+  height: "40px",
+  fontSize: "0.875rem",
+  "& .MuiSelect-select": {
+    padding: "8px 14px",
+  },
+  "& .MuiOutlinedInput-root": {
+    borderRadius: "8px",
+    "& fieldset": {
+      borderColor: "#E0E0E0",
+    },
+    "&:hover fieldset": {
+      borderColor: "#27AE60",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#27AE60",
+    },
+  },
+  "& .MuiInputLabel-root": {
+    fontSize: "0.875rem",
+    transform: "translate(14px, 10px) scale(1)",
+    "&.MuiInputLabel-shrink": {
+      transform: "translate(14px, -6px) scale(0.75)",
+      fontWeight: "bold",
+    },
+  },
+}));
 
 const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
   const [formData, setFormData] = useState({
@@ -25,9 +67,10 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
     cargoId: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(null);
   const [cargos, setCargos] = useState([]);
+  const [focusedField, setFocusedField] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const fetchCargos = async () => {
@@ -38,14 +81,13 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
       );
       setCargos(filteredCargos);
     } catch (err) {
-      setError("Erro ao buscar os cargos");
+      setErrors({ general: "Erro ao buscar os cargos" });
       console.error("Erro ao buscar cargos:", err);
     }
   };
 
   useEffect(() => {
     if (open && user) {
-      console.log("Dados do user recebidos:", user);
       setFormData({
         nome: user.nome || "",
         matricula: user.matricula || "",
@@ -54,65 +96,56 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
       });
       fetchCargos();
       setSuccess(null);
-      setError(null);
+      setErrors({});
     }
   }, [open, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
   };
 
-  const handleSubmit = () => {
-    setConfirmOpen(true);
-  };
-
-  const handleConfirmSave = async () => {
+  const handleSubmit = async () => {
     setLoading(true);
-    setError(null);
+    setErrors({});
     setSuccess(null);
-    setConfirmOpen(false);
+
+    if (formData.cargoId === "") {
+      setErrors((prev) => ({ ...prev, cargoId: "Selecione um cargo" }));
+      setLoading(false);
+      return;
+    }
 
     const updatedData = {
       nome: formData.nome,
       email: formData.email,
-      cargoId: formData.cargoId,
+      cargo: formData.cargoId,
     };
 
-    console.log("Dados enviados para atualização:", {
-      id: user.id,
-      ...updatedData,
-    });
-
     try {
-      const response = await api.put(`/usuario/${user.id}`, updatedData);
-
-      console.log("Resposta da API:", response.data);
-
-      if (response.status === 200) {
-        setSuccess("Usuário atualizado com sucesso!");
-        onUpdateSuccess();
-        setAlert({
-          show: true,
-          message: "Usuário atualizado com sucesso!",
-          type: "success",
-        });
-        setTimeout(() => {
-          onClose();
-          setSuccess(null);
-        }, 2000);
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Erro ao atualizar usuário";
-      console.error("Erro ao atualizar:", error.response || error);
-      setError(errorMessage);
+      const response = await api.put(`/auth/usuario/${user.id}`, updatedData);
+      setSuccess("Usuário atualizado com sucesso!");
+      onUpdateSuccess(response.data);
       setAlert({
         show: true,
-        message: errorMessage,
+        message: "Usuário atualizado com sucesso!",
+        type: "success",
+      });
+      setTimeout(() => {
+        onClose();
+        setSuccess(null);
+      }, 2000);
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.mensagem || "Erro ao atualizar usuário";
+      console.error("Erro ao atualizar:", error.response || error);
+      setErrors({ general: errorMsg });
+      setAlert({
+        show: true,
+        message: errorMsg,
         type: "error",
       });
     } finally {
@@ -120,158 +153,272 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
     }
   };
 
-  const handleCancelConfirm = () => {
-    setConfirmOpen(false);
-  };
-
-  const handleClose = () => {
-    setSuccess(null);
-    setError(null);
-    onClose();
-  };
-
   const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+  const isFormValid = () =>
+    isEmailValid() && formData.nome.trim() && formData.cargoId !== "";
 
   return (
-    <>
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Typography
-            component="h1"
-            variant="h5"
-            sx={{ textAlign: "center", mb: 2 }}
-          >
-            Editar Usuário
-          </Typography>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: "grey.500",
-            }}
-          >
-            <Close />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      TransitionComponent={Fade}
+    >
+      <DialogTitle
+        sx={{
+          backgroundColor: "#27AE60",
+          color: "#FFFFFF",
+          padding: "16px 24px",
+          borderBottom: "1px solid #2ECC71",
+        }}
+      >
+        <Typography
+          component="h1"
+          variant="h5"
+          sx={{ textAlign: "center", mb: 0, fontWeight: "bold" }}
         >
-          <TextField
-            fullWidth
-            margin="normal"
-            name="nome"
-            label="Nome Completo"
-            type="text"
-            value={formData.nome}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="email"
-            label="Email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={!!formData.email && !isEmailValid()}
-            helperText={
-              !!formData.email && !isEmailValid() ? "Email inválido" : ""
-            }
-            InputProps={{
-              startAdornment: <Email sx={{ color: "action.active", mr: 1 }} />,
-            }}
-            required
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="matricula"
-            label="Matrícula"
-            type="text"
-            value={formData.matricula}
-            disabled
-          />
-          <FormControl fullWidth margin="normal">
-            <FormHelperText id="cargo">Tipo de Cargo</FormHelperText>
-            <Select
-              labelId="cargo"
-              name="cargoId"
-              value={formData.cargoId}
+          Editar Usuário
+        </Typography>
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{ position: "absolute", right: 8, top: 8, color: "#FFFFFF" }}
+        >
+          <Close />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent sx={{ padding: 3 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} height={"90px"}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Nome Completo"
+              name="nome"
+              type="text"
+              value={formData.nome}
               onChange={handleChange}
+              onFocus={() => setFocusedField("nome")}
+              onBlur={() => setFocusedField(null)}
+              error={!!errors.nome}
+              helperText={errors.nome}
               required
+              variant="outlined"
+              InputLabelProps={{
+                shrink: focusedField === "nome" || formData.nome !== "",
+                sx: {
+                  color:
+                    focusedField === "nome" || formData.nome !== ""
+                      ? "#27AE60"
+                      : "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} height={"90px"}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              onFocus={() => setFocusedField("email")}
+              onBlur={() => setFocusedField(null)}
+              error={!!formData.email && (!isEmailValid() || !!errors.email)}
+              helperText={
+                !!formData.email && !isEmailValid()
+                  ? "Email inválido"
+                  : errors.email || ""
+              }
+              required
+              variant="outlined"
+              InputLabelProps={{
+                shrink: focusedField === "email" || formData.email !== "",
+                sx: {
+                  color:
+                    focusedField === "email" || formData.email !== ""
+                      ? "#27AE60"
+                      : "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} height={"90px"}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Matrícula"
+              name="matricula"
+              type="text"
+              value={formData.matricula}
+              disabled
+              variant="outlined"
+              InputLabelProps={{
+                shrink: true,
+                sx: {
+                  color: "#27AE60",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-disabled fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                },
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} height={"90px"}>
+            <FormControl
+              fullWidth
+              margin="normal"
+              error={!!errors.cargoId}
+              variant="outlined"
             >
-              {cargos.map((cargoItem) => (
-                <MenuItem key={cargoItem.id} value={cargoItem.id}>
-                  {cargoItem.nome}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <InputLabel id="cargo-label" sx={{ fontSize: "0.9rem" }}>
+                Cargo
+              </InputLabel>
+              <StyledSelect
+                labelId="cargo-label"
+                id="cargoId"
+                name="cargoId"
+                value={formData.cargoId}
+                onChange={handleChange}
+                required
+                onFocus={() => setFocusedField("cargoId")}
+                onBlur={() => setFocusedField(null)}
+                MenuProps={{
+                  MenuListProps: {
+                    sx: { fontSize: "0.875rem" },
+                  },
+                }}
+                InputLabelProps={{
+                  shrink: focusedField === "cargoId" || formData.cargoId !== "",
+                  sx: {
+                    color:
+                      focusedField === "cargoId" || formData.cargoId !== ""
+                        ? "#27AE60"
+                        : "text.secondary",
+                    fontSize: { xs: "0.9rem", md: "1rem" },
+                  },
+                }}
+                sx={{
+                  height: "50px",
+                  "& .MuiSelect-select": {
+                    paddingTop: "16px",
+                    paddingBottom: "16px",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    height: "60px",
+                  },
+                }}
+              >
+                {cargos.map((cargoItem) => (
+                  <MenuItem
+                    key={cargoItem.id}
+                    value={cargoItem.id}
+                    sx={{ fontSize: "0.875rem" }}
+                  >
+                    {cargoItem.nome}
+                  </MenuItem>
+                ))}
+              </StyledSelect>
+              {errors.cargoId && (
+                <FormHelperText sx={{ fontSize: "0.875rem" }}>
+                  {errors.cargoId}
+                </FormHelperText>
+              )}
+            </FormControl>
+          </Grid>
+        </Grid>
 
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-              {error}
-            </Typography>
-          )}
-          {success && (
-            <Typography color="success.main" variant="body2" sx={{ mt: 1 }}>
-              {success}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
-          <Button
-            type="button"
-            fullWidth
-            variant="contained"
-            disabled={
-              loading || !isEmailValid() || !formData.nome || !formData.cargoId
-            }
-            sx={{
-              mt: 3,
-              mb: 2,
-              bgcolor: "#2f9e41",
-              "&:hover": {
-                bgcolor: "#278735",
-              },
-            }}
-            onClick={handleSubmit}
+        {errors.general && (
+          <Typography
+            color="error"
+            variant="body2"
+            sx={{ mt: 2, fontSize: "0.875rem" }}
           >
-            {loading ? <CircularProgress size={24} /> : "Salvar"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={confirmOpen} onClose={handleCancelConfirm} maxWidth="xs">
-        <DialogTitle>Confirmar Alterações</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Tem certeza de que deseja salvar as alterações no usuário?
+            {errors.general}
           </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelConfirm} color="secondary">
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleConfirmSave}
-            variant="contained"
-            color="primary"
-            disabled={loading}
+        )}
+        {success && (
+          <Typography
+            color="success.main"
+            variant="body2"
+            sx={{ mt: 2, fontSize: "0.875rem" }}
           >
-            {loading ? <CircularProgress size={24} /> : "Confirmar"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+            {success}
+          </Typography>
+        )}
+      </DialogContent>
+      <DialogActions
+        sx={{
+          justifyContent: "center",
+          padding: "16px 24px",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+        <StyledButton onClick={onClose} color="error" variant="contained">
+          Cancelar
+        </StyledButton>
+        <StyledButton
+          type="button"
+          variant="contained"
+          disabled={loading || !isFormValid()}
+          sx={{
+            bgcolor: loading || !isFormValid() ? "#E0E0E0" : "#27AE60",
+            color: loading || !isFormValid() ? "#333333" : "#FFFFFF",
+            "&:hover": {
+              bgcolor: loading || !isFormValid() ? "#D0D0D0" : "#2ECC71",
+            },
+          }}
+          onClick={handleSubmit}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Salvar"}
+        </StyledButton>
+      </DialogActions>
+    </Dialog>
   );
 };
 

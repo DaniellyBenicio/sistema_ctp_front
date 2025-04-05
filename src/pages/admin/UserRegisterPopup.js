@@ -160,7 +160,8 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
       }, 2000);
     } catch (err) {
       console.log("API Error:", err.response || err);
-      const errorMsg = err.response?.data?.mensagem || "Erro no servidor. Tente novamente.";
+      const errorMsg =
+        err.response?.data?.mensagem || "Erro no servidor. Tente novamente.";
 
       if (errorMsg.includes("Email já está em uso")) {
         setErrors({ email: errorMsg });
@@ -191,9 +192,26 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth TransitionComponent={Fade}>
-      <DialogTitle sx={{ backgroundColor: "#27AE60", color: "#FFFFFF", padding: "16px 24px", borderBottom: "1px solid #2ECC71" }}>
-        <Typography component="h1" variant="h5" sx={{ textAlign: "center", mb: 0, fontWeight: "bold" }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      TransitionComponent={Fade}
+    >
+      <DialogTitle
+        sx={{
+          backgroundColor: "#27AE60",
+          color: "#FFFFFF",
+          padding: "16px 24px",
+          borderBottom: "1px solid #2ECC71",
+        }}
+      >
+        <Typography
+          component="h1"
+          variant="h5"
+          sx={{ textAlign: "center", mb: 0, fontWeight: "bold" }}
+        >
           {user ? "Editar Usuário" : "Cadastrar Usuário"}
         </Typography>
         <IconButton
@@ -227,7 +245,7 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
                   color:
                     focusedField === "nome" || formData.nome !== ""
                       ? "#27AE60"
-                      : "",
+                      : "text.secondary",
                   fontSize: { xs: "0.9rem", md: "1rem" },
                 },
               }}
@@ -260,7 +278,9 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
               onBlur={() => setFocusedField(null)}
               error={!!formData.email && (!isEmailValid() || !!errors.email)}
               helperText={
-                !!formData.email && !isEmailValid() ? "Email inválido" : errors.email || ""
+                !!formData.email && !isEmailValid()
+                  ? "Email inválido"
+                  : errors.email || ""
               }
               required
               variant="outlined"
@@ -299,7 +319,10 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
               type={showPassword ? "text" : "password"}
               value={formData.senha}
               onChange={handleChange}
-              error={!!formData.senha && (formData.senha.length < 8 || !!errors.senha)}
+              error={
+                !!formData.senha &&
+                (formData.senha.length < 8 || !!errors.senha)
+              }
               helperText={
                 !!formData.senha && formData.senha.length < 8
                   ? "Mínimo 8 caracteres"
@@ -326,11 +349,26 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
                       aria-label="toggle password visibility"
                       onClick={handleTogglePasswordVisibility}
                       edge="end"
+                      sx={{ color: "#27AE60" }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
               }}
             />
           </Grid>
@@ -350,7 +388,8 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
               onFocus={() => setFocusedField("matricula")}
               onBlur={() => setFocusedField(null)}
               InputLabelProps={{
-                shrink: focusedField === "matricula" || formData.matricula !== "",
+                shrink:
+                  focusedField === "matricula" || formData.matricula !== "",
                 sx: {
                   color:
                     focusedField === "matricula" || formData.matricula !== ""
@@ -376,9 +415,14 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <FormControl fullWidth margin="normal" error={!!errors.cargo} variant="outlined">
+            <FormControl
+              fullWidth
+              margin="normal"
+              error={!!errors.cargo}
+              variant="outlined"
+            >
               <InputLabel id="cargo-label" sx={{ fontSize: "0.9rem" }}>
-                Tipo de Cargo
+                Cargo
               </InputLabel>
               <StyledSelect
                 labelId="cargo-label"
@@ -394,18 +438,6 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
                     sx: { fontSize: "0.875rem" },
                   },
                 }}
-                InputLabelProps={{
-                  shrink: focusedField === "cargo" || formData.cargo !== "",
-                  sx: {
-                    color:
-                      focusedField === "cargo" || formData.cargo !== ""
-                        ? INSTITUTIONAL_COLOR
-                        : "text.secondary",
-                    fontWeight:
-                      focusedField === "cargo" || formData.cargo !== "" ? "" : "normal",
-                    fontSize: { xs: "0.9rem", md: "1rem" },
-                  },
-                }}
                 sx={{
                   height: "50px",
                   "& .MuiSelect-select": {
@@ -414,32 +446,64 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
                   },
                   "& .MuiOutlinedInput-root": {
                     height: "60px",
+                    borderRadius: "8px",
+                    "& fieldset": {
+                      borderColor: "#E0E0E0",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#27AE60",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#27AE60",
+                    },
                   },
                 }}
               >
                 {cargos.map((cargoItem) => (
-                  <MenuItem key={cargoItem.id} value={cargoItem.id} sx={{ fontSize: "0.875rem" }}>
+                  <MenuItem
+                    key={cargoItem.id}
+                    value={cargoItem.id}
+                    sx={{ fontSize: "0.875rem" }}
+                  >
                     {cargoItem.nome}
                   </MenuItem>
                 ))}
               </StyledSelect>
-              {errors.cargo && <FormHelperText sx={{ fontSize: "0.875rem" }}>{errors.cargo}</FormHelperText>}
+              {errors.cargo && (
+                <FormHelperText sx={{ fontSize: "0.875rem" }}>
+                  {errors.cargo}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
         </Grid>
 
         {errors.general && (
-          <Typography color="error" variant="body2" sx={{ mt: 2, fontSize: "0.875rem" }}>
+          <Typography
+            color="error"
+            variant="body2"
+            sx={{ mt: 2, fontSize: "0.875rem" }}
+          >
             {errors.general}
           </Typography>
         )}
         {success && (
-          <Typography color="success.main" variant="body2" sx={{ mt: 2, fontSize: "0.875rem" }}>
+          <Typography
+            color="success.main"
+            variant="body2"
+            sx={{ mt: 2, fontSize: "0.875rem" }}
+          >
             {success}
           </Typography>
         )}
       </DialogContent>
-      <DialogActions sx={{ justifyContent: "center", padding: "16px 24px", backgroundColor: "#f9f9f9" }}>
+      <DialogActions
+        sx={{
+          justifyContent: "center",
+          padding: "16px 24px",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
         <StyledButton onClick={onClose} color="error" variant="contained">
           Cancelar
         </StyledButton>
@@ -448,7 +512,8 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
           variant="contained"
           disabled={loading || !isFormValid()}
           sx={{
-            bgcolor: loading || !isFormValid() ? "#E0E0E0" : INSTITUTIONAL_COLOR,
+            bgcolor:
+              loading || !isFormValid() ? "#E0E0E0" : INSTITUTIONAL_COLOR,
             color: loading || !isFormValid() ? "#333333" : "#FFFFFF",
             "&:hover": {
               bgcolor: loading || !isFormValid() ? "#D0D0D0" : "#265b28",
@@ -456,7 +521,13 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
           }}
           onClick={handleSubmit}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : user ? "Atualizar" : "Cadastrar"}
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : user ? (
+            "Atualizar"
+          ) : (
+            "Cadastrar"
+          )}
         </StyledButton>
       </DialogActions>
     </Dialog>
