@@ -30,6 +30,12 @@ const MainScreen = ({ setAuthenticated }) => {
         const firstTwoNames = fullName.split(" ").slice(0, 2).join(" ");
         setUserName(firstTwoNames);
         setUserRole(decoded.cargo || null);
+
+        if (decoded.cargo === "Admin") {
+          navigate("/users");
+        } else {
+          navigate("/demands");
+        }
       } catch (erro) {
         console.error("Erro ao validar token:", erro);
         localStorage.removeItem("token");
