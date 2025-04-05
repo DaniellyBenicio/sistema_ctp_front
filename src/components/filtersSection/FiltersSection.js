@@ -123,6 +123,7 @@ const FiltersSection = ({ onFilterChange }) => {
         width: "100%",
         maxWidth: "1130px",
         margin: "0 auto",
+        background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
         borderBottom: "1px solid #e0e0e0",
       }}
     >
@@ -130,7 +131,7 @@ const FiltersSection = ({ onFilterChange }) => {
         {/* Filtros */}
         <Grid item xs={12}>
           <Grid container spacing={2} alignItems="flex-start">
-            <Grid item xs={12} sm={4} md={4}>
+            <Grid item xs={12} sm={5} md={5}>
               <FormControl fullWidth sx={{ position: "relative" }}>
                 <TextField
                   label="Nome do Aluno"
@@ -146,7 +147,7 @@ const FiltersSection = ({ onFilterChange }) => {
                     },
                     "& .MuiInputLabel-root": {
                       fontSize: "0.9rem",
-                    }
+                    },
                   }}
                 />
                 {showStudentList && filters.nomeAluno && (
@@ -186,7 +187,7 @@ const FiltersSection = ({ onFilterChange }) => {
                 )}
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={2} md={1.8}>
+            <Grid item xs={12} sm={2} md={1.5}>
               <TextField
                 label="Data"
                 type="date"
@@ -203,9 +204,9 @@ const FiltersSection = ({ onFilterChange }) => {
                 }}
               />
             </Grid>
-            <Grid item xs={10} sm={3} md={3.5}>
+            <Grid item xs={12} sm={3} md={3}>
               <FormControl fullWidth sx={{ height: "0px" }}>
-                <InputLabel sx={{ fontSize: '1rem' }}>Curso</InputLabel>
+                <InputLabel sx={{ fontSize: "1rem" }}>Curso</InputLabel>
                 <Select
                   name="cursoId"
                   value={filters.cursoId}
@@ -227,9 +228,11 @@ const FiltersSection = ({ onFilterChange }) => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={3} md={2}>
+            <Grid item xs={12} sm={2} md={2.5}>
               <FormControl fullWidth sx={{ height: "56px" }}>
-                <InputLabel sx={{ fontSize: '1rem' }}>Tipo de Demanda</InputLabel>
+                <InputLabel sx={{ fontSize: "1rem" }}>
+                  Tipo de Demanda
+                </InputLabel>
                 <Select
                   name="tipoDemanda"
                   value={filters.tipoDemanda}
@@ -252,45 +255,70 @@ const FiltersSection = ({ onFilterChange }) => {
         </Grid>
 
         {/* Botões */}
-        <Grid item xs={12} display="flex" gap={2} justifyContent="flex-start">
-
-          <Tooltip title="Filtrar">
-            <Button
-              variant="contained"
-              onClick={handleFilter}
-              sx={{ backgroundColor: "#4CAF50", "&:hover": { backgroundColor: "#388E3C" }, display: "flex", gap: 1 }}
-            >
-              <Search />
-              Filtrar
-            </Button>
-          </Tooltip>
-          <Tooltip title="Limpar Filtros">
-            <Button
-              variant="contained"
-              onClick={handleClearFilters}
-              sx={{ backgroundColor: "#F5F5F5", color: "#000", "&:hover": { backgroundColor: "#E0E0E0" }, display: "flex", gap: 1, fontSize: '0.875rem' }}
-            >
-              <Clear />
-              Limpar
-            </Button>
-          </Tooltip>
-          <Button
-            variant="contained"
+        <Grid item xs={12}>
+          <Box
             sx={{
-              bgcolor: "#2f9e41",
-              "&:hover": { bgcolor: "#257a33" },
-              minWidth: "150px",
-              px: 2,
-              height: "40px",
-              fontSize: "0.875rem",
-              padding: "6px 12px",
-              textTransform: "none",
-              boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 2,
             }}
-            onClick={() => navigate("/demands/register")}
           >
-            Abrir Demanda
-          </Button>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Tooltip title="Filtrar">
+                <Button
+                  variant="contained"
+                  onClick={handleFilter}
+                  sx={{
+                    bgcolor: "#2f9e41", // Mesma cor de "Abrir Demanda"
+                    "&:hover": { bgcolor: "#257a33" }, // Mesma cor de hover
+                    display: "flex",
+                    gap: 1,
+                    minWidth: "120px",
+                    height: "40px",
+                  }}
+                >
+                  <Search />
+                  Filtrar
+                </Button>
+              </Tooltip>
+              <Tooltip title="Limpar Filtros">
+                <Button
+                  variant="contained"
+                  onClick={handleClearFilters}
+                  sx={{
+                    backgroundColor: "#F5F5F5",
+                    color: "#000",
+                    "&:hover": { backgroundColor: "#E0E0E0" },
+                    display: "flex",
+                    gap: 1,
+                    minWidth: "120px",
+                    height: "40px",
+                  }}
+                >
+                  <Clear />
+                  Limpar
+                </Button>
+              </Tooltip>
+            </Box>
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: "#2f9e41",
+                "&:hover": { bgcolor: "#257a33" },
+                minWidth: "150px",
+                px: 2,
+                height: "40px",
+                fontSize: "0.875rem",
+                padding: "6px 12px",
+                textTransform: "uppercase", // Caixa alta
+                boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
+              }}
+              onClick={() => navigate("/demands/register")}
+            >
+              Abrir Demanda
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </Paper>
