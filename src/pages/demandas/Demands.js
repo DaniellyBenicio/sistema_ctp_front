@@ -7,63 +7,34 @@ import FiltersSection from "../../components/filtersSection/FiltersSection";
 import DemandsTable from "./DemandsTable";
 
 export const Demands = () => {
-  const [demands, setDemands] = useState([]);
+  const [allDemands, setAllDemands] = useState([]);
   const { userRole } = useOutletContext();
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [count, setCount] = useState(0);
-  const [pageSize] = useState(10);
-
-  console.log("Demands - Renderizando");
-  console.log("Demands - userRole:", userRole);
-  console.log("Demands - page:", page);
-  console.log("Demands - pageSize:", pageSize);
+  const pageSize = 6;
 
   useEffect(() => {
-    console.log(
-      "Demands - useEffect disparado (navegação, userRole, page, pageSize)"
-    );
     fetchDemands();
-  }, [navigate, userRole, page, pageSize]);
+  }, [navigate, userRole]);
 
   const fetchDemands = async (filterParams = {}) => {
-    console.log(
-      "Demands - fetchDemands chamado com filtros:",
-      filterParams,
-      "page:",
-      page,
-      "pageSize:",
-      pageSize
-    );
     try {
-      const response = await api.post(
-        `/minhas-demandas?page=${page}&pageSize=${pageSize}`,
-        filterParams
-      );
-      const demandsData = response.data.demandas;
-      const totalItems = response.data.totalItems;
-
-      console.log("Demands - Resposta da API:", response.data);
+      const response = await api.post("/minhas-demandas", filterParams);
+      const demandsData = response.data.demandas || [];
 
       if (!Array.isArray(demandsData)) {
         throw new Error("Erro ao buscar demandas: formato inválido.");
       }
 
-      setDemands(demandsData);
-      setCount(Math.ceil(totalItems / pageSize));
-      console.log("Demands - totalItems:", totalItems);
-      console.log("Demands - pageSize:", pageSize);
-      console.log("Demands - count:", Math.ceil(totalItems / pageSize));
+      setAllDemands(demandsData);
     } catch (error) {
       console.error("Demands - Erro na requisição:", error);
-      setDemands([]);
-      setCount(0);
+      setAllDemands([]);
     }
   };
 
   const handleFilterChange = (filters) => {
-    console.log("Demands - handleFilterChange chamado com filtros:", filters);
     setPage(1);
     const filterParams = {
       nomeAluno: filters.nomeAluno || "",
@@ -75,9 +46,8 @@ export const Demands = () => {
   };
 
   const handleSendDemand = async (id) => {
-    console.log("Demands - handleSendDemand chamado para ID:", id);
     try {
-      setDemands((prev) => prev.filter((d) => d.id !== id));
+      setAllDemands((prev) => prev.filter((d) => d.id !== id));
       setAlert({
         show: true,
         message: "Demanda enviada com sucesso",
@@ -93,21 +63,16 @@ export const Demands = () => {
     }
   };
 
-  const handleUpdateDemand = (demand) => {
-    console.log("Demands - Atualizar demanda:", demand);
-  };
-
-  const handleViewDetails = (demand) => {
-    console.log("Demands - Visualizar detalhes:", demand);
-  };
-
   const handlePageChange = (event, value) => {
     console.log("Demands - handlePageChange chamado para página:", value);
     setPage(value);
   };
 
-  const openDemands = demands.filter((demand) => demand.status);
-  console.log("Demands - openDemands:", openDemands);
+  const openDemands = allDemands.filter((demand) => demand.status);
+  const count = Math.ceil(openDemands.length / pageSize) || 1;
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentDemands = openDemands.slice(startIndex, endIndex);
 
   return (
     <Box
@@ -196,9 +161,8 @@ export const Demands = () => {
           </Typography>
         ) : (
           <DemandsTable
-            demands={openDemands}
+            demands={currentDemands}
             onSend={handleSendDemand}
-            onUpdate={handleUpdateDemand}
             usuarioLogadoId={userRole?.id}
             onDemandUpdated={fetchDemands}
             count={count}
