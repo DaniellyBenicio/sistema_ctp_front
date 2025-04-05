@@ -5,7 +5,7 @@ import CustomAlert from "../../components/alert/CustomAlert";
 import { Box, Button, Typography } from "@mui/material";
 import SearchBar from "../../components/SearchBar";
 import UsersTable from "../../components/UsersTable";
-import UserRegisterPopup from "../../components/UserRegisterPopup";
+import UserRegisterPopup from "./UserRegisterPopup";
 import DeleteUser from "../../components/DeleteUser";
 import UpdateUser from "../../components/UpdateUser";
 

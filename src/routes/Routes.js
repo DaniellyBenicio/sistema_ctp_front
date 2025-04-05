@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import Login from "../pages/login/Login.js";
 import MainScreen from "../pages/mainHome/MainScreen";
 import UsersList from "../pages/admin/UsersList";
@@ -13,8 +13,17 @@ import ResetPassword from "../pages/ForgotPassword/ResetPassword.js";
 import ArchivedDemands from "../pages/demandas/ArchivedDemands.js";
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
-  const handleLogin = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = (userRole) => {
     setAuthenticated(true);
+    localStorage.setItem('userRole', userRole);
+    console.log("User Role:", userRole);
+    if (userRole === 'Admin') {
+      navigate('/users');
+    } else {
+      navigate('/demands');
+    }
   };
 
   return (
@@ -25,7 +34,7 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           !isAuthenticated ? (
             <Login onLogin={handleLogin} />
           ) : (
-            <Navigate to="/demands" />
+            <Navigate to={localStorage.getItem('userRole') === 'Admin' ? "/users" : "/demands"} />
           )
         }
       />
