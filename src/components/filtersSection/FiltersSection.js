@@ -314,7 +314,10 @@ const FiltersSection = ({ onFilterChange }) => {
                 textTransform: "uppercase", // Caixa alta
                 boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
               }}
-              onClick={() => navigate("/demands/register")}
+              onClick={() => {
+                console.log("Botão Abrir Demanda clicado");
+                navigate("/demands/register");
+              }}
             >
               Abrir Demanda
             </Button>

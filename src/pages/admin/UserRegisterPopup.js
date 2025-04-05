@@ -20,6 +20,8 @@ import {
 } from "@mui/material";
 import { Close, Visibility, VisibilityOff } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
+import SaveIcon from "@mui/icons-material/Save";
+import CloseIcon from "@mui/icons-material/Close";
 import api from "../../service/api";
 
 const INSTITUTIONAL_COLOR = "#307c34";
@@ -201,10 +203,8 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
     >
       <DialogTitle
         sx={{
-          backgroundColor: "#27AE60",
-          color: "#FFFFFF",
+          color: "#000000",
           padding: "16px 24px",
-          borderBottom: "1px solid #2ECC71",
         }}
       >
         <Typography
@@ -502,14 +502,21 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
           justifyContent: "center",
           padding: "16px 24px",
           backgroundColor: "#f9f9f9",
+          gap: "20px",
         }}
       >
-        <StyledButton onClick={onClose} color="error" variant="contained">
+        <StyledButton
+          onClick={onClose}
+          color="error"
+          variant="contained"
+          startIcon={<CloseIcon />}
+        >
           Cancelar
         </StyledButton>
         <StyledButton
           type="button"
           variant="contained"
+          startIcon={<SaveIcon />}
           disabled={loading || !isFormValid()}
           sx={{
             bgcolor:

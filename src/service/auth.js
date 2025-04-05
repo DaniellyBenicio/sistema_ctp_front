@@ -3,9 +3,9 @@ import api from "./api";
 export const login = async (email, senha) => {
   try {
     const response = await api.post("auth/login", { email, senha });
-    const { token } = response.data;
+    const { token, user } = response.data;
     localStorage.setItem("token", token);
-    return token;
+    return user;
   } catch (error) {
     if (error.response) {
       throw new Error(error.response.data.message || "Falha na autenticação.");

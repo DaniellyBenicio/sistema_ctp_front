@@ -91,6 +91,7 @@ const DemandaRegisterPage = () => {
 
   useEffect(() => {
     getUserId();
+    console.log("DemandaRegisterPage montado!");
   }, []);
 
   const handleChange = (e) => {

@@ -123,7 +123,7 @@ const UpdateUser = ({ open, onClose, user, onUpdateSuccess, setAlert }) => {
     };
 
     try {
-      const response = await api.put(`/auth/usuario/${user.id}`, updatedData);
+      const response = await api.put(`/usuario/${user.id}`, updatedData);
       setSuccess("Usuário atualizado com sucesso!");
       onUpdateSuccess(response.data);
       setAlert({

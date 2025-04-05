@@ -9,6 +9,7 @@ const MainScreen = ({ setAuthenticated }) => {
   const [userName, setUserName] = useState("");
   const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
+  const [initialRedirectDone, setInitialRedirectDone] = useState(false);
 
   useEffect(() => {
     const validarToken = async () => {
@@ -31,11 +32,15 @@ const MainScreen = ({ setAuthenticated }) => {
         setUserName(firstTwoNames);
         setUserRole(decoded.cargo || null);
 
-        if (decoded.cargo === "Admin") {
-          navigate("/users");
-        } else {
-          navigate("/demands");
+        if (!initialRedirectDone) {
+          setInitialRedirectDone(true);
+          if (decoded.cargo === "Admin") {
+            navigate("/users", { replace: true });
+          } else {
+            navigate("/demands", { replace: true });
+          }
         }
+
       } catch (erro) {
         console.error("Erro ao validar token:", erro);
         localStorage.removeItem("token");
@@ -45,7 +50,7 @@ const MainScreen = ({ setAuthenticated }) => {
     };
 
     validarToken();
-  }, [navigate, setAuthenticated]);
+  }, [navigate, setAuthenticated, initialRedirectDone, userRole]);
 
   if (!userRole) {
     return null;
