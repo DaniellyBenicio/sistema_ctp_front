@@ -28,6 +28,8 @@ const Login = ({ onLogin }) => {
     setLoading(true);
     setError("");
 
+    localStorage.removeItem("token");
+
     try {
       await login(email, senha);
       onLogin();

@@ -6,10 +6,10 @@ import UsersList from "../pages/admin/UsersList";
 import Demands from "../pages/demandas/Demands.js";
 import DemandaRegisterPage from "../pages/demandas/DemandaRegisterPage";
 import DemandaDetailsPage from "../pages/demandas/DemandaDetailsPage.js";
-import Students from "../pages/alunos/Students.js";
-import StudentRegisterPage from "../pages/alunos/StudentRegisterPage.js";
-import ForgotPassword from "../pages/forgotPassword/ForgotPassword.js";
-import ResetPassword from "../pages/forgotPassword/ResetPassword.js";
+import Students from "../pages/Alunos/Students.js";
+import StudentRegisterPage from "../pages/Alunos/StudentRegisterPage.js";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.js";
+import ResetPassword from "../pages/ForgotPassword/ResetPassword.js";
 import ArchivedDemands from "../pages/demandas/ArchivedDemands.js";
 
 const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
@@ -17,12 +17,12 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
 
   const handleLogin = (userRole) => {
     setAuthenticated(true);
-    localStorage.setItem('userRole', userRole);
+    localStorage.setItem("userRole", userRole);
     console.log("User Role:", userRole);
-    if (userRole === 'Admin') {
-      navigate('/users');
+    if (userRole === "Admin") {
+      navigate("/users");
     } else {
-      navigate('/demands');
+      navigate("/demands");
     }
   };
 
@@ -34,7 +34,13 @@ const AppRoutes = ({ isAuthenticated, setAuthenticated }) => {
           !isAuthenticated ? (
             <Login onLogin={handleLogin} />
           ) : (
-            <Navigate to={localStorage.getItem('userRole') === 'Admin' ? "/users" : "/demands"} />
+            <Navigate
+              to={
+                localStorage.getItem("userRole") === "Admin"
+                  ? "/users"
+                  : "/demands"
+              }
+            />
           )
         }
       />

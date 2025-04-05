@@ -34,23 +34,26 @@ const App = () => {
       const decoded = jwtDecode(token);
       const agora = Date.now() / 1000;
       if (decoded.exp < agora) {
-        setAlert({
-          message:
-            "Sua sessão expirou por questões de segurança. Faça login novamente.",
-          type: "error",
-          position: "top",
-        });
-        setTimeout(() => {
+        if (
+          location.pathname !== "/login" &&
+          location.pathname !== "/recuperar-senha"
+        ) {
+          setAlert({
+            message:
+              "Sua sessão expirou por questões de segurança. Faça login novamente.",
+            type: "error",
+            position: "top",
+          });
+          setTimeout(() => {
+            localStorage.removeItem("token");
+            setIsAuthenticated(false);
+            setAlert(null);
+            navigate("/login");
+          }, 3000);
+        } else {
           localStorage.removeItem("token");
           setIsAuthenticated(false);
-          setAlert(null);
-          if (
-            location.pathname !== "/login" &&
-            location.pathname !== "/recuperar-senha"
-          ) {
-            navigate("/login");
-          }
-        }, 3000);
+        }
         return false;
       }
       return true;

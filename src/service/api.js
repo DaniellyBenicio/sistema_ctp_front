@@ -19,7 +19,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      if (error.response.status === 401) {
+      if (error.response.status === 401 && error.config.url !== "auth/login") {
         const event = new CustomEvent("sessionExpired", {
           detail: {
             message:
@@ -54,5 +54,4 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 export default api;
