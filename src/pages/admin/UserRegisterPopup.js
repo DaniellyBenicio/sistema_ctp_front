@@ -349,7 +349,6 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
                       aria-label="toggle password visibility"
                       onClick={handleTogglePasswordVisibility}
                       edge="end"
-                      sx={{ color: "#27AE60" }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -435,7 +434,7 @@ const UserRegisterPopup = ({ open, onClose, user, onSave, onUpdate }) => {
                 onBlur={() => setFocusedField(null)}
                 MenuProps={{
                   MenuListProps: {
-                    sx: { fontSize: "0.875rem" },
+                    sx: { fontSize: "0.9rem" },
                   },
                 }}
                 sx={{

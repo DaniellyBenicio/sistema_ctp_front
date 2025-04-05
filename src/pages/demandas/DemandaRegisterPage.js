@@ -551,10 +551,23 @@ const DemandaRegisterPage = () => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            gap: 2,
+            gap: 5,
             width: "100%",
           }}
         >
+          <StyledButton
+            variant="contained"
+            onClick={() => navigate("/demands")}
+            startIcon={<CloseIcon />}
+            sx={{
+              bgcolor: "#d32f2f",
+              "&:hover": { bgcolor: "#b71c1c" },
+              minWidth: "150px",
+              height: "40px",
+            }}
+          >
+            Cancelar
+          </StyledButton>
           <StyledButton
             variant="contained"
             onClick={handleSubmit}
@@ -578,19 +591,6 @@ const DemandaRegisterPage = () => {
             ) : (
               "Criar Demanda"
             )}
-          </StyledButton>
-          <StyledButton
-            variant="contained"
-            onClick={() => navigate("/demands")}
-            startIcon={<CloseIcon />}
-            sx={{
-              bgcolor: "#d32f2f",
-              "&:hover": { bgcolor: "#b71c1c" },
-              minWidth: "150px",
-              height: "40px",
-            }}
-          >
-            Cancelar
           </StyledButton>
         </Box>
       </Box>

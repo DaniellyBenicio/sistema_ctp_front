@@ -5,35 +5,43 @@ import CustomAlert from "../../components/alert/CustomAlert";
 import { Box, Button, Typography, Stack } from "@mui/material";
 import FiltersSection from "../../components/filtersSection/FiltersSection";
 import DemandsTable from "./DemandsTable";
+import Paginate from "../../components/paginate/Paginate";
 
 export const Demands = () => {
   const [demands, setDemands] = useState([]);
   const { userRole } = useOutletContext();
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const [pageSize] = useState(10);
 
   useEffect(() => {
     console.log("User Role:", userRole);
     fetchDemands();
-  }, [navigate, userRole]);
+  }, [navigate, userRole, page, pageSize]);
 
   const fetchDemands = async (filterParams = {}) => {
     try {
-      const response = await api.post("/minhas-demandas", filterParams);
+      const response = await api.post(`/minhas-demandas?page=${page}&pageSize=${pageSize}`, filterParams);
       const demandsData = response.data.demandas;
+      const totalItems = response.data.totalItems;
 
       if (!Array.isArray(demandsData)) {
         throw new Error("Erro ao buscar demandas: formato inválido.");
       }
 
       setDemands(demandsData);
+      setCount(Math.ceil(totalItems / pageSize));
     } catch (error) {
       console.error("Erro na requisição:", error);
       setDemands([]);
+      setCount(0);
     }
   };
 
   const handleFilterChange = (filters) => {
+    setPage(1);
     const filterParams = {
       nomeAluno: filters.nomeAluno || "",
       cursoId: filters.cursoId || "",
@@ -67,6 +75,10 @@ export const Demands = () => {
 
   const handleViewDetails = (demand) => {
     console.log("Visualizar detalhes:", demand);
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
   const openDemands = demands.filter((demand) => demand.status);
@@ -132,10 +144,7 @@ export const Demands = () => {
               height: "auto",
             }}
           />
-
-
         </Stack>
-
       </Box>
 
       <Box
@@ -160,14 +169,23 @@ export const Demands = () => {
             Nenhuma demanda para o filtro informado
           </Typography>
         ) : (
-          <DemandsTable
-            demands={openDemands}
-            onSend={handleSendDemand}
-            onUpdate={handleUpdateDemand}
-            usuarioLogadoId={userRole?.id}
-            onDemandUpdated={fetchDemands}
-            onViewDetails={handleViewDetails}
-          />
+          <>
+            <DemandsTable
+              demands={openDemands}
+              onSend={handleSendDemand}
+              onUpdate={handleUpdateDemand}
+              usuarioLogadoId={userRole?.id}
+              onDemandUpdated={fetchDemands}
+              onViewDetails={handleViewDetails}
+            />
+            {count > 1 && (
+              <Paginate
+                count={count}
+                page={page}
+                onChange={handlePageChange}
+              />
+            )}
+          </>
         )}
       </Box>
     </Box>

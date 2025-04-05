@@ -128,7 +128,6 @@ const FiltersSection = ({ onFilterChange }) => {
       }}
     >
       <Grid container spacing={3} alignItems="center">
-        {/* Filtros */}
         <Grid item xs={12}>
           <Grid container spacing={2} alignItems="flex-start">
             <Grid item xs={12} sm={5} md={5}>
@@ -204,6 +203,7 @@ const FiltersSection = ({ onFilterChange }) => {
                 }}
               />
             </Grid>
+
             <Grid item xs={12} sm={3} md={3}>
               <FormControl fullWidth sx={{ height: "0px" }}>
                 <InputLabel sx={{ fontSize: "1rem" }}>Curso</InputLabel>
@@ -254,7 +254,6 @@ const FiltersSection = ({ onFilterChange }) => {
           </Grid>
         </Grid>
 
-        {/* Botões */}
         <Grid item xs={12}>
           <Box
             sx={{
@@ -270,12 +269,13 @@ const FiltersSection = ({ onFilterChange }) => {
                   variant="contained"
                   onClick={handleFilter}
                   sx={{
-                    bgcolor: "#2f9e41", // Mesma cor de "Abrir Demanda"
-                    "&:hover": { bgcolor: "#257a33" }, // Mesma cor de hover
+                    bgcolor: "#3E7145",
+                    "&:hover": { bgcolor: "#2E5232" },
                     display: "flex",
                     gap: 1,
-                    minWidth: "120px",
+                    minWidth: "10px",
                     height: "40px",
+                    textTransform: 'none',
                   }}
                 >
                   <Search />
@@ -287,13 +287,14 @@ const FiltersSection = ({ onFilterChange }) => {
                   variant="contained"
                   onClick={handleClearFilters}
                   sx={{
-                    backgroundColor: "#F5F5F5",
+                    backgroundColor: "#CECECE",
                     color: "#000",
                     "&:hover": { backgroundColor: "#E0E0E0" },
                     display: "flex",
                     gap: 1,
-                    minWidth: "120px",
+                    minWidth: "10px",
                     height: "40px",
+                    textTransform: 'none',
                   }}
                 >
                   <Clear />
@@ -304,18 +305,18 @@ const FiltersSection = ({ onFilterChange }) => {
             <Button
               variant="contained"
               sx={{
-                bgcolor: "#2f9e41",
+                bgcolor: "#349042",
                 "&:hover": { bgcolor: "#257a33" },
                 minWidth: "150px",
                 px: 2,
                 height: "40px",
                 fontSize: "0.875rem",
                 padding: "6px 12px",
-                textTransform: "uppercase", // Caixa alta
                 boxShadow: "0px 4px 6px rgba(0,0,0,0.2)",
+                textTransform: 'none',
+                minWidth: "10px",
               }}
               onClick={() => {
-                console.log("Botão Abrir Demanda clicado");
                 navigate("/demands/register");
               }}
             >
