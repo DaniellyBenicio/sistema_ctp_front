@@ -7,6 +7,7 @@ import {
   Select,
   CircularProgress,
   Paper,
+  TextField,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useNavigate, useParams } from "react-router-dom";
@@ -40,15 +41,34 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontWeight: "bold",
 }));
 
-const StyledTextField = styled("input")(({ theme }) => ({
-  height: "40px",
-  fontSize: "0.875rem",
-  width: "100%",
-  padding: "0 14px",
-  borderRadius: "8px",
-  border: "1px solid #ced4da",
-  backgroundColor: "#fff",
-  boxSizing: "border-box",
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    height: "40px",
+    fontSize: "0.875rem",
+    width: "100%",
+    borderRadius: "8px",
+    backgroundColor: "#fff",
+    "& fieldset": {
+      borderColor: "#ced4da",
+    },
+    "&:hover fieldset": {
+      borderColor: "#388E3C",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: INSTITUTIONAL_COLOR,
+    },
+    "& .MuiInputBase-input": {
+      padding: "8px 14px", 
+    },
+  },
+  "& .MuiInputLabel-root": {
+    fontSize: "0.875rem",
+    transform: "translate(14px, 10px) scale(1)", 
+    "&.MuiInputLabel-shrink": {
+      transform: "translate(14px, -6px) scale(0.75)", 
+      color: INSTITUTIONAL_COLOR, 
+    },
+  },
 }));
 
 const StyledSelect = styled(Select)(({ theme }) => ({
@@ -76,7 +96,7 @@ const StudentRegisterPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isStudentRegistered, setIsStudentRegistered] = useState([]);
-  const [dataReturned, setDataReturned] = useState([false]); // Controla se os dados foram retornados
+  const [dataReturned, setDataReturned] = useState([false]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -101,7 +121,7 @@ const StudentRegisterPage = () => {
           setStudentsData([mappedStudent]);
           setFormData({ alunos: [mappedStudent] });
           setIsStudentRegistered([true]);
-          setDataReturned([true]); // Dados carregados na edição
+          setDataReturned([true]);
         } catch (err) {
           setError("Erro ao carregar dados do aluno.");
           console.error(
@@ -117,7 +137,7 @@ const StudentRegisterPage = () => {
       setFormData({ alunos: [{ id: "", nome: "", email: "", curso: "", condicoes: [] }] });
       setStudentsData([{ nome: "", email: "", curso: "", condicoes: [] }]);
       setIsStudentRegistered([false]);
-      setDataReturned([false]); // Inicialmente, nenhum dado retornado
+      setDataReturned([false]);
     }
   }, [isEditing, initialMatricula]);
 
@@ -127,34 +147,27 @@ const StudentRegisterPage = () => {
     newMatriculaInputs[index] = numericValue;
     setMatriculaInputs(newMatriculaInputs);
 
-    // Verifica se a matrícula já existe em outro campo de matrícula
     if (newMatriculaInputs.filter(matricula => matricula === numericValue && matricula !== "").length > 1) {
       setError("Esta matrícula já foi informada.");
-
       const newStudentsData = [...studentsData];
       newStudentsData[index] = { nome: "", email: "", curso: "", condicoes: [] };
       setStudentsData(newStudentsData);
       const newFormData = { ...formData };
-
       if (newFormData.alunos && newFormData.alunos[index]) {
         newFormData.alunos[index] = { id: numericValue, nome: "", email: "", curso: "", condicoes: [] };
       }
-
       setFormData(newFormData);
       setIsStudentRegistered((prev) => {
         const newState = [...prev];
         newState[index] = false;
         return newState;
       });
-
       setDataReturned((prev) => {
         const newState = [...prev];
         newState[index] = false;
         return newState;
       });
-
       return;
-
     } else {
       setError(null);
     }
@@ -162,19 +175,16 @@ const StudentRegisterPage = () => {
     const newStudentsData = [...studentsData];
     newStudentsData[index] = { nome: "", email: "", curso: "", condicoes: [] };
     setStudentsData(newStudentsData);
-
     const newFormData = { ...formData };
     if (newFormData.alunos && newFormData.alunos[index]) {
       newFormData.alunos[index] = { id: numericValue, nome: "", email: "", curso: "", condicoes: [] };
     }
-
     setFormData(newFormData);
     setIsStudentRegistered((prev) => {
       const newState = [...prev];
       newState[index] = false;
       return newState;
     });
-
     setDataReturned((prev) => {
       const newState = [...prev];
       newState[index] = false;
@@ -203,8 +213,6 @@ const StudentRegisterPage = () => {
         curso: student.curso || "",
         condicoes: student.condicoes || [],
       };
-
-
       const newStudentsData = [...studentsData];
       newStudentsData[index] = mappedStudent;
       setStudentsData(newStudentsData);
@@ -213,24 +221,18 @@ const StudentRegisterPage = () => {
         newAlunos[index] = mappedStudent;
         return { ...prev, alunos: newAlunos };
       });
-
       setIsStudentRegistered((prev) => {
         const newState = [...prev];
         newState[index] = true;
         return newState;
       });
-
       setDataReturned((prev) => {
         const newState = [...prev];
         newState[index] = true;
         return newState;
       });
-
     } catch (err) {
-      setError(
-        "Aluno não encontrado. Verifique a matrícula e tente novamente."
-      );
-
+      setError("Aluno não encontrado. Verifique a matrícula e tente novamente.");
       const newStudentsData = [...studentsData];
       newStudentsData[index] = { nome: "", email: "", curso: "", condicoes: [] };
       setStudentsData(newStudentsData);
@@ -239,13 +241,11 @@ const StudentRegisterPage = () => {
         newState[index] = false;
         return newState;
       });
-
       setDataReturned((prev) => {
         const newState = [...prev];
         newState[index] = false;
         return newState;
       });
-
     } finally {
       setLoading(false);
     }
@@ -280,7 +280,6 @@ const StudentRegisterPage = () => {
     const newStudentsData = [...studentsData];
     newStudentsData[index] = { ...newStudentsData[index], [name]: value };
     setStudentsData(newStudentsData);
-
     const newFormData = { ...formData };
     if (newFormData.alunos && newFormData.alunos[index]) {
       newFormData.alunos[index] = { ...newFormData.alunos[index], [name]: value };
@@ -414,12 +413,12 @@ const StudentRegisterPage = () => {
             </Typography>
             <Box sx={{ display: "flex", gap: 2, mb: 2, width: "100%" }}>
               <StyledTextField
-                placeholder="Matrícula"
+                label="Matrícula"
                 value={matriculaInput}
                 onChange={(e) => handleMatriculaChange(index, e.target.value)}
-                maxLength={14}
-                pattern="[0-9]*"
+                inputProps={{ maxLength: 14, pattern: "[0-9]*" }}
                 disabled={isEditing || isStudentRegistered[index]}
+                variant="outlined"
               />
               {!isEditing && (
                 <StyledButton
@@ -451,22 +450,25 @@ const StudentRegisterPage = () => {
               }}
             >
               <StyledTextField
-                placeholder="Nome"
+                label="Nome"
                 value={studentsData[index]?.nome || ""}
                 onChange={(e) => handleInputChange(index, "nome", e.target.value)}
                 disabled={!dataReturned[index] || isEditing}
+                variant="outlined"
               />
               <StyledTextField
-                placeholder="Email"
+                label="Email"
                 value={studentsData[index]?.email || ""}
                 onChange={(e) => handleInputChange(index, "email", e.target.value)}
                 disabled={!dataReturned[index] || isEditing}
+                variant="outlined"
               />
               <StyledTextField
-                placeholder="Curso"
+                label="Curso"
                 value={studentsData[index]?.curso || ""}
                 onChange={(e) => handleInputChange(index, "curso", e.target.value)}
                 disabled={!dataReturned[index] || isEditing}
+                variant="outlined"
               />
               <Box
                 sx={{
@@ -591,9 +593,7 @@ const StudentRegisterPage = () => {
             }}
             disabled={
               loading ||
-              !formData.alunos.some(
-                (aluno) => aluno?.nome
-              )
+              !formData.alunos.some((aluno) => aluno?.nome)
             }
           >
             {loading ? (
