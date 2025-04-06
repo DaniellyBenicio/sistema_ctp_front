@@ -80,8 +80,23 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 const StyledSelect = styled(Select)(({ theme }) => ({
   height: "40px",
   fontSize: "0.875rem",
+  width: "100%",
+  borderRadius: "8px",
+  backgroundColor: "#fff",
   "& .MuiSelect-select": {
     padding: "8px 14px",
+    "&.Mui-focused": {
+      color: INSTITUTIONAL_COLOR,
+    },
+  },
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#ced4da",
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#388E3C",
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: INSTITUTIONAL_COLOR,
   },
 }));
 
@@ -382,6 +397,10 @@ const DemandaRegisterPage = () => {
                       transform: "translate(14px, 10px) scale(1)",
                       "&.MuiInputLabel-shrink": {
                         transform: "translate(14px, -6px) scale(0.75)",
+                        color: INSTITUTIONAL_COLOR,
+                      },
+                      "&.Mui-focused": {
+                        color: INSTITUTIONAL_COLOR,
                       },
                     }}
                   >
@@ -491,12 +510,23 @@ const DemandaRegisterPage = () => {
               mb: 3,
               bgcolor: "#fff",
               borderRadius: "8px",
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: 'grey',
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "grey",
                 },
-                '&.Mui-focused fieldset': {
+                "&:hover fieldset": {
+                  borderColor: "#388E3C",
+                },
+                "&.Mui-focused fieldset": {
                   borderColor: INSTITUTIONAL_COLOR, 
+                },
+              },
+              "& .MuiInputLabel-root": {
+                "&.Mui-focused": {
+                  color: INSTITUTIONAL_COLOR, 
+                },
+                "&.MuiInputLabel-shrink": {
+                  color: INSTITUTIONAL_COLOR, 
                 },
               },
             }}
