@@ -130,7 +130,6 @@ const ResetPasswordUI = ({
               value={novaSenha}
               onChange={(e) => setNovaSenha(e.target.value)}
               fullWidth
-              required
               variant="outlined"
               onFocus={() => setFocusedField("novaSenha")}
               onBlur={() => setFocusedField(null)}
@@ -151,7 +150,6 @@ const ResetPasswordUI = ({
                       aria-label="toggle password visibility"
                       onClick={handleToggleNovaSenha}
                       edge="end"
-                      sx={{ color: "#27AE60" }}
                     >
                       {showNovaSenha ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -181,7 +179,6 @@ const ResetPasswordUI = ({
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
               fullWidth
-              required
               variant="outlined"
               onFocus={() => setFocusedField("confirmarSenha")}
               onBlur={() => setFocusedField(null)}
@@ -203,7 +200,6 @@ const ResetPasswordUI = ({
                       aria-label="toggle password visibility"
                       onClick={handleToggleConfirmarSenha}
                       edge="end"
-                      sx={{ color: "#27AE60" }}
                     >
                       {showConfirmarSenha ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
