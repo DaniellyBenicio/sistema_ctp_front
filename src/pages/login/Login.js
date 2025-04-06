@@ -134,7 +134,7 @@ const Login = ({ onLogin }) => {
             <TextField
               fullWidth
               margin="normal"
-              label="Email"
+              label="E-mail"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -143,19 +143,25 @@ const Login = ({ onLogin }) => {
               error={!!email && !isEmailValid()}
               helperText={!!email && !isEmailValid() ? "Email inválido" : ""}
               variant="outlined"
-              InputLabelProps={{
-                shrink: focusedField === "email" || email !== "",
-                sx: {
-                  color:
-                    focusedField === "email" || email !== ""
-                      ? "#27AE60"
-                      : "text.secondary",
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                },
-              }}
               sx={{
+                "& .MuiInputLabel-root": {
+                  color: "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                  transition: "color 0.3s ease, transform 0.3s ease",
+                },
+                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+                  color: "#27AE60",
+                },
+
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",
+                  backgroundColor: "transparent",
+                  "& input": {
+                    backgroundColor: "transparent !important",
+                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
+                    WebkitTextFillColor: "#000",
+                    transition: "background-color 5000s ease-in-out 0s",
+                  },
                   "& fieldset": {
                     borderColor: "#E0E0E0",
                   },
@@ -168,7 +174,6 @@ const Login = ({ onLogin }) => {
                 },
               }}
             />
-
             <TextField
               fullWidth
               margin="normal"
@@ -178,17 +183,6 @@ const Login = ({ onLogin }) => {
               onChange={(e) => setSenha(e.target.value)}
               onFocus={() => setFocusedField("senha")}
               onBlur={() => setFocusedField(null)}
-              variant="outlined"
-              InputLabelProps={{
-                shrink: focusedField === "senha" || senha !== "",
-                sx: {
-                  color:
-                    focusedField === "senha" || senha !== ""
-                      ? "#27AE60"
-                      : "text.secondary",
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                },
-              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -203,8 +197,23 @@ const Login = ({ onLogin }) => {
                 ),
               }}
               sx={{
+                "& .MuiInputLabel-root": {
+                  color: "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                  transition: "color 0.3s ease, transform 0.3s ease",
+                },
+                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+                  color: "#27AE60",
+                },
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",
+                  backgroundColor: "transparent",
+                  "& input": {
+                    backgroundColor: "transparent !important",
+                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
+                    WebkitTextFillColor: "#000",
+                    transition: "background-color 5000s ease-in-out 0s",
+                  },
                   "& fieldset": {
                     borderColor: "#E0E0E0",
                   },
