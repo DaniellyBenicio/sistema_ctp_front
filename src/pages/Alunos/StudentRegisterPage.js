@@ -28,10 +28,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: "12px",
   boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
   background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
-  width: "70%",
+  width: "100%",
   boxSizing: "border-box",
-  marginLeft: "auto",
-  marginRight: "auto",
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -58,15 +56,15 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
       borderColor: INSTITUTIONAL_COLOR,
     },
     "& .MuiInputBase-input": {
-      padding: "8px 14px", 
+      padding: "8px 14px",
     },
   },
   "& .MuiInputLabel-root": {
     fontSize: "0.875rem",
-    transform: "translate(14px, 10px) scale(1)", 
+    transform: "translate(14px, 10px) scale(1)",
     "&.MuiInputLabel-shrink": {
-      transform: "translate(14px, -6px) scale(0.75)", 
-      color: INSTITUTIONAL_COLOR, 
+      transform: "translate(14px, -6px) scale(0.75)",
+      color: INSTITUTIONAL_COLOR,
     },
   },
 }));
@@ -81,6 +79,15 @@ const StyledSelect = styled(Select)(({ theme }) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     display: "block",
+  },
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "#ced4da",
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: INSTITUTIONAL_COLOR,
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: INSTITUTIONAL_COLOR,
   },
 }));
 
@@ -134,7 +141,9 @@ const StudentRegisterPage = () => {
       };
       fetchStudent();
     } else {
-      setFormData({ alunos: [{ id: "", nome: "", email: "", curso: "", condicoes: [] }] });
+      setFormData({
+        alunos: [{ id: "", nome: "", email: "", curso: "", condicoes: [] }],
+      });
       setStudentsData([{ nome: "", email: "", curso: "", condicoes: [] }]);
       setIsStudentRegistered([false]);
       setDataReturned([false]);
@@ -147,14 +156,29 @@ const StudentRegisterPage = () => {
     newMatriculaInputs[index] = numericValue;
     setMatriculaInputs(newMatriculaInputs);
 
-    if (newMatriculaInputs.filter(matricula => matricula === numericValue && matricula !== "").length > 1) {
+    if (
+      newMatriculaInputs.filter(
+        (matricula) => matricula === numericValue && matricula !== ""
+      ).length > 1
+    ) {
       setError("Esta matrícula já foi informada.");
       const newStudentsData = [...studentsData];
-      newStudentsData[index] = { nome: "", email: "", curso: "", condicoes: [] };
+      newStudentsData[index] = {
+        nome: "",
+        email: "",
+        curso: "",
+        condicoes: [],
+      };
       setStudentsData(newStudentsData);
       const newFormData = { ...formData };
       if (newFormData.alunos && newFormData.alunos[index]) {
-        newFormData.alunos[index] = { id: numericValue, nome: "", email: "", curso: "", condicoes: [] };
+        newFormData.alunos[index] = {
+          id: numericValue,
+          nome: "",
+          email: "",
+          curso: "",
+          condicoes: [],
+        };
       }
       setFormData(newFormData);
       setIsStudentRegistered((prev) => {
@@ -177,7 +201,13 @@ const StudentRegisterPage = () => {
     setStudentsData(newStudentsData);
     const newFormData = { ...formData };
     if (newFormData.alunos && newFormData.alunos[index]) {
-      newFormData.alunos[index] = { id: numericValue, nome: "", email: "", curso: "", condicoes: [] };
+      newFormData.alunos[index] = {
+        id: numericValue,
+        nome: "",
+        email: "",
+        curso: "",
+        condicoes: [],
+      };
     }
     setFormData(newFormData);
     setIsStudentRegistered((prev) => {
@@ -232,9 +262,16 @@ const StudentRegisterPage = () => {
         return newState;
       });
     } catch (err) {
-      setError("Aluno não encontrado. Verifique a matrícula e tente novamente.");
+      setError(
+        "Aluno não encontrado. Verifique a matrícula e tente novamente."
+      );
       const newStudentsData = [...studentsData];
-      newStudentsData[index] = { nome: "", email: "", curso: "", condicoes: [] };
+      newStudentsData[index] = {
+        nome: "",
+        email: "",
+        curso: "",
+        condicoes: [],
+      };
       setStudentsData(newStudentsData);
       setIsStudentRegistered((prev) => {
         const newState = [...prev];
@@ -253,7 +290,10 @@ const StudentRegisterPage = () => {
 
   const handleAddStudent = () => {
     setMatriculaInputs([...matriculaInputs, ""]);
-    setStudentsData([...studentsData, { nome: "", email: "", curso: "", condicoes: [] }]);
+    setStudentsData([
+      ...studentsData,
+      { nome: "", email: "", curso: "", condicoes: [] },
+    ]);
     setFormData((prev) => ({
       ...prev,
       alunos: [
@@ -282,7 +322,10 @@ const StudentRegisterPage = () => {
     setStudentsData(newStudentsData);
     const newFormData = { ...formData };
     if (newFormData.alunos && newFormData.alunos[index]) {
-      newFormData.alunos[index] = { ...newFormData.alunos[index], [name]: value };
+      newFormData.alunos[index] = {
+        ...newFormData.alunos[index],
+        [name]: value,
+      };
     }
     setFormData(newFormData);
   };
@@ -292,7 +335,10 @@ const StudentRegisterPage = () => {
     newAlunos[index] = { ...newAlunos[index], condicoes: newSelectedCondicoes };
     setFormData((prev) => ({ ...prev, alunos: newAlunos }));
     const newStudentsData = [...studentsData];
-    newStudentsData[index] = { ...newStudentsData[index], condicoes: newSelectedCondicoes };
+    newStudentsData[index] = {
+      ...newStudentsData[index],
+      condicoes: newSelectedCondicoes,
+    };
     setStudentsData(newStudentsData);
   };
 
@@ -314,7 +360,6 @@ const StudentRegisterPage = () => {
               },
               { headers: { Authorization: `Bearer ${token}` } }
             );
-            console.log("Aluno atualizado:", response.data);
           } else {
             const response = await api.post(
               "/cadastrar-aluno",
@@ -327,7 +372,6 @@ const StudentRegisterPage = () => {
               },
               { headers: { Authorization: `Bearer ${token}` } }
             );
-            console.log("Aluno cadastrado:", response.data);
           }
         }
       }
@@ -349,7 +393,7 @@ const StudentRegisterPage = () => {
       } else {
         setError(
           err.response?.data?.mensagem ||
-          (isEditing ? "Erro ao atualizar aluno" : "Erro ao cadastrar alunos")
+            (isEditing ? "Erro ao atualizar aluno" : "Erro ao cadastrar alunos")
         );
       }
       console.error(
@@ -381,14 +425,20 @@ const StudentRegisterPage = () => {
         minHeight: "100vh",
         width: "100%",
         bgcolor: "#f0f2f5",
-        p: { xs: 1, sm: 2 },
+        p: { xs: 1, sm: 2, md: 3 },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         boxSizing: "border-box",
       }}
     >
-      <Box sx={{ width: "135%", maxWidth: "1200px" }}>
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: { xs: "100%", sm: "800px", md: "1200px" },
+          px: { xs: 1, sm: 0 },
+        }}
+      >
         <Typography
           variant="h5"
           align="center"
@@ -397,40 +447,64 @@ const StudentRegisterPage = () => {
             fontWeight: "bold",
             color: INSTITUTIONAL_COLOR,
             textShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
-            mb: 4,
+            mb: { xs: 2, sm: 4 },
+            fontSize: { xs: "1.25rem", sm: "1.5rem" },
           }}
         >
           {isEditing ? "Editar Aluno" : "Cadastro de Aluno"}
         </Typography>
 
         {matriculaInputs.map((matriculaInput, index) => (
-          <StyledPaper key={index} elevation={3} sx={{ mb: 1 }}>
+          <StyledPaper
+            key={index}
+            elevation={3}
+            sx={{
+              mb: 1,
+              width: "100%",
+              p: { xs: 2, sm: 3 },
+            }}
+          >
             <Typography
               variant="h6"
-              sx={{ mb: 2, fontWeight: "medium", color: INSTITUTIONAL_COLOR }}
+              sx={{
+                mb: 2,
+                fontWeight: "medium",
+                color: INSTITUTIONAL_COLOR,
+                fontSize: { xs: "1rem", sm: "1.25rem" },
+              }}
             >
               Dados do Aluno
             </Typography>
-            <Box sx={{ display: "flex", gap: 2, mb: 2, width: "100%" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+                mb: 2,
+                width: "100%",
+              }}
+            >
               <StyledTextField
                 label="Matrícula"
                 value={matriculaInput}
                 onChange={(e) => handleMatriculaChange(index, e.target.value)}
                 inputProps={{ maxLength: 14, pattern: "[0-9]*" }}
                 disabled={isEditing || isStudentRegistered[index]}
-                sx={{ bgcolor: "#fff", borderRadius: "8px",  width: "85%"}}
+                sx={{ bgcolor: "#fff", borderRadius: "8px", width: "100%" }}
                 variant="outlined"
               />
               {!isEditing && (
                 <StyledButton
                   variant="contained"
                   onClick={() => handleSearchByMatricula(index)}
-                  disabled={loading || isStudentRegistered[index] || !matriculaInput}
+                  disabled={
+                    loading || isStudentRegistered[index] || !matriculaInput
+                  }
                   startIcon={<SearchIcon />}
                   sx={{
                     bgcolor: INSTITUTIONAL_COLOR,
                     "&:hover": { bgcolor: "#265b28" },
-                    minWidth: "120px",
+                    minWidth: { xs: "100%", sm: "120px" },
                     height: "40px",
                   }}
                 >
@@ -446,37 +520,41 @@ const StudentRegisterPage = () => {
               sx={{
                 display: "grid",
                 gap: 2,
-                gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                gridTemplateColumns: {
+                  xs: "1fr",
+                  sm: "1fr 1fr",
+                },
                 width: "100%",
               }}
             >
               <StyledTextField
                 label="Nome"
                 value={studentsData[index]?.nome || ""}
-                onChange={(e) => handleInputChange(index, "nome", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange(index, "nome", e.target.value)
+                }
                 disabled={!dataReturned[index] || isEditing}
                 variant="outlined"
               />
               <StyledTextField
                 label="Email"
                 value={studentsData[index]?.email || ""}
-                onChange={(e) => handleInputChange(index, "email", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange(index, "email", e.target.value)
+                }
                 disabled={!dataReturned[index] || isEditing}
                 variant="outlined"
               />
               <StyledTextField
                 label="Curso"
                 value={studentsData[index]?.curso || ""}
-                onChange={(e) => handleInputChange(index, "curso", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange(index, "curso", e.target.value)
+                }
                 disabled={!dataReturned[index] || isEditing}
                 variant="outlined"
               />
-              <Box
-                sx={{
-                  gridColumn: { xs: "1 / 2", sm: "2 / 3" },
-                  maxWidth: "100%",
-                }}
-              >
+              <Box sx={{ width: "100%" }}>
                 <FormControl fullWidth>
                   <InputLabel
                     sx={{
@@ -484,6 +562,7 @@ const StudentRegisterPage = () => {
                       transform: "translate(14px, 10px) scale(1)",
                       "&.MuiInputLabel-shrink": {
                         transform: "translate(14px, -6px) scale(0.75)",
+                        color: INSTITUTIONAL_COLOR,
                       },
                     }}
                   >
@@ -535,6 +614,7 @@ const StudentRegisterPage = () => {
               <Box
                 sx={{
                   display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
                   justifyContent: "flex-start",
                   gap: 2,
                   mt: 2,
@@ -549,6 +629,7 @@ const StudentRegisterPage = () => {
                       borderColor: INSTITUTIONAL_COLOR,
                       color: INSTITUTIONAL_COLOR,
                       "&:hover": { borderColor: "#265b28", color: "#265b28" },
+                      width: { xs: "100%", sm: "auto" },
                     }}
                   >
                     Adicionar
@@ -563,6 +644,7 @@ const StudentRegisterPage = () => {
                       borderColor: "#d32f2f",
                       color: "#d32f2f",
                       "&:hover": { borderColor: "#b71c1c", color: "#b71c1c" },
+                      width: { xs: "100%", sm: "auto" },
                     }}
                   >
                     Remover
@@ -576,12 +658,14 @@ const StudentRegisterPage = () => {
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             justifyContent: "flex-start",
             gap: 2,
             mt: 2,
-            width: "70%",
-            marginLeft: "auto",
-            marginRight: "auto",
+            width: "100%",
+            maxWidth: { xs: "100%", sm: "70%" },
+            mx: "auto",
+            ml: { xs: 0, sm: 2 },
           }}
         >
           <StyledButton
@@ -591,11 +675,9 @@ const StudentRegisterPage = () => {
             sx={{
               bgcolor: INSTITUTIONAL_COLOR,
               "&:hover": { bgcolor: "#265b28" },
+              width: { xs: "100%", sm: "auto" },
             }}
-            disabled={
-              loading ||
-              !formData.alunos.some((aluno) => aluno?.nome)
-            }
+            disabled={loading || !formData.alunos.some((aluno) => aluno?.nome)}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />
@@ -607,7 +689,11 @@ const StudentRegisterPage = () => {
             variant="contained"
             onClick={handleClose}
             startIcon={<CloseIcon />}
-            sx={{ bgcolor: "#d32f2f", "&:hover": { bgcolor: "#b71c1c" } }}
+            sx={{
+              bgcolor: "#d32f2f",
+              "&:hover": { bgcolor: "#b71c1c" },
+              width: { xs: "100%", sm: "auto" },
+            }}
           >
             Cancelar
           </StyledButton>
