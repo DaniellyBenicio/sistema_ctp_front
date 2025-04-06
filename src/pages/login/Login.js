@@ -134,7 +134,7 @@ const Login = ({ onLogin }) => {
             <TextField
               fullWidth
               margin="normal"
-              label="E-mail"
+              label="Email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
