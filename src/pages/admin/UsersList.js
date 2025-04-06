@@ -119,10 +119,10 @@ export const UsersList = () => {
         display: "flex",
         justifyContent: "center",
         flexDirection: "column",
-        width: "90%", // Largura de 90% em todas as telas
+        width: "90%",
         marginTop: 0,
         padding: { xs: "3% 0%", sm: "2% 0%" },
-        marginLeft: { xs: 'auto', sm: 'auto' }, // Margem automática nas laterais
+        marginLeft: { xs: 'auto', sm: 'auto' },
         marginRight: { xs: 'auto', sm: 'auto' },
       }}
     >
@@ -156,7 +156,7 @@ export const UsersList = () => {
           alignItems: { xs: "stretch", sm: "center" },
           gap: { xs: 1, sm: 2 },
           mb: 2,
-          width: "100%", // Ocupa 100% da largura do Box pai (que já tem 90% da tela)
+          width: "100%",
           maxWidth: "1200px",
           alignSelf: "center",
         }}
@@ -179,17 +179,18 @@ export const UsersList = () => {
         <Button
           variant="contained"
           sx={{
-            bgcolor: "#2f9e41",
-            "&:hover": { bgcolor: "#257a33" },
-            minWidth: { xs: "100%", sm: "150px", md: "150px" },
-            px: 2,
-            height: { xs: "35px", sm: "38px" },
-            fontSize: { xs: "0.75rem", sm: "0.875rem" },
-            padding: { xs: "4px 8px", sm: "6px 12px" },
+            bgcolor: "#2e7d32",
+            "&:hover": {
+              bgcolor: "#1b5e20",
+              transform: "scale(1.05)",
+            },
+            minWidth: "140px",
+            height: "35px",
+            fontSize: "0.9rem",
+            fontWeight: 600,
             textTransform: "none",
-            marginBottom: "15px",
-            display: "flex",
-            alignItems: "center",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+            transition: "all 0.2s ease",
           }}
           onClick={() => setOpenPopup(true)}
         >
@@ -199,7 +200,7 @@ export const UsersList = () => {
 
       <Box
         sx={{
-          width: "100%", // Ocupa 100% da largura do Box pai
+          width: "100%",
           maxWidth: "1200px",
           alignSelf: "center",
           mx: "auto",

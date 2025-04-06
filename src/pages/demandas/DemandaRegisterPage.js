@@ -52,16 +52,16 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     borderRadius: "8px",
     backgroundColor: "#fff",
     "& fieldset": {
-      borderColor: "#ced4da", 
+      borderColor: "#ced4da",
     },
     "&:hover fieldset": {
-      borderColor: "#388E3C", 
+      borderColor: "#388E3C",
     },
     "&.Mui-focused fieldset": {
-      borderColor: INSTITUTIONAL_COLOR, 
+      borderColor: INSTITUTIONAL_COLOR,
     },
     "& .MuiInputBase-input": {
-      padding: "8px 14px", 
+      padding: "8px 14px",
     },
   },
   "& .MuiInputLabel-root": {
@@ -69,10 +69,10 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     transform: "translate(14px, 10px) scale(1)",
     "&.MuiInputLabel-shrink": {
       transform: "translate(14px, -6px) scale(0.75)",
-      color: "#27AE60", 
+      color: INSTITUTIONAL_COLOR,
     },
     "&.Mui-focused": {
-      color: "#27AE60", 
+      color: INSTITUTIONAL_COLOR,
     },
   },
 }));
@@ -185,7 +185,7 @@ const DemandaRegisterPage = () => {
       console.error("Erro ao buscar aluno:", err.response?.data || err.message);
       const errorMessage =
         err.response?.data?.mensagem ===
-        "Aluno não encontrado na base de dados local"
+          "Aluno não encontrado na base de dados local"
           ? "Aluno não encontrado na base de dados. Procure um funcionário da CTP para cadastrá-lo."
           : "Erro ao buscar aluno. Verifique a matrícula e tente novamente.";
       setError(errorMessage);
@@ -265,8 +265,8 @@ const DemandaRegisterPage = () => {
       );
       setError(
         err.response?.data?.mensagem ||
-          err.response?.data?.erro ||
-          "Erro ao cadastrar a demanda"
+        err.response?.data?.erro ||
+        "Erro ao cadastrar a demanda"
       );
       setAlertOpen(true);
     } finally {
@@ -286,7 +286,7 @@ const DemandaRegisterPage = () => {
         minHeight: "100vh",
         width: "100%",
         bgcolor: "#f0f2f5",
-        p: { xs: 2, sm: 2 },
+        p: { xs: 2, sm: 3 },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -296,11 +296,12 @@ const DemandaRegisterPage = () => {
       <Box sx={{ width: "100%", maxWidth: "1200px" }}>
         <Typography
           variable="h5"
+          fontSize="25px"
           align="center"
           gutterBottom
           sx={{
             fontWeight: "bold",
-            color: INSTITUTIONAL_COLOR,
+            color: "#000000",
             textShadow: "1px 1px 4px rgba(0, 0, 0, 0.1)",
             mb: 4,
           }}
@@ -485,9 +486,20 @@ const DemandaRegisterPage = () => {
             multiline
             rows={4}
             variant="outlined"
-            required
             disabled={!allStudentsValidated}
-            sx={{ mb: 3, bgcolor: "#fff", borderRadius: "8px" }}
+            sx={{
+              mb: 3,
+              bgcolor: "#fff",
+              borderRadius: "8px",
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'grey',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: INSTITUTIONAL_COLOR, 
+                },
+              },
+            }}
           />
           <Box
             sx={{ display: "flex", gap: 2, flexWrap: "wrap", width: "100%" }}

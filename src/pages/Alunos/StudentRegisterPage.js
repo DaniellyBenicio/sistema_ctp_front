@@ -404,7 +404,7 @@ const StudentRegisterPage = () => {
         </Typography>
 
         {matriculaInputs.map((matriculaInput, index) => (
-          <StyledPaper key={index} elevation={3} sx={{ mb: 4 }}>
+          <StyledPaper key={index} elevation={3} sx={{ mb: 1 }}>
             <Typography
               variant="h6"
               sx={{ mb: 2, fontWeight: "medium", color: INSTITUTIONAL_COLOR }}
@@ -418,6 +418,7 @@ const StudentRegisterPage = () => {
                 onChange={(e) => handleMatriculaChange(index, e.target.value)}
                 inputProps={{ maxLength: 14, pattern: "[0-9]*" }}
                 disabled={isEditing || isStudentRegistered[index]}
+                sx={{ bgcolor: "#fff", borderRadius: "8px",  width: "85%"}}
                 variant="outlined"
               />
               {!isEditing && (

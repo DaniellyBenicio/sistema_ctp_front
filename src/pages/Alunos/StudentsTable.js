@@ -305,7 +305,8 @@ const StudentsTable = ({ searchValue }) => {
                       >
                         <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
                           <Tooltip title="Editar" arrow>
-                            <IconButton
+
+                            <IconButton color="primary"
                               onClick={() => handleEdit(student.matricula)}
                               sx={{ padding: "2px" }}
                             >
@@ -314,7 +315,7 @@ const StudentsTable = ({ searchValue }) => {
                           </Tooltip>
                           <Tooltip title="Ver detalhes" arrow>
                             <IconButton
-                              color="info"
+                              color="success"
                               onClick={() => handleViewDetails(student)}
                               sx={{ padding: "2px" }}
                             >

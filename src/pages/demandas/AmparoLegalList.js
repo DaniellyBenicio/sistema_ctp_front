@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import api from "../../service/api";
 
+const INSTITUTIONAL_COLOR = "#307c34";
+
 const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
   const [amparos, setAmparos] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -196,6 +198,12 @@ const AmparoLegalList = ({ selectedAmparos, onAmparoChange }) => {
                         tabIndex={-1}
                         disableRipple
                         inputProps={{ "aria-labelledby": labelId }}
+                        sx={{
+                          color: 'default',
+                          '&.Mui-checked': {
+                            color: INSTITUTIONAL_COLOR
+                          },
+                        }}
                       />
                       <ListItemText id={labelId} primary={amparo.nome} />
                     </>
