@@ -202,17 +202,17 @@ const UserFormDialog = ({
       }, 2000);
     } catch (err) {
       const errorMsg = err.response?.data?.mensagem || "Erro no servidor.";
-      setErrors({
-        general: errorMsg.includes("Email")
-          ? { email: errorMsg }
-          : errorMsg.includes("Matrícula")
-            ? { matricula: errorMsg }
-            : errorMsg.includes("Senha")
-              ? { senha: errorMsg }
-              : errorMsg.includes("Cargo")
-                ? { cargo: errorMsg }
-                : { general: errorMsg },
-      });
+      if (errorMsg.includes("Email")) {
+        setErrors({ email: errorMsg });
+      } else if (errorMsg.includes("Matrícula")) {
+        setErrors({ matricula: errorMsg });
+      } else if (errorMsg.includes("Senha")) {
+        setErrors({ senha: errorMsg });
+      } else if (errorMsg.includes("Cargo")) {
+        setErrors({ cargo: errorMsg });
+      } else {
+        setErrors({ general: errorMsg });
+      }
     } finally {
       setLoading(false);
     }
@@ -252,15 +252,9 @@ const UserFormDialog = ({
         >
           {isUpdate ? "Editar Usuário" : "Cadastrar Usuário"}
         </Typography>
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", right: 8, top: 8, color: "#000000" }}
-        >
-          <Close />
-        </IconButton>
       </DialogTitle>
       <DialogContent sx={{ padding: 3 }}>
-        <Grid container spacing={2}>
+        <Grid container spacing={0}>
           <Grid item xs={12}>
             <StyledTextField
               fullWidth
@@ -273,10 +267,37 @@ const UserFormDialog = ({
               onBlur={() => setFocusedField(null)}
               error={!!errors.nome}
               helperText={errors.nome}
-              required
+              InputLabelProps={{ required: false }} //
               variant="outlined"
-              InputLabelProps={{
-                shrink: focusedField === "nome" || formData.nome !== "",
+              sx={{
+                "& .MuiInputLabel-root": {
+                  color: "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                  transition: "color 0.3s ease, transform 0.3s ease",
+                },
+                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+                  color: "#27AE60",
+                },
+
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  backgroundColor: "transparent",
+                  "& input": {
+                    backgroundColor: "transparent !important",
+                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
+                    WebkitTextFillColor: "#000",
+                    transition: "background-color 5000s ease-in-out 0s",
+                  },
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
               }}
             />
           </Grid>
@@ -297,68 +318,164 @@ const UserFormDialog = ({
                   ? "Email inválido"
                   : errors.email
               }
-              required
+              InputLabelProps={{ required: false }}
               variant="outlined"
-              InputLabelProps={{
-                shrink: focusedField === "email" || formData.email !== "",
+              sx={{
+                "& .MuiInputLabel-root": {
+                  color: "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                  transition: "color 0.3s ease, transform 0.3s ease",
+                },
+                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+                  color: "#27AE60",
+                },
+
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  backgroundColor: "transparent",
+                  "& input": {
+                    backgroundColor: "transparent !important",
+                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
+                    WebkitTextFillColor: "#000",
+                    transition: "background-color 5000s ease-in-out 0s",
+                  },
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
               }}
             />
           </Grid>
-          {!isUpdate && (
-            <Grid item xs={12} md={6}>
+
+          <Grid container spacing={2}>
+            {!isUpdate && (
+              <Grid item xs={12} md={6}>
+                <StyledTextField
+                  fullWidth
+                  margin="normal"
+                  label="Senha"
+                  name="senha"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.senha}
+                  onChange={handleChange}
+                  onFocus={() => setFocusedField("senha")}
+                  onBlur={() => setFocusedField(null)}
+                  error={
+                    !!formData.senha &&
+                    (formData.senha.length < 8 || !!errors.senha)
+                  }
+                  helperText={
+                    formData.senha && formData.senha.length < 8
+                      ? "Mínimo 8 caracteres"
+                      : errors.senha
+                  }
+                  variant="outlined"
+                  InputLabelProps={{
+                    shrink: focusedField === "senha" || formData.senha !== "",
+                    required: false
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={togglePasswordVisibility}>
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    "& .MuiInputLabel-root": {
+                      color: "text.secondary",
+                      fontSize: { xs: "0.9rem", md: "1rem" },
+                      transition: "color 0.3s ease, transform 0.3s ease",
+                    },
+                    "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+                      color: "#27AE60",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "8px",
+                      backgroundColor: "transparent",
+                      "& input": {
+                        backgroundColor: "transparent !important",
+                        WebkitBoxShadow: "0 0 0 1000px transparent inset",
+                        WebkitTextFillColor: "#000",
+                        transition: "background-color 5000s ease-in-out 0s",
+                      },
+                      "& fieldset": {
+                        borderColor: "#E0E0E0",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#27AE60",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#27AE60",
+                      },
+                    },
+                  }}
+                />
+              </Grid>
+            )}
+
+            <Grid item xs={12} md={isUpdate ? 12 : 6}>
               <StyledTextField
                 fullWidth
                 margin="normal"
-                label="Senha"
-                name="senha"
-                type={showPassword ? "text" : "password"}
-                value={formData.senha}
+                label="Matrícula"
+                name="matricula"
+                type="text"
+                value={formData.matricula}
                 onChange={handleChange}
-                onFocus={() => setFocusedField("senha")}
-                onBlur={() => setFocusedField(null)}
-                error={
-                  !!formData.senha &&
-                  (formData.senha.length < 8 || !!errors.senha)
-                }
-                helperText={
-                  formData.senha && formData.senha.length < 8
-                    ? "Mínimo 8 caracteres"
-                    : errors.senha
-                }
-                required
+                disabled={isUpdate}
+                error={!!errors.matricula}
+                helperText={errors.matricula}
+                InputLabelProps={{ required: false }}
                 variant="outlined"
-                InputLabelProps={{
-                  shrink: focusedField === "senha" || formData.senha !== "",
+                inputProps={{
+                  pattern: "[0-9]*"
                 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={togglePasswordVisibility}>
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
+                sx={{
+                  "& .MuiInputLabel-root": {
+                    color: "text.secondary",
+                    fontSize: { xs: "0.9rem", md: "1rem" },
+                    transition: "color 0.3s ease, transform 0.3s ease",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+                    color: "#27AE60",
+                  },
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    backgroundColor: isUpdate ? "#f5f5f5" : "transparent",
+                    "& input": {
+                      backgroundColor: "transparent",
+                      WebkitBoxShadow: "0 0 0 1000px transparent inset",
+                      WebkitTextFillColor: "#000",
+                      transition: "background-color 5000s ease-in-out 0s",
+                    },
+                    "& fieldset": {
+                      borderColor: "#E0E0E0",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#27AE60",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#27AE60",
+                    },
+                    "&.Mui-disabled": {
+                      backgroundColor: "#f5f5f5",
+                      "& input": {
+                        WebkitTextFillColor: "#9e9e9e",
+                      }
+                    },
+                  },
                 }}
               />
             </Grid>
-          )}
-          <Grid item xs={12} md={isUpdate ? 12 : 6}>
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Matrícula"
-              type="text"
-              value={formData.matricula}
-              onChange={handleChange}
-              disabled={isUpdate}
-              error={!!errors.matricula}
-              helperText={errors.matricula}
-              required
-              variant="outlined"
-              inputProps={{
-                pattern: "[0-9]*"
-              }}
-            />
           </Grid>
           <Grid item xs={12}>
             <FormControl
@@ -366,6 +483,35 @@ const UserFormDialog = ({
               margin="normal"
               error={!!errors.cargo}
               variant="outlined"
+              sx={{
+                "& .MuiInputLabel-root": {
+                  color: "text.secondary",
+                  fontSize: { xs: "0.9rem", md: "1rem" },
+                  transition: "color 0.3s ease, transform 0.3s ease",
+                },
+                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+                  color: "#27AE60",
+                },
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  backgroundColor: "transparent",
+                  "& input": {
+                    backgroundColor: "transparent !important",
+                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
+                    WebkitTextFillColor: "#000",
+                    transition: "background-color 5000s ease-in-out 0s",
+                  },
+                  "& fieldset": {
+                    borderColor: "#E0E0E0",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#27AE60",
+                  },
+                },
+              }}
             >
               <InputLabel id="cargo-label">Cargo</InputLabel>
               <StyledSelect
@@ -376,6 +522,7 @@ const UserFormDialog = ({
                 onFocus={() => setFocusedField("cargo")}
                 onBlur={() => setFocusedField(null)}
                 required
+                label="Cargo"
               >
                 {cargos.map((cargoItem) => (
                   <MenuItem key={cargoItem.id} value={cargoItem.id}>
@@ -387,6 +534,7 @@ const UserFormDialog = ({
             </FormControl>
           </Grid>
         </Grid>
+
         {errors.general && (
           <Typography color="error" sx={{ mt: 2 }}>
             {errors.general}
@@ -402,7 +550,6 @@ const UserFormDialog = ({
         sx={{
           justifyContent: "center",
           padding: "16px 24px",
-          backgroundColor: "#f9f9f9",
           gap: 3,
         }}
       >
