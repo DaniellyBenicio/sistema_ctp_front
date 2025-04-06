@@ -76,7 +76,7 @@ const StudentRegisterPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isStudentRegistered, setIsStudentRegistered] = useState([]);
-  const [dataReturned, setDataReturned] = useState([false]); // Controla se os dados foram retornados
+  const [dataReturned, setDataReturned] = useState([false]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -382,14 +382,14 @@ const StudentRegisterPage = () => {
         minHeight: "100vh",
         width: "100%",
         bgcolor: "#f0f2f5",
-        p: { xs: 2, sm: 2 },
+        p: { xs: 1, sm: 2 },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         boxSizing: "border-box",
       }}
     >
-      <Box sx={{ width: "100%", maxWidth: "1200px" }}>
+      <Box sx={{ width: "135%", maxWidth: "1200px" }}>
         <Typography
           variant="h5"
           align="center"

@@ -581,7 +581,7 @@ const DemandaDetailsPage = () => {
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}
-            onClick={() => navigate("/demands")}
+            onClick={() => navigate(-1)}
             disabled={loading}
             sx={{
               borderColor: "#2E7D32",

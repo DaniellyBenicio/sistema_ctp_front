@@ -23,8 +23,8 @@ const Students = () => {
         justifyContent: "center",
         flexDirection: "column",
         width: "100%",
-        marginTop: { xs: 2, sm: 4 },
-        padding: { xs: "16px 2px", sm: "16px 0" },
+        marginTop: { xs: 0, sm: 4 },
+        padding: { xs: "16px 2px", sm: "0px 0" },
       }}
     >
       <Typography
@@ -34,7 +34,6 @@ const Students = () => {
           color: "#333",
           mb: { xs: 4, sm: 5 },
           textAlign: "center",
-          fontFamily: '"Open Sans", sans-serif',
           fontSize: { xs: "1.25rem", sm: "1.5rem" },
         }}
       >
@@ -48,11 +47,11 @@ const Students = () => {
           justifyContent: "space-between",
           alignItems: { xs: "stretch", sm: "center" },
           gap: { xs: 1, sm: 2 },
-          width: { xs: "100%", sm: "90%" },
+          width: { xs: "90%", sm: "90%" },
           maxWidth: "1200px",
           alignSelf: "center",
-          px: { xs: 0, sm: 1 }, // Adicionado padding de 8px (1 unidade = 8px) para alinhar com a tabela
-          mb: { xs: 0.5, sm: 1 },
+          px: { xs: 0, sm: 1 },
+          mb: { xs: 2, sm: 1 },
         }}
       >
         <SearchBar
@@ -100,7 +99,7 @@ const Students = () => {
 
       <Box
         sx={{
-          width: { xs: "100%", sm: "90%" },
+          width: { xs: "90%", sm: "90%" },
           maxWidth: "1200px",
           alignSelf: "center",
           mx: "auto",

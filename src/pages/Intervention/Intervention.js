@@ -14,6 +14,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonIcon from "@mui/icons-material/Person";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Intervention = ({
   demanda,
@@ -107,7 +108,6 @@ const Intervention = ({
 
   return (
     <Paper sx={{ p: 3, mb: 3, borderRadius: "12px", maxWidth: "1100px", mx: "auto" }}>
-      {/* Alert Section */}
       {showAlert && (
         <CustomAlert message={alertMessage} type={alertType} onClose={handleCloseAlert} />
       )}
@@ -186,7 +186,8 @@ const Intervention = ({
                 setNovaIntervencao("");
                 setMostrarCampoIntervencao(false);
               }}
-              sx={{ borderColor: "#2E7D32", color: "#2E7D32", borderRadius: "8px" }}
+              sx={{ borderColor: "#D32F2F", color: "#D32F2F", borderRadius: "8px" }}
+              startIcon={<CloseIcon />}
             >
               Cancelar
             </Button>
