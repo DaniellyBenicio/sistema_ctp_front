@@ -24,6 +24,13 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
   "& .MuiInputBase-root": {
     padding: "0px",
     height: "36px",
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#307c34", 
+    },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#307c34", 
+      borderWidth: "1px !important",
+    },
   },
   "& .MuiInputLabel-root": {
     fontSize: "0.9rem",
@@ -35,7 +42,7 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
     textAlign: "left",
     fontWeight: 500,
     "&.Mui-focused": {
-      color: theme.palette.primary.main,
+      color: "#307c34", 
     },
   },
   "& .MuiSelect-select": {
@@ -45,14 +52,7 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
     alignItems: "center",
   },
   "& .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#ccc",
-  },
-  "&:hover .MuiOutlinedInput-notchedOutline": {
-    borderColor: theme.palette.primary.main,
-  },
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: theme.palette.primary.main,
-    borderWidth: "1px !important",
+    borderColor: "#ccc", 
   },
 }));
 
@@ -141,8 +141,8 @@ const FiltersSection = ({ onFilterChange }) => {
   const today = () => {
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -179,7 +179,10 @@ const FiltersSection = ({ onFilterChange }) => {
           mb: 1,
         }}
       >
-        <Typography variant="subtitle1" style={{ fontWeight: '', fontSize: '18px', paddingTop: '8px' }}>
+        <Typography
+          variant="subtitle1"
+          style={{ fontWeight: "", fontSize: "18px", paddingTop: "8px" }}
+        >
           Gerenciamento de Demandas
         </Typography>
         <Button
@@ -253,7 +256,6 @@ const FiltersSection = ({ onFilterChange }) => {
                 </ListItem>
               ))}
             </List>
-
           )}
         </Grid>
         <Grid item xs={6} sm={2} md={1.8}>
