@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, useMediaQuery } from "@mui/material";
 import SearchBar from "../../components/searchBar/SearchBar";
 import UsersTable from "./UsersTable";
 import UserRegisterPopup from "./UserRegisterPopup";
@@ -21,6 +21,7 @@ export const UsersList = () => {
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
   const [userToUpdate, setUserToUpdate] = useState(null);
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     if (userRole !== "Admin") {
@@ -118,9 +119,11 @@ export const UsersList = () => {
         display: "flex",
         justifyContent: "center",
         flexDirection: "column",
-        width: "100%",
+        width: "90%", // Largura de 90% em todas as telas
         marginTop: 0,
-        padding: { xs: "2% 5%", sm: "2% 0%" },
+        padding: { xs: "3% 0%", sm: "2% 0%" },
+        marginLeft: { xs: 'auto', sm: 'auto' }, // Margem automática nas laterais
+        marginRight: { xs: 'auto', sm: 'auto' },
       }}
     >
       {alert.show && (
@@ -153,7 +156,7 @@ export const UsersList = () => {
           alignItems: { xs: "stretch", sm: "center" },
           gap: { xs: 1, sm: 2 },
           mb: 2,
-          width: { xs: "100%", sm: "90%" },
+          width: "100%", // Ocupa 100% da largura do Box pai (que já tem 90% da tela)
           maxWidth: "1200px",
           alignSelf: "center",
         }}
@@ -196,10 +199,11 @@ export const UsersList = () => {
 
       <Box
         sx={{
-          width: { xs: "100%", sm: "90%" },
+          width: "100%", // Ocupa 100% da largura do Box pai
           maxWidth: "1200px",
           alignSelf: "center",
           mx: "auto",
+          overflowX: 'auto',
         }}
       >
         {filteredUsers.length === 0 && searchValue ? (
@@ -220,6 +224,7 @@ export const UsersList = () => {
             users={filteredUsers}
             onDelete={handleDeleteUser}
             onUpdate={handleUpdateUser}
+            isMobileWidth={isMobile}
             sx={{
               "& .MuiTable-root": {
                 minWidth: "100%",

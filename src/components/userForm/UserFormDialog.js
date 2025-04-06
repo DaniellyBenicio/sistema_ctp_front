@@ -40,7 +40,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 const StyledSelect = styled(Select)(({ theme }) => ({
-  height: "40px",
+  height: "50px",
   fontSize: "0.875rem",
   "& .MuiSelect-select": {
     padding: "8px 14px",
@@ -164,17 +164,17 @@ const UserFormDialog = ({
 
     const apiData = isUpdate
       ? {
-          nome: formData.nome,
-          email: formData.email,
-          cargo: formData.cargo,
-        }
+        nome: formData.nome,
+        email: formData.email,
+        cargo: formData.cargo,
+      }
       : {
-          nome: formData.nome,
-          matricula: matriculaNum,
-          email: formData.email,
-          senha: formData.senha,
-          cargo: formData.cargo,
-        };
+        nome: formData.nome,
+        matricula: matriculaNum,
+        email: formData.email,
+        senha: formData.senha,
+        cargo: formData.cargo,
+      };
 
     try {
       const response = isUpdate
@@ -206,12 +206,12 @@ const UserFormDialog = ({
         general: errorMsg.includes("Email")
           ? { email: errorMsg }
           : errorMsg.includes("Matrícula")
-          ? { matricula: errorMsg }
-          : errorMsg.includes("senha")
-          ? { senha: errorMsg }
-          : errorMsg.includes("Cargo")
-          ? { cargo: errorMsg }
-          : { general: errorMsg },
+            ? { matricula: errorMsg }
+            : errorMsg.includes("Senha")
+              ? { senha: errorMsg }
+              : errorMsg.includes("Cargo")
+                ? { cargo: errorMsg }
+                : { general: errorMsg },
       });
     } finally {
       setLoading(false);
@@ -347,7 +347,6 @@ const UserFormDialog = ({
               fullWidth
               margin="normal"
               label="Matrícula"
-              name="matricula"
               type="text"
               value={formData.matricula}
               onChange={handleChange}
@@ -356,8 +355,9 @@ const UserFormDialog = ({
               helperText={errors.matricula}
               required
               variant="outlined"
-              InputLabelProps={{ shrink: true }}
-              inputProps={{ pattern: "[0-9]*" }}
+              inputProps={{
+                pattern: "[0-9]*"
+              }}
             />
           </Grid>
           <Grid item xs={12}>

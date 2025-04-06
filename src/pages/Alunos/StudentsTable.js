@@ -18,7 +18,7 @@ import { Edit, Visibility } from "@mui/icons-material";
 import api from "../../service/api";
 import { useNavigate } from "react-router-dom";
 import StudentDetailsModal from "./StudentDetails";
-import Paginate from "../../components/paginate//Paginate";
+import Paginate from "../../components/paginate/Paginate";
 
 const StudentsTable = ({ searchValue }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
