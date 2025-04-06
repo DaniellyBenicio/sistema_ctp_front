@@ -45,15 +45,34 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
-  "& .MuiInputBase-root": {
+  "& .MuiOutlinedInput-root": {
     height: "40px",
     fontSize: "0.875rem",
+    width: "100%",
+    borderRadius: "8px",
+    backgroundColor: "#fff",
+    "& fieldset": {
+      borderColor: "#ced4da", 
+    },
+    "&:hover fieldset": {
+      borderColor: "#388E3C", 
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: INSTITUTIONAL_COLOR, 
+    },
+    "& .MuiInputBase-input": {
+      padding: "8px 14px", 
+    },
   },
   "& .MuiInputLabel-root": {
     fontSize: "0.875rem",
     transform: "translate(14px, 10px) scale(1)",
     "&.MuiInputLabel-shrink": {
       transform: "translate(14px, -6px) scale(0.75)",
+      color: "#27AE60", 
+    },
+    "&.Mui-focused": {
+      color: "#27AE60", 
     },
   },
 }));
