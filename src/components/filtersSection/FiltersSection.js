@@ -303,7 +303,7 @@ const FiltersSection = ({ onFilterChange }) => {
             >
               <MenuItem value="">Todas</MenuItem>
               <MenuItem value="criadaPorMim">Criada por Mim</MenuItem>
-              <MenuItem value="recebidas">Recebidas</MenuItem>
+              <MenuItem value="encaminhada">Recebidas</MenuItem>
             </Select>
           </StyledFormControl>
         </Grid>
