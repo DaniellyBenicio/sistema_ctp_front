@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IconButton,
   Paper,
@@ -19,6 +19,7 @@ import { Send, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import ForwardingPopup from "../Encaminhamentos/ForwardingPopup.js";
 import Paginate from "../../components/paginate/Paginate.js";
+import api from "../../service/api";
 
 const DemandsTable = ({
   demands,
@@ -36,6 +37,7 @@ const DemandsTable = ({
   const [selectedDemandId, setSelectedDemandId] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedDemand, setSelectedDemand] = useState(null);
+  const [canForward, setCanForward] = useState({});
 
   const handleOpenPopup = (demandId) => {
     setSelectedDemandId(demandId);
@@ -47,6 +49,7 @@ const DemandsTable = ({
     setSelectedDemandId(null);
     if (onDemandUpdated) {
       onDemandUpdated();
+      fetchCanForwardStatus();
     }
   };
 
@@ -65,6 +68,30 @@ const DemandsTable = ({
   };
 
   const open = Boolean(anchorEl);
+
+  const fetchCanForwardStatus = async () => {
+    const token = localStorage.getItem("token");
+    const updatedCanForward = {};
+
+    try {
+      for (const demand of demands) {
+        const response = await api.get(`/demandas/${demand.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        updatedCanForward[demand.id] = response.data.podeIntervir;
+      }
+      setCanForward(updatedCanForward);
+    } catch (err) {
+      console.error(
+        "Erro ao verificar se pode encaminhar:",
+        err.response?.data || err
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchCanForwardStatus();
+  }, [demands]);
 
   const getUniqueRecipients = (destinatarios) => {
     if (!destinatarios || destinatarios.length === 0) return [];
@@ -131,6 +158,8 @@ const DemandsTable = ({
                   title={
                     !demand.status
                       ? "Você não pode enviar uma demanda que está fechada"
+                      : canForward[demand.id] === false
+                      ? "Você já encaminhou essa demanda"
                       : "Encaminhar demanda"
                   }
                 >
@@ -138,7 +167,9 @@ const DemandsTable = ({
                     <IconButton
                       color="success"
                       onClick={() => handleOpenPopup(demand.id)}
-                      disabled={!demand.status}
+                      disabled={
+                        !demand.status || canForward[demand.id] === false
+                      }
                     >
                       <Send />
                     </IconButton>
@@ -334,6 +365,8 @@ const DemandsTable = ({
                   title={
                     !demand.status
                       ? "Você não pode enviar uma demanda que está fechada"
+                      : canForward[demand.id] === false
+                      ? "Você já encaminhou essa demanda"
                       : "Encaminhar demanda"
                   }
                 >
@@ -341,7 +374,9 @@ const DemandsTable = ({
                     <IconButton
                       color="success"
                       onClick={() => handleOpenPopup(demand.id)}
-                      disabled={!demand.status}
+                      disabled={
+                        !demand.status || canForward[demand.id] === false
+                      }
                     >
                       <Send />
                     </IconButton>
