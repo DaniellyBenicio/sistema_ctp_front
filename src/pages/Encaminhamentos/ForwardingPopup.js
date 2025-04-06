@@ -83,6 +83,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       .toString()
       .padStart(2, "0")}/${date.getFullYear()}`;
   };
+  const cargos_excluidos = ["Funcionario CTP", "Diretor Geral", "Diretor Ensino"];
 
   const fetchUsuarios = async () => {
     setLoading(true);
@@ -91,7 +92,10 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       const response = await api.get("/usuarios-encaminhamento", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUsuarios(response.data.usuarios || []);
+      const usuariosFiltrados = (response.data.usuarios || []).filter(
+        (usuario) => !cargos_excluidos.includes(usuario.Cargo?.nome)
+      );
+      setUsuarios(usuariosFiltrados);
     } catch (err) {
       setAlert({ message: "Erro ao carregar usuários", type: "error" });
       console.error("Erro ao buscar usuários:", err.response?.data || err);
@@ -99,7 +103,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       setLoading(false);
     }
   };
-
+  
   const fetchEncaminhamentos = async () => {
     setLoading(true);
     try {
