@@ -12,7 +12,7 @@ export const Demands = () => {
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const pageSize = 6;
+  const pageSize = 4;
 
   useEffect(() => {
     fetchDemands();
