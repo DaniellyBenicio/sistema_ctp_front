@@ -18,6 +18,7 @@ import api from "../../service/api";
 import { CustomAlert } from "../../components/alert/CustomAlert";
 
 const INSTITUTIONAL_COLOR = "#307c34";
+const DEFAULT_TEXT_COLOR = "#000000";
 
 const StyledPaper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -41,31 +42,29 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     borderRadius: "8px",
     backgroundColor: "#fff",
     "& .MuiInputBase-input": {
-      color: INSTITUTIONAL_COLOR,
+      color: DEFAULT_TEXT_COLOR,
     },
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#ced4da", 
+      borderColor: "#ced4da",
     },
     "&:hover fieldset": {
-      borderColor: "#388E3C", 
+      borderColor: "#388E3C",
     },
     "&.Mui-focused fieldset": {
-      borderColor: INSTITUTIONAL_COLOR + " !important", 
+      borderColor: INSTITUTIONAL_COLOR + " !important",
     },
   },
   "& .MuiInputLabel-root": {
     fontSize: "0.875rem",
-    color: INSTITUTIONAL_COLOR + " !important", 
     transform: "translate(14px, 10px) scale(1)",
   },
   "& .MuiInputLabel-shrink": {
     transform: "translate(14px, -6px) scale(0.75)",
-    color: INSTITUTIONAL_COLOR + " !important", 
   },
   "& .Mui-focused.MuiInputLabel-root": {
-    color: INSTITUTIONAL_COLOR + " !important", 
+    color: INSTITUTIONAL_COLOR + " !important",
   },
   "& .MuiInputBase-multiline": {
     height: "auto",
@@ -79,32 +78,28 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     borderRadius: "8px",
     backgroundColor: "#fff",
     "& .MuiInputBase-input": {
-      color: INSTITUTIONAL_COLOR, 
+      color: DEFAULT_TEXT_COLOR,
     },
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#ced4da", 
+      borderColor: "#ced4da",
     },
     "&:hover fieldset": {
-      borderColor: "#388E3C", 
+      borderColor: "#388E3C",
     },
     "&.Mui-focused fieldset": {
-      borderColor: INSTITUTIONAL_COLOR + " !important", 
+      borderColor: INSTITUTIONAL_COLOR + " !important",
     },
   },
   "& .MuiInputLabel-root": {
     fontSize: "0.875rem",
-    color: INSTITUTIONAL_COLOR + " !important", 
     transform: "translate(14px, 10px) scale(1)",
   },
   "& .MuiInputLabel-shrink": {
     transform: "translate(14px, -6px) scale(0.75)",
-    color: INSTITUTIONAL_COLOR + " !important", 
   },
-  "& .Mui-focused.MuiInputLabel-root": {
-    color: INSTITUTIONAL_COLOR + " !important", 
-  },
+  "& .Mui-focused.MuiInputLabel-root": {},
   "& .MuiAutocomplete-endAdornment": {
     display: "none",
   },
@@ -292,6 +287,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
                 label="Destinatário"
                 placeholder="Digite para buscar..."
                 margin="normal"
+                color="#FFFFFF"
               />
             )}
             fullWidth
@@ -306,7 +302,6 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             margin="normal"
             multiline
             rows={3}
-            required
             disabled={!podeEncaminhar || loading}
           />
           <StyledTextField
