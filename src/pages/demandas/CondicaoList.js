@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import api from "../../service/api";
 
+const INSTITUTIONAL_COLOR = "#307c34";
+
 const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
   const [condicoes, setCondicoes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,10 +33,6 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
     } catch (err) {
       setError("Erro ao carregar condições");
       console.error("Erro ao buscar condições:", err);
-      if (err.response) {
-        console.error("Status:", err.response.status);
-        console.error("Dados do erro:", err.response.data);
-      }
     } finally {
       setLoading(false);
     }
@@ -118,10 +116,13 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
       <Box
         sx={{
           maxHeight: 200,
-          overflow: "auto",
+          overflowY: "auto",
+          overflowX: "hidden",
           border: "1px solid #ccc",
           borderRadius: 1,
           bgcolor: "#fff",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {loading ? (
@@ -133,7 +134,7 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
         ) : condicoes.length === 0 ? (
           <Typography sx={{ p: 2 }}>Nenhuma condição disponível</Typography>
         ) : (
-          <List>
+          <List sx={{ padding: 0 }}>
             {condicoes.map((condicao) => {
               const labelId = `checkbox-list-label-${condicao.nome}`;
               const isSelected = selectedCondicoes.some(
@@ -150,7 +151,11 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
                     e.stopPropagation();
                     handleToggle(condicao);
                   }}
-                  sx={{ padding: "0 8px" }}
+                  sx={{
+                    padding: "0 8px",
+                    maxWidth: "100%",
+                    overflow: "hidden",
+                  }}
                 >
                   {isOutra && outraSelecionada ? (
                     <Box
@@ -159,10 +164,11 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
                         alignItems: "center",
                         width: "100%",
                         gap: 1,
+                        maxWidth: "100%",
+                        flexWrap: "nowrap",
                       }}
                     >
                       <TextField
-                        fullWidth
                         value={novaCondicao}
                         onChange={handleNovaCondicaoChange}
                         onClick={(e) => e.stopPropagation()}
@@ -170,15 +176,35 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
                         variant="outlined"
                         size="small"
                         disabled={loading}
+                        sx={{
+                          flex: 1,
+                          minWidth: 0,
+                          "& .MuiOutlinedInput-root": {
+                            height: "35px",
+                            fontSize: "0.875rem",
+                            "& fieldset": {
+                              borderColor: "#ced4da",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "#388E3C",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: INSTITUTIONAL_COLOR,
+                            },
+                          },
+                        }}
                       />
                       <Button
                         variant="contained"
                         onClick={handleSalvarCondicao}
                         disabled={loading || !novaCondicao.trim()}
                         sx={{
-                          bgcolor: "#2f9e41",
-                          "&:hover": { bgcolor: "#278735" },
+                          bgcolor: INSTITUTIONAL_COLOR,
+                          "&:hover": { bgcolor: "#265b28" },
                           minWidth: "80px",
+                          height: "35px",
+                          fontSize: "0.875rem",
+                          textTransform: "none",
                         }}
                       >
                         Salvar
@@ -192,8 +218,25 @@ const CondicaoList = ({ selectedCondicoes, onCondicaoChange }) => {
                         tabIndex={-1}
                         disableRipple
                         inputProps={{ "aria-labelledby": labelId }}
+                        sx={{
+                          color: "#ced4da",
+                          "&.Mui-checked": {
+                            color: INSTITUTIONAL_COLOR,
+                          },
+                          "&:hover": {
+                            color: "#388E3C",
+                          },
+                        }}
                       />
-                      <ListItemText id={labelId} primary={condicao.nome} />
+                      <ListItemText
+                        id={labelId}
+                        primary={condicao.nome}
+                        sx={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      />
                     </>
                   )}
                 </ListItem>
