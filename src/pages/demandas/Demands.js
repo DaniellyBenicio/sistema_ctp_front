@@ -141,7 +141,7 @@ export const Demands = () => {
       <Box
         sx={{
           width: { xs: "100%", sm: "90%" },
-          maxWidth: "1200px",
+          maxWidth: "1150px",
           alignSelf: "center",
           mx: "auto",
         }}
@@ -152,12 +152,12 @@ export const Demands = () => {
             color="textSecondary"
             align="center"
             sx={{
-              mt: 2,
+              mt: 4,
               fontSize: "0.875rem",
               fontFamily: '"Open Sans", sans-serif',
             }}
           >
-            Nenhuma demanda encontrada
+            Nenhuma demanda aberta encontrada
           </Typography>
         ) : (
           <DemandsTable

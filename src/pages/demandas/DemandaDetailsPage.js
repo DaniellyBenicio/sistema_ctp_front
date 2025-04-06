@@ -522,7 +522,7 @@ const DemandaDetailsPage = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 400,
+            width: 330,
             bgcolor: "white",
             borderRadius: "12px",
             boxShadow: 24,
@@ -533,7 +533,6 @@ const DemandaDetailsPage = () => {
             id="confirm-close-modal"
             variant="h6"
             sx={{
-              color: "#2E7D32",
               fontWeight: "bold",
               mb: 2,
               textAlign: "center",
@@ -541,20 +540,21 @@ const DemandaDetailsPage = () => {
           >
             Fechar Demanda
           </Typography>
-          <Typography id="confirm-close-description" sx={{ mb: 3 }}>
-            Deseja realmente fechar a demanda? Ao confirmar, ela será fechada e
+          <Typography id="confirm-close-description" sx={{ mb: 3, textAlign: 'center' }}>
+            Deseja realmente fechar a demanda?<br /> Ao confirmar, ela será fechada e
             ninguém poderá mais intervir.
           </Typography>
-          <Stack direction="row" spacing={2} justifyContent="center">
+          <Stack direction="row" spacing={3} justifyContent="center">
             <Button
               variant="outlined"
               onClick={handleCancelCloseDemanda}
               disabled={loading}
               sx={{
-                borderColor: "#D32F2F",
-                color: "#D32F2F",
+                bgcolor: "#D32F2F",
+                "&:hover": { bgcolor: "#B71C1C" }, 
                 borderRadius: "8px",
-                "&:hover": { borderColor: "#B71C1C", color: "#B71C1C" },
+                color: "white",
+                borderColor: "transparent", 
               }}
             >
               Não
@@ -597,8 +597,8 @@ const DemandaDetailsPage = () => {
                 !podeIntervir
                   ? "Você não tem permissão para fechar esta demanda no momento"
                   : !temIntervencoes()
-                  ? "É necessário pelo menos uma intervenção para fechar a demanda"
-                  : ""
+                    ? "É necessário pelo menos uma intervenção para fechar a demanda"
+                    : ""
               }
             >
               <span>
@@ -608,10 +608,10 @@ const DemandaDetailsPage = () => {
                   onClick={handleFecharDemanda}
                   disabled={loading || !podeIntervir || !temIntervencoes()}
                   sx={{
-                    bgcolor: "#2E7D32",
+                    bgcolor: "#D32F2F",
                     color: "white",
                     borderRadius: "8px",
-                    "&:hover": { bgcolor: "#1B5E20" },
+                    "&:hover": { bgcolor: "#B71C1C" },
                     "&.Mui-disabled": {
                       bgcolor: "#B0BEC5",
                       color: "#FFFFFF",

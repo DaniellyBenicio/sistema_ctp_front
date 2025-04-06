@@ -167,7 +167,7 @@ const DemandaRegisterPage = () => {
       const errorMessage =
         err.response?.data?.mensagem ===
         "Aluno não encontrado na base de dados local"
-          ? "Aluno não encontrado na base de dados, procure um funcionário da CTP para cadastrá-lo."
+          ? "Aluno não encontrado na base de dados. Procure um funcionário da CTP para cadastrá-lo."
           : "Erro ao buscar aluno. Verifique a matrícula e tente novamente.";
       setError(errorMessage);
       setAlertOpen(true);

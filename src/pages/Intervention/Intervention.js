@@ -8,7 +8,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import BuildIcon from "@mui/icons-material/Build";
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import AddIcon from "@mui/icons-material/Add";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonIcon from "@mui/icons-material/Person";
@@ -113,7 +113,7 @@ const Intervention = ({
       )}
 
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-        <BuildIcon sx={{ color: "#2E7D32" }} />
+        <QuestionAnswerIcon sx={{ color: "#2E7D32" }} />
         <Typography variant="h6" sx={{ color: "#2E7D32", fontWeight: "bold" }}>
           Intervenções
         </Typography>

@@ -138,6 +138,16 @@ const FiltersSection = ({ onFilterChange }) => {
     }
   };
 
+  const today = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const todayFormatted = today();
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -169,7 +179,9 @@ const FiltersSection = ({ onFilterChange }) => {
           mb: 1,
         }}
       >
-        <Typography variant="subtitle1">Gerenciamento de Demandas</Typography>
+        <Typography variant="subtitle1" style={{ fontWeight: '', fontSize: '18px', paddingTop: '8px' }}>
+          Gerenciamento de Demandas
+        </Typography>
         <Button
           variant="contained"
           sx={{
@@ -179,7 +191,7 @@ const FiltersSection = ({ onFilterChange }) => {
               transform: "scale(1.05)",
             },
             minWidth: "140px",
-            height: "40px",
+            height: "35px",
             fontSize: "0.9rem",
             fontWeight: 600,
             textTransform: "none",
@@ -191,9 +203,9 @@ const FiltersSection = ({ onFilterChange }) => {
           Abrir Demanda
         </Button>
       </Box>
-      <Divider sx={{ mb: 1, mt: 0.5 }} />
-      <Grid container spacing={1}>
-        <Grid item xs={12} sm={5} md={4} sx={{ position: "relative" }}>
+      <Divider sx={{ mb: 3, mt: 0.5 }} />
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={5} md={4.3} sx={{ position: "relative" }}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="nomeAluno">Nome do Aluno</InputLabel>
             <TextField
@@ -211,12 +223,13 @@ const FiltersSection = ({ onFilterChange }) => {
                 position: "absolute",
                 zIndex: 1000,
                 bgcolor: "background.paper",
-                width: "100%",
-                maxHeight: filteredStudents.length > 5 ? 80 : "fit-content",
-                overflowY: filteredStudents.length > 5 ? "auto" : "hidden",
-                marginTop: "-1px",
-                border: "1px solid rgba(0, 0, 0, 0.12)",
-                borderRadius: "2px",
+                width: inputRef.current ? inputRef.current.offsetWidth : "100%",
+                maxHeight: 200,
+                overflowY: "auto",
+                marginTop: "-7px",
+                boxShadow: 3,
+                borderRadius: 1,
+                p: 0,
               }}
             >
               {filteredStudents.map((student) => (
@@ -224,15 +237,26 @@ const FiltersSection = ({ onFilterChange }) => {
                   key={student.matricula}
                   button
                   onClick={() => handleStudentSelect(student.nome)}
-                  sx={{ "&:hover": { backgroundColor: "#f5f5f5" } }}
+                  sx={{
+                    px: 2,
+                    py: 1.5,
+                    borderBottom: "1px solid #f0f0f0",
+                    "&:hover": {
+                      backgroundColor: "#e3f2fd",
+                    },
+                    "&:last-child": {
+                      borderBottom: "none",
+                    },
+                  }}
                 >
                   {student.nome}
                 </ListItem>
               ))}
             </List>
+
           )}
         </Grid>
-        <Grid item xs={6} sm={2} md={2}>
+        <Grid item xs={6} sm={2} md={1.8}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="date">Data</InputLabel>
             <TextField
@@ -242,10 +266,13 @@ const FiltersSection = ({ onFilterChange }) => {
               value={filters.date}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
+              inputProps={{
+                max: todayFormatted,
+              }}
             />
           </StyledFormControl>
         </Grid>
-        <Grid item xs={6} sm={3} md={3}>
+        <Grid item xs={6} sm={3} md={3.8}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="cursoId">Curso</InputLabel>
             <Select
@@ -255,7 +282,7 @@ const FiltersSection = ({ onFilterChange }) => {
               onChange={handleChange}
               IconComponent={ArrowDropDown}
             >
-              <MenuItem value="">Todas</MenuItem>
+              <MenuItem value="">Todos</MenuItem>
               {courses.map((curso) => (
                 <MenuItem key={curso.id} value={curso.id}>
                   {curso.nome}
@@ -283,7 +310,7 @@ const FiltersSection = ({ onFilterChange }) => {
         <Grid
           item
           xs={12}
-          sx={{ display: "flex", gap: 1, justifyContent: "flex-start", mt: 1 }}
+          sx={{ display: "flex", gap: 3, justifyContent: "flex-start", mt: 1 }}
         >
           <Button
             variant="contained"
@@ -293,7 +320,7 @@ const FiltersSection = ({ onFilterChange }) => {
               "&:hover": { bgcolor: "#2E5233" },
               height: "36px",
               minWidth: "80px",
-              fontSize: "0.8rem",
+              fontSize: "0.9rem",
               textTransform: "none",
             }}
           >
@@ -309,7 +336,7 @@ const FiltersSection = ({ onFilterChange }) => {
               "&:hover": { backgroundColor: "#f8f9fa" },
               height: "36px",
               minWidth: "80px",
-              fontSize: "0.8rem",
+              fontSize: "0.9rem",
               textTransform: "none",
             }}
           >

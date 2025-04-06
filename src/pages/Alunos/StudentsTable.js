@@ -134,7 +134,7 @@ const StudentsTable = ({ searchValue }) => {
                   <strong>Condições:</strong>
                 </Typography>
                 {Array.isArray(student.condicoes) &&
-                student.condicoes.length > 0 ? (
+                  student.condicoes.length > 0 ? (
                   student.condicoes.map((condicao, index) => (
                     <Typography key={index} sx={{ pl: 2, fontSize: "0.7rem" }}>
                       - {condicao}
@@ -298,29 +298,30 @@ const StudentsTable = ({ searchValue }) => {
                       <TableCell
                         align="center"
                         sx={{
-                          padding: { xs: "4px", sm: "6px" },
+                          padding: { xs: "4px", sm: "4px" },
                           height: "30px",
                           lineHeight: "30px",
                         }}
                       >
-                        <Tooltip title="Editar" arrow>
-                          <IconButton
-                            color="warning"
-                            onClick={() => handleEdit(student.matricula)}
-                            sx={{ padding: "2px" }}
-                          >
-                            <Edit fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Ver detalhes" arrow>
-                          <IconButton
-                            color="info"
-                            onClick={() => handleViewDetails(student)}
-                            sx={{ padding: "2px" }}
-                          >
-                            <Visibility fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                        <Stack direction="row" spacing={1} alignItems="center" justifyContent="center">
+                          <Tooltip title="Editar" arrow>
+                            <IconButton
+                              onClick={() => handleEdit(student.matricula)}
+                              sx={{ padding: "2px" }}
+                            >
+                              <Edit fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Ver detalhes" arrow>
+                            <IconButton
+                              color="info"
+                              onClick={() => handleViewDetails(student)}
+                              sx={{ padding: "2px" }}
+                            >
+                              <Visibility fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Stack>
                       </TableCell>
                     </TableRow>
                   ))

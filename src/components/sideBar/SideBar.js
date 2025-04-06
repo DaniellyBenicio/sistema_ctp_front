@@ -218,7 +218,13 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
         <DialogContent sx={{ textAlign: "center" }}>
           <Typography>Tem certeza que deseja sair?</Typography>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "center" }}>
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            "& > :not(:last-child)": {
+              mr: 2,
+            },
+          }}>
           <Button
             onClick={handleLogout}
             sx={{

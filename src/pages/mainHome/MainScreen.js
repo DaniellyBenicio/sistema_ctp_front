@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "./SideBar";
+import Sidebar from "../../components/sideBar/SideBar";
 import { jwtDecode } from "jwt-decode";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";

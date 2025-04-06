@@ -100,7 +100,7 @@ const Login = ({ onLogin }) => {
               fontSize: { xs: "1.25rem", md: "1.5rem" },
             }}
           >
-            Seja Bem-Vindo! <br /> Coordenação Técnica Pedagógica
+            Seja Bem-Vindo! <br /> Coordenação Técnico Pedagógica
           </Typography>
         </Box>
 

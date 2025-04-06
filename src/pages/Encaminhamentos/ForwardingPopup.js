@@ -20,10 +20,9 @@ import { CustomAlert } from "../../components/alert/CustomAlert";
 const INSTITUTIONAL_COLOR = "#307c34";
 
 const StyledPaper = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(3),
-  borderRadius: "12px",
+  padding: theme.spacing(2),
+  borderRadius: "8px",
   boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-  background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
   width: "100%",
   boxSizing: "border-box",
 }));
@@ -220,11 +219,10 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
           <Typography
             sx={{
               fontWeight: "bold",
-              color: INSTITUTIONAL_COLOR,
               fontSize: "1.25rem",
             }}
           >
-            Encaminhar Demanda #{demandId}
+            Encaminhar Demanda
           </Typography>
         </DialogTitle>
         <DialogContent sx={{ p: 0 }}>

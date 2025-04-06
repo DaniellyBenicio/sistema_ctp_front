@@ -27,55 +27,44 @@ const StudentDetails = ({ open, onClose, student }) => {
             overflowY: "auto",
           }}
         >
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ mb: 2 }}
-          >
+          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
             <Typography
               id="modal-title"
               variant="h6"
               component="h2"
-              sx={{ fontSize: "1.1rem" }}
+              sx={{ fontSize: "1.1rem", textAlign: "center", flexGrow: 1 }}
             >
-              {student ? `Detalhes de ${student.nome}` : "Detalhes do Aluno"}
+              Detalhes do Aluno
             </Typography>
             <IconButton onClick={onClose} sx={{ color: "grey.600" }}>
               <Close fontSize="small" />
             </IconButton>
           </Stack>
           {student && (
-            <Stack spacing={1.5}>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Email fontSize="small" color="info" />
-                <Typography sx={{ fontSize: "0.9rem" }}>
-                  <strong>Email:</strong> {student.email}
-                </Typography>
-              </Stack>
-              <Stack direction="row" alignItems="flex-start" spacing={1}>
-                <Info fontSize="small" color="info" />
-                <Stack>
-                  <Typography sx={{ fontSize: "0.9rem" }}>
+            <Stack spacing={1.5} alignItems="flex-start">
+              <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                <strong>Nome:</strong> {student.nome}
+              </Typography>
+              <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                <strong>Email:</strong> {student.email}
+              </Typography>
+              {Array.isArray(student.condicoes) && student.condicoes.length > 0 && (
+                <Stack alignItems="flex-start">
+                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
                     <strong>Condições:</strong>
                   </Typography>
-                  {Array.isArray(student.condicoes) &&
-                  student.condicoes.length > 0 ? (
-                    student.condicoes.map((condicao, index) => (
-                      <Typography
-                        key={index}
-                        sx={{ pl: 2, fontSize: "0.9rem" }}
-                      >
-                        - {condicao}
-                      </Typography>
-                    ))
-                  ) : (
-                    <Typography sx={{ pl: 2, fontSize: "0.9rem" }}>
-                      - Nenhuma condição
+                  {student.condicoes.map((condicao, index) => (
+                    <Typography key={index} variant="body2" sx={{ pl: 1, fontSize: "0.9rem" }}>
+                      - {condicao}
                     </Typography>
-                  )}
+                  ))}
                 </Stack>
-              </Stack>
+              )}
+              {Array.isArray(student.condicoes) && student.condicoes.length === 0 && (
+                <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                  <strong>Condições:</strong> Nenhuma condição
+                </Typography>
+              )}
             </Stack>
           )}
         </Box>

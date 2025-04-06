@@ -28,11 +28,6 @@ export const ArchivedDemands = () => {
       console.log("Archived Demands atualizado:", archivedDemands);
     } catch (error) {
       console.error("Erro na requisição:", error);
-      setAlert({
-        show: true,
-        message: "Erro ao buscar demandas arquivadas",
-        type: "error",
-      });
       setDemands([]);
     }
   };
