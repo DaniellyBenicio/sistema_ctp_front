@@ -40,9 +40,32 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     fontSize: "0.875rem",
     borderRadius: "8px",
     backgroundColor: "#fff",
+    "& .MuiInputBase-input": {
+      color: INSTITUTIONAL_COLOR,
+    },
   },
-  "& .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#ced4da",
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "#ced4da", 
+    },
+    "&:hover fieldset": {
+      borderColor: "#388E3C", 
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: INSTITUTIONAL_COLOR + " !important", 
+    },
+  },
+  "& .MuiInputLabel-root": {
+    fontSize: "0.875rem",
+    color: INSTITUTIONAL_COLOR + " !important", 
+    transform: "translate(14px, 10px) scale(1)",
+  },
+  "& .MuiInputLabel-shrink": {
+    transform: "translate(14px, -6px) scale(0.75)",
+    color: INSTITUTIONAL_COLOR + " !important", 
+  },
+  "& .Mui-focused.MuiInputLabel-root": {
+    color: INSTITUTIONAL_COLOR + " !important", 
   },
   "& .MuiInputBase-multiline": {
     height: "auto",
@@ -55,9 +78,32 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     fontSize: "0.875rem",
     borderRadius: "8px",
     backgroundColor: "#fff",
+    "& .MuiInputBase-input": {
+      color: INSTITUTIONAL_COLOR, 
+    },
   },
-  "& .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#ced4da",
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "#ced4da", 
+    },
+    "&:hover fieldset": {
+      borderColor: "#388E3C", 
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: INSTITUTIONAL_COLOR + " !important", 
+    },
+  },
+  "& .MuiInputLabel-root": {
+    fontSize: "0.875rem",
+    color: INSTITUTIONAL_COLOR + " !important", 
+    transform: "translate(14px, 10px) scale(1)",
+  },
+  "& .MuiInputLabel-shrink": {
+    transform: "translate(14px, -6px) scale(0.75)",
+    color: INSTITUTIONAL_COLOR + " !important", 
+  },
+  "& .Mui-focused.MuiInputLabel-root": {
+    color: INSTITUTIONAL_COLOR + " !important", 
   },
   "& .MuiAutocomplete-endAdornment": {
     display: "none",
@@ -66,7 +112,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 
 const ForwardingPopup = ({ open, onClose, demandId }) => {
   const [usuarios, setUsuarios] = useState([]);
-  const [destinatarioSelecionado, setDestinatarioSelecionado] = useState(null); 
+  const [destinatarioSelecionado, setDestinatarioSelecionado] = useState(null);
   const [descricao, setDescricao] = useState("");
   const [data, setData] = useState(new Date().toISOString());
   const [loading, setLoading] = useState(false);
@@ -91,7 +137,6 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       const response = await api.get("/usuarios-encaminhamento", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
       setUsuarios(response.data.usuarios || []);
     } catch (err) {
       setAlert({ message: "Erro ao carregar usuários", type: "error" });
@@ -100,7 +145,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
       setLoading(false);
     }
   };
-  
+
   const fetchEncaminhamentos = async () => {
     setLoading(true);
     try {
@@ -237,7 +282,7 @@ const ForwardingPopup = ({ open, onClose, demandId }) => {
             getOptionLabel={(option) =>
               `${option.nome} (${option.Cargo?.nome || "Cargo não informado"})`
             }
-            value={destinatarioSelecionado} 
+            value={destinatarioSelecionado}
             onChange={handleDestinatarioChange}
             filterOptions={filterOptions}
             openOnFocus={false}
