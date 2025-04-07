@@ -30,6 +30,23 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
     return users.slice(startIndex, endIndex);
   }, [users, page, rowsPerPage]);
 
+  const tableHeadStyle = {
+    fontWeight: "bold",
+    backgroundColor: "#2f9e41",
+    color: "#fff",
+    borderRight: "1px solid #fff",
+    padding: { xs: "4px", sm: "6px" },
+    height: "30px",
+    lineHeight: "30px",
+  };
+
+  const tableBodyCellStyle = {
+    borderRight: "1px solid #e0e0e0",
+    padding: { xs: "4px", sm: "6px" },
+    height: "30px",
+    lineHeight: "30px",
+  };
+
   if (isMobile) {
     return (
       <Stack spacing={1} sx={{ width: "100%" }}>
@@ -83,132 +100,40 @@ const UsersTable = ({ users, onDelete, onUpdate }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell
-                align="center"
-                sx={{
-                  fontWeight: "bold",
-                  backgroundColor: "#2f9e41",
-                  color: "#fff",
-                  borderRight: "1px solid #fff",
-                  padding: { xs: "4px", sm: "6px" },
-                  height: "30px",
-                  lineHeight: "30px",
-                }}
-              >
+              <TableCell align="center" sx={tableHeadStyle}>
                 Nome
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  fontWeight: "bold",
-                  backgroundColor: "#2f9e41",
-                  color: "#fff",
-                  borderRight: "1px solid #fff",
-                  padding: { xs: "4px", sm: "6px" },
-                  height: "30px",
-                  lineHeight: "30px",
-                }}
-              >
+              <TableCell align="center" sx={tableHeadStyle}>
                 Matrícula
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  fontWeight: "bold",
-                  backgroundColor: "#2f9e41",
-                  color: "#fff",
-                  borderRight: "1px solid #fff",
-                  padding: { xs: "4px", sm: "6px" },
-                  height: "30px",
-                  lineHeight: "30px",
-                }}
-              >
+              <TableCell align="center" sx={tableHeadStyle}>
                 Cargo
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  fontWeight: "bold",
-                  backgroundColor: "#2f9e41",
-                  color: "#fff",
-                  borderRight: "1px solid #fff",
-                  padding: { xs: "4px", sm: "6px" },
-                  height: "30px",
-                  lineHeight: "30px",
-                }}
-              >
+              <TableCell align="center" sx={tableHeadStyle}>
                 Email
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{
-                  fontWeight: "bold",
-                  backgroundColor: "#2f9e41",
-                  color: "#fff",
-                  padding: { xs: "4px", sm: "6px" },
-                  height: "30px",
-                  lineHeight: "30px",
-                }}
-              >
+              <TableCell align="center" sx={tableHeadStyle}>
                 Ações
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {visibleUsers.map((user) => (
               <TableRow key={user.id}>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #e0e0e0",
-                    padding: { xs: "4px", sm: "6px" },
-                    height: "30px",
-                    lineHeight: "30px",
-                  }}
-                >
+                <TableCell align="center" sx={tableBodyCellStyle}>
                   {user.nome}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #e0e0e0",
-                    padding: { xs: "4px", sm: "6px" },
-                    height: "30px",
-                    lineHeight: "30px",
-                  }}
-                >
+                <TableCell align="center" sx={tableBodyCellStyle}>
                   {user.matricula}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #e0e0e0",
-                    padding: { xs: "4px", sm: "6px" },
-                    height: "30px",
-                    lineHeight: "30px",
-                  }}
-                >
+                <TableCell align="center" sx={tableBodyCellStyle}>
                   {user.Cargo.nome}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    borderRight: "1px solid #e0e0e0",
-                    padding: { xs: "4px", sm: "6px" },
-                    height: "30px",
-                    lineHeight: "30px",
-                  }}
-                >
+                <TableCell align="center" sx={tableBodyCellStyle}>
                   {user.email}
                 </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    padding: { xs: "4px", sm: "6px" },
-                    height: "30px",
-                    lineHeight: "30px",
-                  }}
-                >
+                <TableCell align="center" sx={tableBodyCellStyle}>
                   <IconButton color="primary" onClick={() => onUpdate(user)}>
                     <Edit />
                   </IconButton>

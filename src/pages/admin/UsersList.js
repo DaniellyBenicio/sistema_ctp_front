@@ -9,6 +9,9 @@ import UserRegisterPopup from "./UserRegisterPopup";
 import DeleteUser from "./DeleteUser";
 import UpdateUser from "./UpdateUser";
 
+// Este componente é responsável por exibir a lista de usuários, permitir a busca,
+// cadastrar novos usuários, excluir e atualizar usuários existentes.
+
 export const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -24,13 +27,10 @@ export const UsersList = () => {
   const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
-    if (userRole !== "Admin") {
-      navigate("/");
-      return;
-    }
     fetchUsers();
   }, [navigate, userRole]);
 
+  // Função assíncrona para buscar a lista de todos os usuários da API.
   const fetchUsers = async () => {
     try {
       const response = await api.get("usuarios");
@@ -48,6 +48,7 @@ export const UsersList = () => {
     }
   };
 
+  // Função assíncrona para buscar usuários da API com base em um termo de busca.
   const fetchUsersByTermo = async (termo) => {
     try {
       const encodedTermo = encodeURIComponent(termo);
@@ -61,6 +62,7 @@ export const UsersList = () => {
     }
   };
 
+  // Função assíncrona chamada quando o valor do campo de busca muda.
   const handleSearchChange = async (e) => {
     const value = e.target.value;
     setSearchValue(value);
@@ -72,6 +74,7 @@ export const UsersList = () => {
     }
 
     const usersByTermo = await fetchUsersByTermo(value);
+
     if (usersByTermo && usersByTermo.length > 0) {
       setFilteredUsers(usersByTermo);
       setAlert({ show: false, message: "", type: "" });
@@ -101,6 +104,7 @@ export const UsersList = () => {
     });
   };
 
+  // As duas funções abaixo recarrega a lista de usuários, respectivamente uma fecha o diálogo de exclusão/edição e limpa o ID do usuário a ser excluído/editado.
   const handleDeleteSuccess = () => {
     fetchUsers();
     setOpenDeleteDialog(false);

@@ -28,6 +28,7 @@ import { styled } from "@mui/material/styles";
 import api from "../../service/api";
 
 const INSTITUTIONAL_COLOR = "#307c34";
+
 const StyledButton = styled(Button)(({ theme }) => ({
   borderRadius: "8px",
   padding: theme.spacing(1, 3),
@@ -61,15 +62,38 @@ const StyledSelect = styled(Select)(({ theme }) => ({
   },
 }));
 
+// Estilize os campos de TextField 
 const StyledTextField = styled(TextField)({
+  "& .MuiInputLabel-root": {
+    color: "text.secondary",
+    fontSize: { xs: "0.9rem", md: "1rem" },
+    transition: "color 0.3s ease, transform 0.3s ease",
+  },
+  "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+    color: "#27AE60",
+  },
   "& .MuiOutlinedInput-root": {
     borderRadius: "8px",
-    "& fieldset": { borderColor: "#E0E0E0" },
-    "&:hover fieldset": { borderColor: "#27AE60" },
-    "&.Mui-focused fieldset": { borderColor: "#27AE60" },
+    backgroundColor: "transparent",
+    "& input": {
+      backgroundColor: "transparent !important",
+      WebkitBoxShadow: "0 0 0 1000px transparent inset",
+      WebkitTextFillColor: "#000",
+      transition: "background-color 5000s ease-in-out 0s",
+    },
+    "& fieldset": {
+      borderColor: "#E0E0E0",
+    },
+    "&:hover fieldset": {
+      borderColor: "#27AE60",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#27AE60",
+    },
   },
 });
 
+// Componente funcional para o diálogo de formulário de usuário (cadastro/edição)
 const UserFormDialog = ({
   open,
   onClose,
@@ -86,6 +110,7 @@ const UserFormDialog = ({
     senha: "",
     cargo: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(null);
@@ -93,6 +118,7 @@ const UserFormDialog = ({
   const [focusedField, setFocusedField] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Função assíncrona para buscar a lista de cargos da API
   const fetchCargos = async () => {
     try {
       const response = await api.get("/cargos");
@@ -106,6 +132,7 @@ const UserFormDialog = ({
     }
   };
 
+  // Efeito para carregar os cargos e preencher o formulário ao abrir o diálogo
   useEffect(() => {
     if (open) {
       fetchCargos();
@@ -131,6 +158,7 @@ const UserFormDialog = ({
     }
   }, [open, user]);
 
+  // Lida com as mudanças nos campos do formulário
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "matricula") {
@@ -186,6 +214,7 @@ const UserFormDialog = ({
           ? "Usuário atualizado com sucesso!"
           : "Usuário cadastrado com sucesso!"
       );
+
       if (isUpdate) {
         onUpdate(response.data);
         setAlert?.({
@@ -200,6 +229,7 @@ const UserFormDialog = ({
         onClose();
         setSuccess(null);
       }, 2000);
+
     } catch (err) {
       const errorMsg = err.response?.data?.mensagem || "Erro no servidor.";
       if (errorMsg.includes("Email")) {
@@ -219,6 +249,8 @@ const UserFormDialog = ({
   };
 
   const isEmailValid = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+
+  // Verifica se o formulário é válido para submissão
   const isFormValid = () => {
     const matriculaNum = Number(formData.matricula);
     return (
@@ -231,6 +263,7 @@ const UserFormDialog = ({
     );
   };
 
+  // Alterna a visibilidade da senha
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
@@ -241,11 +274,7 @@ const UserFormDialog = ({
       fullWidth
       TransitionComponent={Fade}
     >
-      <DialogTitle
-        sx={{
-          padding: "16px 24px",
-        }}
-      >
+      <DialogTitle sx={{ padding: "16px 24px" }}>
         <Typography
           variant="h5"
           sx={{ textAlign: "center", fontWeight: "bold" }}
@@ -267,38 +296,8 @@ const UserFormDialog = ({
               onBlur={() => setFocusedField(null)}
               error={!!errors.nome}
               helperText={errors.nome}
-              InputLabelProps={{ required: false }} //
+              InputLabelProps={{ required: false }}
               variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "text.secondary",
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                  transition: "color 0.3s ease, transform 0.3s ease",
-                },
-                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
-                  color: "#27AE60",
-                },
-
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                  backgroundColor: "transparent",
-                  "& input": {
-                    backgroundColor: "transparent !important",
-                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
-                    WebkitTextFillColor: "#000",
-                    transition: "background-color 5000s ease-in-out 0s",
-                  },
-                  "& fieldset": {
-                    borderColor: "#E0E0E0",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                },
-              }}
             />
           </Grid>
           <Grid item xs={12}>
@@ -312,44 +311,10 @@ const UserFormDialog = ({
               onChange={handleChange}
               onFocus={() => setFocusedField("email")}
               onBlur={() => setFocusedField(null)}
-              error={!!formData.email && (!isEmailValid() || !!errors.email)}
-              helperText={
-                formData.email && !isEmailValid()
-                  ? "Email inválido"
-                  : errors.email
-              }
+              error={!!errors.email || (formData.email && !isEmailValid())}
+              helperText={errors.email || (formData.email && !isEmailValid() ? "Email inválido" : "")}
               InputLabelProps={{ required: false }}
               variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "text.secondary",
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                  transition: "color 0.3s ease, transform 0.3s ease",
-                },
-                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
-                  color: "#27AE60",
-                },
-
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                  backgroundColor: "transparent",
-                  "& input": {
-                    backgroundColor: "transparent !important",
-                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
-                    WebkitTextFillColor: "#000",
-                    transition: "background-color 5000s ease-in-out 0s",
-                  },
-                  "& fieldset": {
-                    borderColor: "#E0E0E0",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                },
-              }}
             />
           </Grid>
 
@@ -378,7 +343,7 @@ const UserFormDialog = ({
                   variant="outlined"
                   InputLabelProps={{
                     shrink: focusedField === "senha" || formData.senha !== "",
-                    required: false
+                    required: false,
                   }}
                   InputProps={{
                     endAdornment: (
@@ -388,35 +353,6 @@ const UserFormDialog = ({
                         </IconButton>
                       </InputAdornment>
                     ),
-                  }}
-                  sx={{
-                    "& .MuiInputLabel-root": {
-                      color: "text.secondary",
-                      fontSize: { xs: "0.9rem", md: "1rem" },
-                      transition: "color 0.3s ease, transform 0.3s ease",
-                    },
-                    "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
-                      color: "#27AE60",
-                    },
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "8px",
-                      backgroundColor: "transparent",
-                      "& input": {
-                        backgroundColor: "transparent !important",
-                        WebkitBoxShadow: "0 0 0 1000px transparent inset",
-                        WebkitTextFillColor: "#000",
-                        transition: "background-color 5000s ease-in-out 0s",
-                      },
-                      "& fieldset": {
-                        borderColor: "#E0E0E0",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#27AE60",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#27AE60",
-                      },
-                    },
                   }}
                 />
               </Grid>
@@ -437,40 +373,16 @@ const UserFormDialog = ({
                 InputLabelProps={{ required: false }}
                 variant="outlined"
                 inputProps={{
-                  pattern: "[0-9]*"
+                  pattern: "[0-9]*",
                 }}
                 sx={{
-                  "& .MuiInputLabel-root": {
-                    color: "text.secondary",
-                    fontSize: { xs: "0.9rem", md: "1rem" },
-                    transition: "color 0.3s ease, transform 0.3s ease",
-                  },
-                  "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
-                    color: "#27AE60",
-                  },
                   "& .MuiOutlinedInput-root": {
-                    borderRadius: "8px",
                     backgroundColor: isUpdate ? "#f5f5f5" : "transparent",
-                    "& input": {
-                      backgroundColor: "transparent",
-                      WebkitBoxShadow: "0 0 0 1000px transparent inset",
-                      WebkitTextFillColor: "#000",
-                      transition: "background-color 5000s ease-in-out 0s",
-                    },
-                    "& fieldset": {
-                      borderColor: "#E0E0E0",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#27AE60",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#27AE60",
-                    },
                     "&.Mui-disabled": {
                       backgroundColor: "#f5f5f5",
                       "& input": {
                         WebkitTextFillColor: "#9e9e9e",
-                      }
+                      },
                     },
                   },
                 }}
@@ -483,35 +395,6 @@ const UserFormDialog = ({
               margin="normal"
               error={!!errors.cargo}
               variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "text.secondary",
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                  transition: "color 0.3s ease, transform 0.3s ease",
-                },
-                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
-                  color: "#27AE60",
-                },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                  backgroundColor: "transparent",
-                  "& input": {
-                    backgroundColor: "transparent !important",
-                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
-                    WebkitTextFillColor: "#000",
-                    transition: "background-color 5000s ease-in-out 0s",
-                  },
-                  "& fieldset": {
-                    borderColor: "#E0E0E0",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                },
-              }}
             >
               <InputLabel id="cargo-label">Cargo</InputLabel>
               <StyledSelect
