@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import api from "../../service/api";
 import CustomAlert from "../../components/alert/CustomAlert";
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, useMediaQuery } from "@mui/material";
 import FiltersSection from "../../components/filtersSection/FiltersSection";
 import DemandsTable from "./DemandsTable";
 
@@ -12,7 +12,8 @@ export const Demands = () => {
   const [alert, setAlert] = useState({ show: false, message: "", type: "" });
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const pageSize = 4;
+  const pageSize = useMediaQuery("(max-width:600px)") ? 2 : 4;
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     fetchDemands();
@@ -83,6 +84,7 @@ export const Demands = () => {
         width: "100%",
         background: "linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%)",
         padding: { xs: "2% 5%", sm: "2% 0%" },
+        boxSizing: "border-box",
       }}
     >
       {alert.show && (
@@ -94,7 +96,7 @@ export const Demands = () => {
       )}
 
       <Typography
-        variant="h5"
+        variant="h6"
         sx={{
           fontWeight: "bold",
           color: "#333",
@@ -113,10 +115,11 @@ export const Demands = () => {
           justifyContent: "space-between",
           alignItems: { xs: "stretch", sm: "center" },
           gap: { xs: 1, sm: 2 },
-          mb: -1,
+          mb: 2,
           width: { xs: "100%", sm: "90%" },
           maxWidth: "1200px",
           alignSelf: "center",
+          boxSizing: "border-box",
         }}
       >
         <Stack
@@ -124,6 +127,7 @@ export const Demands = () => {
             position: "relative",
             width: "100%",
             height: "auto",
+            boxSizing: "border-box",
           }}
         >
           <FiltersSection
@@ -132,6 +136,8 @@ export const Demands = () => {
               flexGrow: 1,
               width: "100%",
               height: "auto",
+              boxSizing: "border-box",
+              marginBottom: 2,
             }}
           />
         </Stack>
@@ -143,6 +149,7 @@ export const Demands = () => {
           maxWidth: "1150px",
           alignSelf: "center",
           mx: "auto",
+          boxSizing: "border-box",
         }}
       >
         {openDemands.length === 0 ? (

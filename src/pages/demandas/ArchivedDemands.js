@@ -20,12 +20,13 @@ export const ArchivedDemands = () => {
     try {
       const response = await api.post("/minhas-demandas", filterParams);
       const demandsData = response.data.demandas;
+
       if (!demandsData || !Array.isArray(demandsData)) {
         throw new Error("Erro ao buscar demandas: formato inválido.");
       }
+
       const archivedDemands = demandsData.filter((demand) => !demand.status);
       setDemands(archivedDemands);
-      console.log("Archived Demands atualizado:", archivedDemands);
     } catch (error) {
       console.error("Erro na requisição:", error);
       setDemands([]);
@@ -57,7 +58,7 @@ export const ArchivedDemands = () => {
       )}
 
       <Typography
-        variant="h5"
+        variant="h6"
         sx={{
           fontWeight: "bold",
           color: "#333",

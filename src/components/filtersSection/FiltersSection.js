@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  FormControl, TextField, MenuItem, Select, Grid, Paper, List, ListItem, InputLabel, Button, Box, styled, Divider, Typography
+  FormControl, TextField, MenuItem, Select, Grid, Paper, List, ListItem, InputLabel, Button, Box, styled, Divider, Typography, useMediaQuery
 } from "@mui/material";
 import { Search, Clear, ArrowDropDown } from "@mui/icons-material";
 import api from "../../service/api";
@@ -48,7 +48,6 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
 
 }));
 
-// Estados para os filtros e dados da API
 const FiltersSection = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
     nomeAluno: "",
@@ -62,10 +61,10 @@ const FiltersSection = ({ onFilterChange }) => {
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [showStudentList, setShowStudentList] = useState(false);
 
-  const inputRef = useRef(null); // Ajusta a largura da sugestão da lista de alunos
-  const wrapperRef = useRef(null); // Fecha a listar ao clicar fora da lista
-
+  const inputRef = useRef(null);
+  const wrapperRef = useRef(null);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -91,7 +90,6 @@ const FiltersSection = ({ onFilterChange }) => {
     fetchStudents();
   }, []);
 
-  // Efeito para adicionar e remover listener de clique fora para fechar a lista de alunos
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -99,7 +97,6 @@ const FiltersSection = ({ onFilterChange }) => {
     };
   }, []);
 
-  // Função para lidar com a mudança nos campos de filtro
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -113,13 +110,11 @@ const FiltersSection = ({ onFilterChange }) => {
     }
   };
 
-  // Função para lidar com a seleção de um aluno da lista de sugestões
   const handleStudentSelect = (studentName) => {
     setFilters((prev) => ({ ...prev, nomeAluno: studentName }));
     setShowStudentList(false);
   };
 
-  // Função para aplicar os filtros
   const handleFilter = () => {
     onFilterChange && onFilterChange(filters);
   };
@@ -138,7 +133,6 @@ const FiltersSection = ({ onFilterChange }) => {
     onFilterChange && onFilterChange(newFilters);
   };
 
-  // Função para fechar a lista de sugestões ao clicar fora
   const handleClickOutside = (event) => {
     if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
       setShowStudentList(false);
@@ -150,7 +144,6 @@ const FiltersSection = ({ onFilterChange }) => {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
     const day = String(now.getDate()).padStart(2, "0");
-
     return `${year}-${month}-${day}`;
   };
 
@@ -161,13 +154,14 @@ const FiltersSection = ({ onFilterChange }) => {
       ref={wrapperRef}
       elevation={1}
       sx={{
-        p: 1,
-        mb: 1,
+        p: 2,
+        mb: 2,
         borderRadius: 2,
         boxShadow: "0 2px 6px rgba(0, 0, 0, 0.06)",
         border: "1px solid #e0e0e0",
         width: "100%",
-        maxWidth: "1130px",
+        maxWidth: "100%",
+        boxSizing: "border-box",
         margin: "0 auto",
         background: "#fff",
       }}
@@ -177,12 +171,15 @@ const FiltersSection = ({ onFilterChange }) => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 1,
+          mb: 2,
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 1,
         }}
       >
         <Typography
           variant="subtitle1"
           style={{ fontWeight: "", fontSize: "18px", paddingTop: "8px" }}
+          sx={{ textAlign: { xs: "center", sm: "left" } }}
         >
           Gerenciamento de Demandas
         </Typography>
@@ -194,7 +191,7 @@ const FiltersSection = ({ onFilterChange }) => {
               bgcolor: "#1b5e20",
               transform: "scale(1.05)",
             },
-            minWidth: "140px",
+            minWidth: { xs: "100%", sm: "140px" },
             height: "35px",
             fontSize: "0.9rem",
             fontWeight: 600,
@@ -207,9 +204,9 @@ const FiltersSection = ({ onFilterChange }) => {
           Abrir Demanda
         </Button>
       </Box>
-      <Divider sx={{ mb: 3, mt: 0.5 }} />
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={5} md={4.3} sx={{ position: "relative" }}>
+      <Divider sx={{ mb: 2, mt: 0.5 }} />
+      <Grid container spacing={isMobile ? 1 : 2}>
+        <Grid item xs={12} sm={6} md={4.3} sx={{ position: "relative" }}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="nomeAluno">Nome do Aluno</InputLabel>
             <TextField
@@ -259,7 +256,7 @@ const FiltersSection = ({ onFilterChange }) => {
             </List>
           )}
         </Grid>
-        <Grid item xs={6} sm={2} md={1.8}>
+        <Grid item xs={6} sm={3} md={1.8}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="date">Data</InputLabel>
             <TextField
@@ -272,10 +269,11 @@ const FiltersSection = ({ onFilterChange }) => {
               inputProps={{
                 max: todayFormatted,
               }}
+              sx={{ minWidth: '120px' }}
             />
           </StyledFormControl>
         </Grid>
-        <Grid item xs={6} sm={3} md={3.8}>
+        <Grid item xs={12} sm={6} md={3.8}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="cursoId">Curso</InputLabel>
             <Select
@@ -294,7 +292,7 @@ const FiltersSection = ({ onFilterChange }) => {
             </Select>
           </StyledFormControl>
         </Grid>
-        <Grid item xs={6} sm={2} md={2}>
+        <Grid item xs={12} sm={6} md={2}>
           <StyledFormControl fullWidth>
             <InputLabel htmlFor="tipoDemanda">Tipo de Demanda</InputLabel>
             <Select
@@ -313,7 +311,13 @@ const FiltersSection = ({ onFilterChange }) => {
         <Grid
           item
           xs={12}
-          sx={{ display: "flex", gap: 3, justifyContent: "flex-start", mt: 1 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            justifyContent: "flex-start",
+            mt: 1
+          }}
         >
           <Button
             variant="contained"
@@ -322,7 +326,7 @@ const FiltersSection = ({ onFilterChange }) => {
               bgcolor: "#3E7145",
               "&:hover": { bgcolor: "#2E5233" },
               height: "36px",
-              minWidth: "80px",
+              minWidth: isMobile ? "48%" : "80px",
               fontSize: "0.9rem",
               textTransform: "none",
             }}
@@ -338,7 +342,7 @@ const FiltersSection = ({ onFilterChange }) => {
               borderColor: "#6c757d",
               "&:hover": { backgroundColor: "#f8f9fa" },
               height: "36px",
-              minWidth: "80px",
+              minWidth: isMobile ? "48%" : "80px",
               fontSize: "0.9rem",
               textTransform: "none",
             }}

@@ -308,7 +308,7 @@ const DemandaRegisterPage = () => {
         boxSizing: "border-box",
       }}
     >
-      <Box sx={{ width: "100%", maxWidth: "1200px" }}>
+      <Box sx={{ width: "140%", maxWidth: "1200px" }}>
         <Typography
           variable="h5"
           fontSize="25px"
@@ -518,15 +518,15 @@ const DemandaRegisterPage = () => {
                   borderColor: "#388E3C",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: INSTITUTIONAL_COLOR, 
+                  borderColor: INSTITUTIONAL_COLOR,
                 },
               },
               "& .MuiInputLabel-root": {
                 "&.Mui-focused": {
-                  color: INSTITUTIONAL_COLOR, 
+                  color: INSTITUTIONAL_COLOR,
                 },
                 "&.MuiInputLabel-shrink": {
-                  color: INSTITUTIONAL_COLOR, 
+                  color: INSTITUTIONAL_COLOR,
                 },
               },
             }}

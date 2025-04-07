@@ -208,10 +208,10 @@ const DemandaDetailsPage = () => {
   return (
     <Box m={0} sx={{ bgcolor: "#F5F7FA" }}>
       <Typography
-        variant="h5"
+        variant="h6"
         gutterBottom
         sx={{
-          color: "#2E7D32",
+          color: "#000000",
           fontWeight: "bold",
           textAlign: "center",
           paddingTop: "20px",
@@ -551,10 +551,10 @@ const DemandaDetailsPage = () => {
               disabled={loading}
               sx={{
                 bgcolor: "#D32F2F",
-                "&:hover": { bgcolor: "#B71C1C" }, 
+                "&:hover": { bgcolor: "#B71C1C" },
                 borderRadius: "8px",
                 color: "white",
-                borderColor: "transparent", 
+                borderColor: "transparent",
               }}
             >
               Não
