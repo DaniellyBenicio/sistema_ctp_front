@@ -70,7 +70,6 @@ const DeleteUser = ({ open, onClose, userId, onDeleteSuccess, setAlert }) => {
             textAlign: "center",
             color: "#333",
             fontSize: "1rem",
-            fontFamily: '"Open Sans", sans-serif',
           }}
         >
           Tem certeza que deseja excluir este usuário?

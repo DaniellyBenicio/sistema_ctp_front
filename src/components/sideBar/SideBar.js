@@ -25,6 +25,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 
+// Componente da Sidebar (barra lateral de navegação)
 const Sidebar = ({ setAuthenticated, userRole, userName }) => {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -41,6 +42,8 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
   const handleOpenConfirmDialog = () => setOpenConfirmDialog(true);
   const handleCloseConfirmDialog = () => setOpenConfirmDialog(false);
 
+  // Função para lidar com o clique em um item do menu: define o item selecionado, 
+  // navega para a rota correspondente e fecha a sidebar em dispositivos móveis
   const handleItemClick = (path, item) => {
     setSelectedItem(item);
     navigate(path);
@@ -60,6 +63,7 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
 
   const drawerContent = (
     <List>
+      {/* Título "Sistema CTP" visível apenas em telas maiores */}
       {!isMobile && (
         <ListItem sx={{ justifyContent: "center", py: 1 }}>
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
@@ -67,14 +71,18 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
           </Typography>
         </ListItem>
       )}
+
+      {/* Informações do usuário */}
       <ListItem sx={{ justifyContent: "center", py: 1 }}>
         <Person sx={{ mr: 1 }} />
         <Typography variant="body1" sx={{ fontWeight: "medium" }}>
           {userName || "Usuário"}
         </Typography>
       </ListItem>
+
       <Divider sx={{ backgroundColor: "white", marginBottom: 1 }} />
 
+      {/* Itens de menu condionais baseados no cargo do usuário */}
       {userRole === "Admin" ? (
         <>
           <ListItem
@@ -86,6 +94,7 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
             <ListItemText primary="Usuários" />
           </ListItem>
         </>
+
       ) : userRole === "Funcionario CTP" ? (
         <>
           <ListItem
@@ -114,7 +123,6 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
           </ListItem>
         </>
       ) : (
-
         <>
           <ListItem
             button
@@ -148,6 +156,7 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
 
   return (
     <>
+      {/* AppBar (barra superior) visível apenas em dispositivos móveis */}
       <AppBar
         position="fixed"
         sx={{
@@ -161,6 +170,7 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
         }}
       >
         <Toolbar>
+          {/* Botão para abrir/fechar a sidebar em dispositivos móveis */}
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -176,6 +186,7 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
         </Toolbar>
       </AppBar>
 
+      {/* Drawer (sidebar) para telas maiores */}
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? mobileOpen : true}
@@ -195,6 +206,7 @@ const Sidebar = ({ setAuthenticated, userRole, userName }) => {
         {drawerContent}
       </Drawer>
 
+      {/* Drawer (sidebar) temporário para dispositivos móveis */}
       {isMobile && (
         <Drawer
           variant="temporary"

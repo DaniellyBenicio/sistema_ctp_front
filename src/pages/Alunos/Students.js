@@ -89,7 +89,6 @@ const Students = () => {
             transition: "all 0.2s ease",
             display: "flex",
             alignItems: "center",
-            fontFamily: '"Open Sans", sans-serif',
           }}
           onClick={handleNewStudent}
         >

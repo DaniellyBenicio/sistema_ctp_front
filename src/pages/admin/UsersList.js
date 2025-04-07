@@ -141,7 +141,6 @@ export const UsersList = () => {
           color: "#333",
           mb: 1,
           textAlign: "center",
-          fontFamily: '"Open Sans", sans-serif',
           marginBottom: { xs: "16px", sm: "30px" },
         }}
       >
@@ -215,7 +214,6 @@ export const UsersList = () => {
             sx={{
               mt: 2,
               fontSize: "0.875rem",
-              fontFamily: '"Open Sans", sans-serif',
             }}
           >
             Nenhum resultado encontrado

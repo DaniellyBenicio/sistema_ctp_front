@@ -63,7 +63,6 @@ export const ArchivedDemands = () => {
           color: "#333",
           mb: 1,
           textAlign: "center",
-          fontFamily: '"Open Sans", sans-serif',
           marginBottom: { xs: "16px", sm: "30px" },
         }}
       >
@@ -86,7 +85,6 @@ export const ArchivedDemands = () => {
             sx={{
               mt: 2,
               fontSize: "0.875rem",
-              fontFamily: '"Open Sans", sans-serif',
             }}
           >
             Nenhuma demanda fechada disponível

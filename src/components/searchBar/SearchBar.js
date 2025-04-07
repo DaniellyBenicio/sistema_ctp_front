@@ -5,7 +5,7 @@ import { Search } from "@mui/icons-material";
 const INSTITUTIONAL_COLOR = "#307c34";
 
 const SearchBar = ({ value, onChange }) => {
-  const handleInputChange = (e) => {
+  const handleInputChange = (e) => {  // Função para lidar com a mudança no valor do input
     onChange(e);
   };
 

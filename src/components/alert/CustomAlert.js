@@ -12,8 +12,10 @@ export const CustomAlert = ({ message, type, onClose }) => {
         onClose();
       }
     }, 3000);
+
     return () => clearTimeout(timer);
-  }, [onClose]);
+  },
+    [onClose]);
 
   const getAlertIcon = () => {
     switch (alertType) {
@@ -35,7 +37,8 @@ export const CustomAlert = ({ message, type, onClose }) => {
     info: "#2196f3",
     warning: "#ff9800",
     error: "#f44336",
-  }[alertType];
+  }
+  [alertType];
 
   return (
     <Alert

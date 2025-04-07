@@ -100,7 +100,6 @@ export const Demands = () => {
           color: "#333",
           mb: 1,
           textAlign: "center",
-          fontFamily: '"Open Sans", sans-serif',
           marginBottom: { xs: "16px", sm: "30px" },
         }}
       >
@@ -154,7 +153,6 @@ export const Demands = () => {
             sx={{
               mt: 4,
               fontSize: "0.875rem",
-              fontFamily: '"Open Sans", sans-serif',
             }}
           >
             Nenhuma demanda aberta encontrada

@@ -1,19 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  FormControl,
-  TextField,
-  MenuItem,
-  Select,
-  Grid,
-  Paper,
-  List,
-  ListItem,
-  InputLabel,
-  Button,
-  Box,
-  styled,
-  Divider,
-  Typography,
+  FormControl, TextField, MenuItem, Select, Grid, Paper, List, ListItem, InputLabel, Button, Box, styled, Divider, Typography
 } from "@mui/material";
 import { Search, Clear, ArrowDropDown } from "@mui/icons-material";
 import api from "../../service/api";
@@ -25,13 +12,15 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
     padding: "0px",
     height: "36px",
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#307c34", 
+      borderColor: "#307c34",
     },
+
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#307c34", 
+      borderColor: "#307c34",
       borderWidth: "1px !important",
     },
   },
+
   "& .MuiInputLabel-root": {
     fontSize: "0.9rem",
     transform: "translate(0, 0) scale(1)",
@@ -42,20 +31,24 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
     textAlign: "left",
     fontWeight: 500,
     "&.Mui-focused": {
-      color: "#307c34", 
+      color: "#307c34",
     },
   },
+
   "& .MuiSelect-select": {
     paddingTop: "8px !important",
     paddingBottom: "8px !important",
     display: "flex",
     alignItems: "center",
   },
+
   "& .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#ccc", 
+    borderColor: "#ccc",
   },
+
 }));
 
+// Estados para os filtros e dados da API
 const FiltersSection = ({ onFilterChange }) => {
   const [filters, setFilters] = useState({
     nomeAluno: "",
@@ -68,8 +61,10 @@ const FiltersSection = ({ onFilterChange }) => {
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [showStudentList, setShowStudentList] = useState(false);
-  const inputRef = useRef(null);
-  const wrapperRef = useRef(null);
+
+  const inputRef = useRef(null); // Ajusta a largura da sugestão da lista de alunos
+  const wrapperRef = useRef(null); // Fecha a listar ao clicar fora da lista
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -96,6 +91,15 @@ const FiltersSection = ({ onFilterChange }) => {
     fetchStudents();
   }, []);
 
+  // Efeito para adicionar e remover listener de clique fora para fechar a lista de alunos
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Função para lidar com a mudança nos campos de filtro
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
@@ -109,13 +113,14 @@ const FiltersSection = ({ onFilterChange }) => {
     }
   };
 
+  // Função para lidar com a seleção de um aluno da lista de sugestões
   const handleStudentSelect = (studentName) => {
     setFilters((prev) => ({ ...prev, nomeAluno: studentName }));
     setShowStudentList(false);
   };
 
+  // Função para aplicar os filtros
   const handleFilter = () => {
-    console.log("Filtros enviados:", filters);
     onFilterChange && onFilterChange(filters);
   };
 
@@ -126,12 +131,14 @@ const FiltersSection = ({ onFilterChange }) => {
       date: "",
       tipoDemanda: "",
     };
+
     setFilters(newFilters);
     setFilteredStudents([]);
     setShowStudentList(false);
     onFilterChange && onFilterChange(newFilters);
   };
 
+  // Função para fechar a lista de sugestões ao clicar fora
   const handleClickOutside = (event) => {
     if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
       setShowStudentList(false);
@@ -143,17 +150,11 @@ const FiltersSection = ({ onFilterChange }) => {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
     const day = String(now.getDate()).padStart(2, "0");
+
     return `${year}-${month}-${day}`;
   };
 
   const todayFormatted = today();
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <Paper
