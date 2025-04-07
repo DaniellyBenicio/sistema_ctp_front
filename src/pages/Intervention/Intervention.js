@@ -124,7 +124,7 @@ const Intervention = ({
           {demanda.IntervencoesDemandas.map((int) => (
             <Card key={int.id} variant="outlined">
               <CardContent>
-                <Typography fontSize={"0.9rem"} fontWeight="bold">
+                <Typography fontSize={"0.9rem"} fontWeight="bold" borderColor={"red"}>
                   Descrição:
                 </Typography>
                 <Typography fontSize={"0.9rem"} sx={{ wordBreak: "break-word", whiteSpace: "pre-wrap", mb: 1 }}>
@@ -177,7 +177,22 @@ const Intervention = ({
             onChange={(e) => setNovaIntervencao(e.target.value)}
             placeholder="Descreva a intervenção"
             variant="outlined"
-            sx={{ bgcolor: "white", borderRadius: "8px", width: "100%" }}
+            sx={{
+              bgcolor: "white",
+              borderRadius: "8px",
+              width: "100%",
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#2E7D32",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#1B5E20",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#1B5E20",
+                },
+              },
+            }}
           />
           <Stack direction="row" spacing={2}>
             <Button
