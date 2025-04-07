@@ -200,7 +200,7 @@ const DemandaRegisterPage = () => {
       console.error("Erro ao buscar aluno:", err.response?.data || err.message);
       const errorMessage =
         err.response?.data?.mensagem ===
-          "Aluno não encontrado na base de dados local"
+        "Aluno não encontrado na base de dados local"
           ? "Aluno não encontrado na base de dados. Procure um funcionário da CTP para cadastrá-lo."
           : "Erro ao buscar aluno. Verifique a matrícula e tente novamente.";
       setError(errorMessage);
@@ -280,8 +280,8 @@ const DemandaRegisterPage = () => {
       );
       setError(
         err.response?.data?.mensagem ||
-        err.response?.data?.erro ||
-        "Erro ao cadastrar a demanda"
+          err.response?.data?.erro ||
+          "Erro ao cadastrar a demanda"
       );
       setAlertOpen(true);
     } finally {
@@ -412,17 +412,26 @@ const DemandaRegisterPage = () => {
                     }
                     multiple
                     disabled
-                    renderValue={(selected) =>
-                      formData.alunos[index]?.condicoes
+                    renderValue={(selected) => {
+                      const condicoes = formData.alunos[index]?.condicoes || [];
+                      if (condicoes.length === 0) {
+                        return "Nenhuma condição selecionada";
+                      }
+                      const displayedCondicoes = condicoes.slice(0, 2);
+                      const text = displayedCondicoes
                         .map((c) => c.nome)
-                        .join(", ") || "Nenhuma condição selecionada"
-                    }
+                        .join(", ");
+                      return condicoes.length > 2 ? `${text}...` : text;
+                    }}
                     sx={{ bgcolor: "#fff", borderRadius: "8px" }}
                     MenuProps={{
                       PaperProps: {
-                        sx: {
-                          maxHeight: 300,
-                          width: "auto",
+                        bgcolor: "#fff",
+                        borderRadius: "8px",
+                        "& .MuiSelect-select": {
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
                         },
                       },
                     }}
