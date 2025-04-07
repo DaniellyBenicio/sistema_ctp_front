@@ -106,7 +106,7 @@ const DemandaDetailsPage = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await api.put(
-        `/${id}/fechar`,
+        `demandas/${id}/fechar`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

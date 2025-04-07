@@ -69,7 +69,7 @@ const Intervention = ({
       }
 
       await api.post(
-        "/intervencoesdemandas",
+        "/intervencoes-demandas",
         {
           intervencao_id: intervencaoId,
           demanda_id: demanda.id,

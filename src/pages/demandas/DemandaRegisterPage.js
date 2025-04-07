@@ -257,7 +257,7 @@ const DemandaRegisterPage = () => {
     setError(null);
     setSuccess(null);
     try {
-      const response = await api.post("/criar-demanda", {
+      const response = await api.post("/demandas", {
         usuario_id: userId,
         descricao: formData.descricao,
         status: formData.status,
