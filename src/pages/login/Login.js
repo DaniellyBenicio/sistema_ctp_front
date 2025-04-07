@@ -13,6 +13,52 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../service/auth";
 
+const CustomTextField = ({ label, type, value, onChange, onFocus, onBlur, error, helperText, InputProps }) => (
+  <TextField
+    fullWidth
+    margin="normal"
+    label={label}
+    type={type}
+    value={value}
+    onChange={onChange}
+    onFocus={onFocus}
+    onBlur={onBlur}
+    error={error}
+    helperText={helperText}
+    variant="outlined"
+    InputProps={InputProps}
+    sx={{
+      "& .MuiInputLabel-root": {
+        color: "text.secondary",
+        fontSize: { xs: "0.9rem", md: "1rem" },
+        transition: "color 0.3s ease, transform 0.3s ease",
+      },
+      "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
+        color: "#27AE60",
+      },
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "8px",
+        backgroundColor: "transparent",
+        "& input": {
+          backgroundColor: "transparent !important",
+          WebkitBoxShadow: "0 0 0 1000px transparent inset",
+          WebkitTextFillColor: "#000",
+          transition: "background-color 5000s ease-in-out 0s",
+        },
+        "& fieldset": {
+          borderColor: "#E0E0E0",
+        },
+        "&:hover fieldset": {
+          borderColor: "#27AE60",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "#27AE60",
+        },
+      },
+    }}
+  />
+);
+
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -131,9 +177,7 @@ const Login = ({ onLogin }) => {
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
-            <TextField
-              fullWidth
-              margin="normal"
+            <CustomTextField
               label="Email"
               type="email"
               value={email}
@@ -142,41 +186,8 @@ const Login = ({ onLogin }) => {
               onBlur={() => setFocusedField(null)}
               error={!!email && !isEmailValid()}
               helperText={!!email && !isEmailValid() ? "Email inválido" : ""}
-              variant="outlined"
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "text.secondary",
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                  transition: "color 0.3s ease, transform 0.3s ease",
-                },
-                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
-                  color: "#27AE60",
-                },
-
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                  backgroundColor: "transparent",
-                  "& input": {
-                    backgroundColor: "transparent !important",
-                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
-                    WebkitTextFillColor: "#000",
-                    transition: "background-color 5000s ease-in-out 0s",
-                  },
-                  "& fieldset": {
-                    borderColor: "#E0E0E0",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                },
-              }}
             />
-            <TextField
-              fullWidth
-              margin="normal"
+            <CustomTextField
               label="Senha"
               type={showPassword ? "text" : "password"}
               value={senha}
@@ -195,35 +206,6 @@ const Login = ({ onLogin }) => {
                     </IconButton>
                   </InputAdornment>
                 ),
-              }}
-              sx={{
-                "& .MuiInputLabel-root": {
-                  color: "text.secondary",
-                  fontSize: { xs: "0.9rem", md: "1rem" },
-                  transition: "color 0.3s ease, transform 0.3s ease",
-                },
-                "& .MuiInputLabel-root.Mui-focused, & .MuiInputLabel-root.MuiInputLabel-shrink": {
-                  color: "#27AE60",
-                },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                  backgroundColor: "transparent",
-                  "& input": {
-                    backgroundColor: "transparent !important",
-                    WebkitBoxShadow: "0 0 0 1000px transparent inset",
-                    WebkitTextFillColor: "#000",
-                    transition: "background-color 5000s ease-in-out 0s",
-                  },
-                  "& fieldset": {
-                    borderColor: "#E0E0E0",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#27AE60",
-                  },
-                },
               }}
             />
 
@@ -257,7 +239,6 @@ const Login = ({ onLogin }) => {
                   "&:hover": { textDecoration: "underline", color: "#2ECC71" },
                 }}
                 onClick={() => {
-                  console.log("Navegando para /recuperar-senha");
                   navigate("/recuperar-senha");
                 }}
               >
