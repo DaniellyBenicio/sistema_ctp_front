@@ -40,6 +40,7 @@ const StyledTableCellBody = styled(TableCell)(({ theme }) => ({
     height: "auto",
     lineHeight: "normal",
     borderBottom: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`,
 }));
 
 const DemandsTable = ({
