@@ -11,6 +11,7 @@ import {
   Modal,
   Tooltip,
 } from "@mui/material";
+import { styled, useTheme } from "@mui/material/styles"; 
 import InfoIcon from "@mui/icons-material/Info";
 import PeopleIcon from "@mui/icons-material/People";
 import GavelIcon from "@mui/icons-material/Gavel";
@@ -25,9 +26,18 @@ import { jwtDecode } from "jwt-decode";
 import Intervention from "../Intervention/Intervention.js";
 import CustomAlert from "../../components/alert/CustomAlert";
 
+const StyledCard = styled(Card)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderColor: "#2E7D32",
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(1), 
+  },
+}));
+
 const DemandaDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const theme = useTheme(); 
   const [demanda, setDemanda] = useState(null);
   const [podeIntervir, setPodeIntervir] = useState(null);
   const [novaIntervencao, setNovaIntervencao] = useState("");
@@ -395,12 +405,12 @@ const DemandaDetailsPage = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 800,
+            width: { xs: "90%", sm: 600, md: 800 }, 
             maxHeight: "80vh",
             bgcolor: "white",
             borderRadius: "12px",
             boxShadow: 24,
-            p: 4,
+            p: { xs: 2, sm: 3, md: 4 }, 
             overflowY: "auto",
           }}
         >
@@ -412,6 +422,7 @@ const DemandaDetailsPage = () => {
               fontWeight: "bold",
               mb: 2,
               textAlign: "center",
+              fontSize: { xs: "1.25rem", sm: "1.5rem" }, 
             }}
           >
             Detalhes dos Encaminhamentos
@@ -420,29 +431,55 @@ const DemandaDetailsPage = () => {
           {demanda.Encaminhamentos?.length > 0 ? (
             <Stack spacing={2}>
               {demanda.Encaminhamentos.map((enc) => (
-                <Card
-                  key={enc.id}
-                  variant="outlined"
-                  sx={{ p: 2, borderColor: "#2E7D32" }}
-                >
-                  <Stack spacing={1}>
-                    <Stack direction="row" alignItems="center">
+                <StyledCard key={enc.id} variant="outlined">
+                  <Stack
+                    spacing={1}
+                    sx={{
+                      flexDirection: { xs: "column", sm: "column" }, 
+                    }}
+                  >
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      sx={{ flexWrap: "wrap" }} 
+                    >
                       <SubjectIcon
-                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                        sx={{
+                          color: "#2E7D32",
+                          fontSize: { xs: "0.9rem", sm: "1rem" }, 
+                          mr: 1,
+                        }}
                       />
                       <Typography
-                        sx={{ fontSize: "0.9rem", whiteSpace: "pre-line" }}
+                        sx={{
+                          fontSize: { xs: "0.8rem", sm: "0.9rem" }, 
+                          whiteSpace: "pre-line",
+                          wordBreak: "break-word", 
+                        }}
                       >
                         <strong>Assunto do Encaminhamento:</strong>{" "}
                         {enc.descricao || "Descrição não disponível"}
                       </Typography>
                     </Stack>
 
-                    <Stack direction="row" alignItems="center">
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      sx={{ flexWrap: "wrap" }}
+                    >
                       <PersonIcon
-                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                        sx={{
+                          color: "#2E7D32",
+                          fontSize: { xs: "0.9rem", sm: "1rem" },
+                          mr: 1,
+                        }}
                       />
-                      <Typography sx={{ fontSize: "0.9rem" }}>
+                      <Typography
+                        sx={{
+                          fontSize: { xs: "0.8rem", sm: "0.9rem" },
+                          wordBreak: "break-word",
+                        }}
+                      >
                         <strong>Remetente:</strong>{" "}
                         {enc.Remetente?.nome || "Nome não disponível"}
                         {enc.Remetente?.Cargo?.nome
@@ -451,11 +488,24 @@ const DemandaDetailsPage = () => {
                       </Typography>
                     </Stack>
 
-                    <Stack direction="row" alignItems="center">
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      sx={{ flexWrap: "wrap" }}
+                    >
                       <PersonIcon
-                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                        sx={{
+                          color: "#2E7D32",
+                          fontSize: { xs: "0.9rem", sm: "1rem" },
+                          mr: 1,
+                        }}
                       />
-                      <Typography sx={{ fontSize: "0.9rem" }}>
+                      <Typography
+                        sx={{
+                          fontSize: { xs: "0.8rem", sm: "0.9rem" },
+                          wordBreak: "break-word",
+                        }}
+                      >
                         <strong>Destinatário:</strong>{" "}
                         {enc.Destinatario?.nome || "Nome não disponível"}
                         {enc.Destinatario?.Cargo?.nome
@@ -464,31 +514,49 @@ const DemandaDetailsPage = () => {
                       </Typography>
                     </Stack>
 
-                    <Stack direction="row" alignItems="center">
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      sx={{ flexWrap: "wrap" }}
+                    >
                       <AccessTimeIcon
-                        sx={{ color: "#2E7D32", fontSize: "1rem", mr: 1 }}
+                        sx={{
+                          color: "#2E7D32",
+                          fontSize: { xs: "0.9rem", sm: "1rem" },
+                          mr: 1,
+                        }}
                       />
-                      <Typography sx={{ fontSize: "0.9rem" }}>
+                      <Typography
+                        sx={{
+                          fontSize: { xs: "0.8rem", sm: "0.9rem" },
+                          wordBreak: "break-word",
+                        }}
+                      >
                         <strong>Data/Hora:</strong>{" "}
                         {new Date(enc.data).toLocaleString() ||
                           "Data não disponível"}
                       </Typography>
                     </Stack>
                   </Stack>
-                </Card>
+                </StyledCard>
               ))}
             </Stack>
           ) : (
-            <Typography>Nenhum encaminhamento</Typography>
+            <Typography
+              sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" }, textAlign: "center" }}
+            >
+              Nenhum encaminhamento
+            </Typography>
           )}
           <Button
             variant="contained"
             onClick={handleCloseEncaminhamentosModal}
             sx={{
               mt: 2,
-              fontSize: "0.9rem",
+              fontSize: { xs: "0.8rem", sm: "0.9rem" },
               bgcolor: "#2E7D32",
               "&:hover": { bgcolor: "#1B5E20" },
+              width: { xs: "100%", sm: "auto" }, 
             }}
           >
             Fechar
@@ -522,11 +590,11 @@ const DemandaDetailsPage = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 330,
+            width: { xs: "90%", sm: 330 }, 
             bgcolor: "white",
             borderRadius: "12px",
             boxShadow: 24,
-            p: 4,
+            p: { xs: 2, sm: 4 }, 
           }}
         >
           <Typography
@@ -536,15 +604,27 @@ const DemandaDetailsPage = () => {
               fontWeight: "bold",
               mb: 2,
               textAlign: "center",
+              fontSize: { xs: "1rem", sm: "1.25rem" },
             }}
           >
             Fechar Demanda
           </Typography>
-          <Typography id="confirm-close-description" sx={{ mb: 3, textAlign: 'center' }}>
-            Deseja realmente fechar a demanda?<br /> Ao confirmar, ela será fechada e
-            ninguém poderá mais intervir.
+          <Typography
+            id="confirm-close-description"
+            sx={{
+              mb: 3,
+              textAlign: "center",
+              fontSize: { xs: "0.8rem", sm: "0.9rem" },
+            }}
+          >
+            Deseja realmente fechar a demanda?
+            <br /> Ao confirmar, ela será fechada e ninguém poderá mais intervir.
           </Typography>
-          <Stack direction="row" spacing={3} justifyContent="center">
+          <Stack
+            direction={{ xs: "column", sm: "row" }} 
+            spacing={2}
+            justifyContent="center"
+          >
             <Button
               variant="outlined"
               onClick={handleCancelCloseDemanda}
@@ -555,6 +635,7 @@ const DemandaDetailsPage = () => {
                 borderRadius: "8px",
                 color: "white",
                 borderColor: "transparent",
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               Não
@@ -568,6 +649,7 @@ const DemandaDetailsPage = () => {
                 "&:hover": { bgcolor: "#1B5E20" },
                 borderRadius: "8px",
                 color: "white",
+                width: { xs: "100%", sm: "auto" },
               }}
             >
               Sim
