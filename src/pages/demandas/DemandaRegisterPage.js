@@ -198,9 +198,17 @@ const DemandaRegisterPage = () => {
       }
     } catch (err) {
       console.error("Erro ao buscar aluno:", err.response?.data || err.message);
-      const errorMessage =
+      let errorMessage = null;
+      if (
         err.response?.data?.mensagem ===
-        "Aluno não encontrado na base de dados local";
+        "Aluno não encontrado na base de dados local"
+      ) {
+        errorMessage = "Aluno não encontrado";
+      } else if (err.response?.data?.mensagem) {
+        errorMessage = err.response.data.mensagem;
+      } else {
+        errorMessage = "Erro ao buscar aluno.";
+      }
       setError(errorMessage);
       setAlertOpen(true);
       const newStudentsData = [...studentsData];
@@ -278,8 +286,8 @@ const DemandaRegisterPage = () => {
       );
       setError(
         err.response?.data?.mensagem ||
-          err.response?.data?.erro ||
-          "Erro ao cadastrar a demanda"
+        err.response?.data?.erro ||
+        "Erro ao cadastrar a demanda"
       );
       setAlertOpen(true);
     } finally {
